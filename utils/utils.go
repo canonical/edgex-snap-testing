@@ -9,7 +9,7 @@ import (
 
 const ShellToUse = "bash"
 
-func Shellout(command string) (error, string, string) {
+func Exit(command string) (error, string, string) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	cmd := exec.Command(ShellToUse, "-c", command)
@@ -20,7 +20,7 @@ func Shellout(command string) (error, string, string) {
 }
 
 func Command(command string) string {
-	err, out, errout := Shellout(command)
+	err, out, errout := Exit(command)
 	if err != nil {
 		log.Printf("[LOG] `%s`, error: %v\n", command, err)
 	}
