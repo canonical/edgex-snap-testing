@@ -2,30 +2,30 @@ package utils
 
 import (
 	"bytes"
-	"fmt"
-	"log"
+	"github.com/stretchr/testify/assert"
 	"os/exec"
+	"testing"
 )
 
 const ShellToUse = "bash"
 
-func Exit(command string) (error, string, string) {
+func Exec(command string) (string, string, error) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	cmd := exec.Command(ShellToUse, "-c", command)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	err := cmd.Run()
-	return err, stdout.String(), stderr.String()
+	return stdout.String(), stderr.String(), err
 }
 
-func Command(command string) string {
-	err, out, errout := Exit(command)
-	if err != nil {
-		log.Printf("[LOG] `%s`, error: %v\n", command, err)
-	}
-	fmt.Println(out)
+func Command(t *testing.T, command string) string {
+	stdout, stderr, err := Exec(command)
+
+	assert.Empty(t, err, "Execution error: %s; Stdout: %s;", err, stderr)
+	return stdout
+}
+
 	fmt.Println(errout)
 
 	return out
-}
