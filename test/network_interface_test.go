@@ -1,45 +1,50 @@
 package test
 
 import (
-	"MQTT-test-project/utils"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	"MQTT-test-project/utils"
 )
 
-func setupSubtest(t *testing.T) {
-	t.Logf("[SETUP]")
-	utils.Command(t, "sudo snap install edgexfoundry --channel=latest/beta")
-	utils.Command(t, "sudo snap install edgex-device-mqtt --channel=latest/beta")
-	utils.Command(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
+var port = []string{"59982"}
+
+func setupSubtestNetworkInterface(t *testing.T) {
+	t.Log("[SUBTEST SETUP]")
+	stdout, stderr, err := utils.Command("sudo snap start --enable edgex-device-mqtt.device-mqtt")
+	utils.CommandLog(t, stdout, stderr, err)
+
+	err = utils.WaitServiceOnline(t, port)
+	utils.CommandLog(t, "", "", err)
 }
 
 func TestNetworkInterface(t *testing.T) {
-	setupSubtest(t)
+	setupSubtestNetworkInterface(t)
+
 	t.Cleanup(func() {
-		t.Logf("[CLEANUP]")
-		utils.Command(t, "sudo snap remove --purge edgex-device-mqtt")
-		utils.Command(t, "sudo snap remove --purge edgexfoundry")
-		// TODO improvement
-		// utils.RemoveSnaps("edgex-device-mqtt", "edgexfoundry")
-		// the function can be variadic and take zero or more inputs
-		// e.g. https://github.com/canonical/edgex-snap-hooks/blob/50df6237c8eb5b49d497d3a6f978f83391905308/utils.go#L254
+		t.Log("[SUBTEST CLEANUP]")
+		stdout, stderr, err := utils.Command("sudo snap stop --disable edgex-device-mqtt.device-mqtt")
+		utils.CommandLog(t, stdout, stderr, err)
 	})
 
 	t.Run("listen-all-interfaces", func(t *testing.T) {
-		t.Logf("[SUBTEST] Test if the service is listening on all the configured network interfaces")
-		t.Cleanup(func() {
-			// subtest cleanup
-		})
-		output := utils.Command(t, "sudo lsof -nPi :59982 | { grep \\* || true; }")
-		assert.Equal(t, "", output, "This service is listening on all the configured network interface which is not allowed.")
+		t.Log("Test if the service is listening on all the configured network interfaces which is not allowed")
+
+		//stdout, stderr, err := utils.Command("sudo lsof -nPi :59982 | { grep \\* || true; }")
+		//utils.CommandLog(t, stdout, stderr, err)
+		//require.Empty(t, stdout, "This service is listening on all the configured network interface which is not allowed.")
+		isConnected := utils.PortConnectionAllInterface(t, port)
+		require.False(t, isConnected, "This service is listening on all the configured network interface which is not allowed.")
 	})
 
 	t.Run("listen-localhost-interfaces", func(t *testing.T) {
-		t.Logf("[SUBTEST] Test if the service is only bound to the local machine")
-		t.Cleanup(func() {
-			// subtest cleanup
-		})
-		output := utils.Command(t, "sudo lsof -nPi :59982 | { grep 127.0.0.1 || true; }")
-		assert.NotEmpty(t, output, "This service is not bound to the local machine.")
+		t.Log("Test if the service is only bound to the local machine")
+
+		//stdout, stderr, err := utils.Command("sudo lsof -nPi :59982 | { grep 127.0.0.1 || true; }")
+		//utils.CommandLog(t, stdout, stderr, err)
+		//require.NotEmpty(t, stdout, "This service is not bound to the local machine.")
+		isConnected := utils.PortConnectionLocalhost(t, port)
+		require.True(t, isConnected, "This service is listening on all the configured network interface which is not allowed.")
 	})
 }
