@@ -10,8 +10,7 @@ import (
 
 func setupSubtestConfiguration(t *testing.T) {
 	t.Log("[SUBTEST SETUP]")
-	stdout, stderr, err := utils.Command("sudo snap start --enable edgex-device-mqtt.device-mqtt")
-	utils.CommandLog(t, stdout, stderr, err)
+	utils.Command(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
 }
 
 func TestConfiguration(t *testing.T) {
@@ -19,18 +18,15 @@ func TestConfiguration(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Log("[SUBTEST CLEANUP]")
-		stdout, stderr, err := utils.Command("sudo snap stop --disable edgex-device-mqtt.device-mqtt")
-		utils.CommandLog(t, stdout, stderr, err)
+		utils.Command(t, "sudo snap stop --disable edgex-device-mqtt.device-mqtt")
 	})
 
 	t.Run("change-the-maximum-startup-duration", func(t *testing.T) {
 		startupDurationValue := "120"
 
-		stdout, stderr, err := utils.Command("sudo snap set edgex-device-mqtt startup-duration=" + startupDurationValue)
-		utils.CommandLog(t, stdout, stderr, err)
+		utils.Command(t, "sudo snap set edgex-device-mqtt startup-duration="+startupDurationValue)
 
-		stdout, stderr, err = utils.Command("sudo snap get edgex-device-mqtt startup-duration")
-		utils.CommandLog(t, stdout, stderr, err)
+		stdout, _ := utils.Command(t, "sudo snap get edgex-device-mqtt startup-duration")
 		assert.Equal(t, startupDurationValue+"\n", stdout, "maximum startup-duration does not set successfully")
 
 	})
@@ -40,11 +36,9 @@ func TestConfiguration(t *testing.T) {
 
 		startupIntervalValue := "3"
 
-		stdout, stderr, err := utils.Command("sudo snap set edgex-device-mqtt startup-interval=" + startupIntervalValue)
-		utils.CommandLog(t, stdout, stderr, err)
+		utils.Command(t, "sudo snap set edgex-device-mqtt startup-interval="+startupIntervalValue)
 
-		stdout, stderr, err = utils.Command("sudo snap get edgex-device-mqtt startup-interval")
-		utils.CommandLog(t, stdout, stderr, err)
+		stdout, _ := utils.Command(t, "sudo snap get edgex-device-mqtt startup-interval")
 		assert.Equal(t, startupIntervalValue+"\n", stdout, "maximum startup-interval does not set successfully")
 
 	})
