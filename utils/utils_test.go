@@ -9,22 +9,22 @@ import (
 
 func TestCommand(t *testing.T) {
 	t.Run("one command", func(t *testing.T) {
-		Command(t, `echo "hi" && sleep 1 && echo "hi2"`)
+		RunCommand(t, `echo "hi" && sleep 1 && echo "hi2"`)
 	})
 	t.Run("multiple commands", func(t *testing.T) {
-		Command(t,
+		RunCommand(t,
 			`echo "hi" && sleep 1 && echo "hi2"`,
 			`echo "hi3"`,
 		)
 	})
 
 	t.Run("bad command", func(t *testing.T) {
-		_, stderr := Command(t, `bad_command`)
+		_, stderr := RunCommand(t, `bad_command`)
 		require.NotEmpty(t, stderr)
 	})
 
 	t.Run("redirect stdout to stderr", func(t *testing.T) {
-		stdout, stderr := Command(t, `echo "hello" >&2`)
+		stdout, stderr := RunCommand(t, `echo "hello" >&2`)
 		assert.Empty(t, stdout)
 		require.Contains(t, stderr, "hello")
 	})
@@ -32,7 +32,7 @@ func TestCommand(t *testing.T) {
 	t.Run("bad command, redirects stderr to stdout", func(t *testing.T) {
 		// Do not pass t which raises the error because we want to
 		// validate the error handling
-		stdout, stderr := Command(nil, `bad_command 2>&1`)
+		stdout, stderr := RunCommand(nil, `bad_command 2>&1`)
 		assert.Empty(t, stderr)
 		require.Contains(t, stdout, "not found")
 	})
@@ -41,7 +41,7 @@ func TestCommand(t *testing.T) {
 		// Do not pass t which raises the error because we want to
 		// validate the error handling
 		t.Run("bad+good", func(t *testing.T) {
-			stdout, stderr := Command(nil,
+			stdout, stderr := RunCommand(nil,
 				`bad_command`,
 				`echo 'hi'`,
 			)
@@ -49,7 +49,7 @@ func TestCommand(t *testing.T) {
 			assert.Contains(t, stdout, "hi")
 		})
 		t.Run("good+bad", func(t *testing.T) {
-			stdout, stderr := Command(nil,
+			stdout, stderr := RunCommand(nil,
 				`echo 'hi'`,
 				`bad_command`,
 			)

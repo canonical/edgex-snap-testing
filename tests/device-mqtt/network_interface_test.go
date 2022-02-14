@@ -12,7 +12,7 @@ var port = []string{"59982"}
 
 func setupSubtestNetworkInterface(t *testing.T) {
 	t.Log("[SUBTEST SETUP]")
-	utils.Command(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
+	utils.RunCommand(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
 
 	err := utils.WaitServiceOnline(t, port)
 	require.NoError(t, err)
@@ -23,7 +23,7 @@ func TestNetworkInterface(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Log("[SUBTEST CLEANUP]")
-		utils.Command(t, "sudo snap stop --disable edgex-device-mqtt.device-mqtt")
+		utils.RunCommand(t, "sudo snap stop --disable edgex-device-mqtt.device-mqtt")
 	})
 
 	t.Run("listen-all-interfaces", func(t *testing.T) {

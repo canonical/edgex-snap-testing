@@ -13,14 +13,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Command executes an array of string(s)
-func Command(t *testing.T, commands ...string) (string, string) {
+// RunCommand executes one or more commands
+func RunCommand(t *testing.T, commands ...string) (string, string) {
 	var stdout string
 	var stderr string
 	var err error
 
 	defer func() {
-		commandLog(t, stdout, stderr, err)
+		logCommand(t, stdout, stderr, err)
 	}()
 
 	for _, command := range commands {
@@ -71,8 +71,8 @@ func Command(t *testing.T, commands ...string) (string, string) {
 	return stdout, stderr
 }
 
-// commandLog logs output and err of commands, it is used together with Command
-func commandLog(t *testing.T, stdout string, stderr string, err error) {
+// logCommand logs output and err of executed commands, it is used together with RunCommand
+func logCommand(t *testing.T, stdout string, stderr string, err error) {
 
 	// caller passes t *testing.T
 	if t != nil {
@@ -167,7 +167,7 @@ func PortConnectionAllInterface(t *testing.T, ports []string) bool {
 
 	for _, port := range ports {
 
-		stdout, _ := Command(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
+		stdout, _ := RunCommand(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
 		if stdout == "" {
 			isListening = false
 		} else {
@@ -183,7 +183,7 @@ func PortConnectionLocalhost(t *testing.T, ports []string) bool {
 
 	for _, port := range ports {
 
-		stdout, _ := Command(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
+		stdout, _ := RunCommand(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
 		if stdout == "" {
 			isOpen = false
 		} else {
