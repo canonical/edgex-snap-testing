@@ -10,9 +10,15 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: echo Running tests for ${{ inputs.name }}
+    - name: Build the snap
       shell: bash
-    - run: echo "${{ github.action_path }}"
-      shell: bash          
-    - run: ls -l
+      run: |
+        echo "TODO"
+
+    - name: Run tests
       shell: bash
+      run: |
+        echo Running tests for: ${{ inputs.name }}
+        cd ${{github.action_path}}
+        go test -v ${{github.action_path}}/tests/${{inputs.name}}
+    
