@@ -1,0 +1,18 @@
+name: EdgeX Snap Tester
+description: |
+  Github action to test packaging of EdgeX snaps on source PRs
+
+inputs:
+  name:
+    description: Name of the testing suite
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - run: echo Running tests for ${{ inputs.name }}
+      shell: bash
+    - run: echo "${{ github.action_path }}"
+      shell: bash          
+    - run: ls -l
+      shell: bash
