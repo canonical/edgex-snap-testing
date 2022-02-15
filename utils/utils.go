@@ -13,23 +13,27 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Command executes an array of string(s)
-func Command(commands ...string) (string, string, error) {
+// RunCommand executes one or more commands
+func RunCommand(t *testing.T, commands ...string) (string, string) {
 	var stdout string
 	var stderr string
 	var err error
+
+	defer func() {
+		logCommand(t, stdout, stderr, err)
+	}()
 
 	for _, command := range commands {
 		cmd := exec.Command("/bin/sh", "-c", command)
 
 		outStream, err := cmd.StdoutPipe()
 		if err != nil {
-			return stdout, stderr, err
+			return stdout, stderr
 		}
 
 		errStream, err := cmd.StderrPipe()
 		if err != nil {
-			return stdout, stderr, err
+			return stdout, stderr
 		}
 
 		var wg sync.WaitGroup
@@ -60,15 +64,15 @@ func Command(commands ...string) (string, string, error) {
 		// stderr reader
 		err = cmd.Start()
 		if err != nil {
-			return stdout, stderr, err
+			return stdout, stderr
 		}
 		wg.Wait()
 	}
-	return stdout, stderr, err
+	return stdout, stderr
 }
 
-// CommandLog logs output and err of commands, it is used together with Command
-func CommandLog(t *testing.T, stdout string, stderr string, err error) {
+// logCommand logs output and err of executed commands, it is used together with RunCommand
+func logCommand(t *testing.T, stdout string, stderr string, err error) {
 
 	// caller passes t *testing.T
 	if t != nil {
@@ -77,13 +81,14 @@ func CommandLog(t *testing.T, stdout string, stderr string, err error) {
 		}
 		if stderr != "" {
 			if err != nil {
-				t.Error(stderr)
+				// fatal error, non-zero exit
+				t.Fatal(stderr)
 			} else {
-				t.Log(stdout)
+				t.Logf("Error: %s", stderr)
 			}
-
 		}
 		if err != nil {
+			// fatal error, but no stderr
 			t.Fatal(err)
 		}
 	} else {
@@ -93,13 +98,15 @@ func CommandLog(t *testing.T, stdout string, stderr string, err error) {
 		}
 		if stderr != "" {
 			if err != nil {
-				log.Panicln(stderr)
+				// fatal error, non-zero exit
+				log.Fatalln(stderr)
 			} else {
-				log.Println(stdout)
+				log.Printf("Error: %s", stderr)
 			}
-			if err != nil {
-				log.Fatalln(err)
-			}
+		}
+		if err != nil {
+			// fatal error, but no stderr
+			log.Fatalln(err)
 		}
 	}
 }
@@ -160,8 +167,7 @@ func PortConnectionAllInterface(t *testing.T, ports []string) bool {
 
 	for _, port := range ports {
 
-		stdout, stderr, err := Command("sudo lsof -nPi :" + port + " | { grep \\* || true; }")
-		CommandLog(t, stdout, stderr, err)
+		stdout, _ := RunCommand(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
 		if stdout == "" {
 			isListening = false
 		} else {
@@ -177,8 +183,7 @@ func PortConnectionLocalhost(t *testing.T, ports []string) bool {
 
 	for _, port := range ports {
 
-		stdout, stderr, err := Command("sudo lsof -nPi :" + port + " | { grep 127.0.0.1  || true; }")
-		CommandLog(t, stdout, stderr, err)
+		stdout, _ := RunCommand(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
 		if stdout == "" {
 			isOpen = false
 		} else {
@@ -187,7 +192,7 @@ func PortConnectionLocalhost(t *testing.T, ports []string) bool {
 				isOpen = true
 			} else {
 				isOpen = false
-				CommandLog(t, "", "", err)
+				require.NoError(t, err, "Error in bind-address or bind-port.")
 			}
 		}
 	}
