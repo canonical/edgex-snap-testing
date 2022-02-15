@@ -15,7 +15,7 @@ func setupSubtestNetworkInterface(t *testing.T) {
 	utils.RunCommand(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
 
 	err := utils.WaitServiceOnline(t, port)
-	require.NoError(t, err)
+	require.NoError(t, err, "Error waiting for services to come online.")
 }
 
 func TestNetworkInterface(t *testing.T) {

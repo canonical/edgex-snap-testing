@@ -82,7 +82,7 @@ func logCommand(t *testing.T, stdout string, stderr string, err error) {
 		if stderr != "" {
 			if err != nil {
 				// fatal error, non-zero exit
-				t.Error(stderr)
+				t.Fatal(stderr)
 			} else {
 				t.Logf("Error: %s", stderr)
 			}
@@ -192,7 +192,7 @@ func PortConnectionLocalhost(t *testing.T, ports []string) bool {
 				isOpen = true
 			} else {
 				isOpen = false
-				require.NoError(t, err)
+				require.NoError(t, err, "Error in bind-address or bind-port.")
 			}
 		}
 	}
