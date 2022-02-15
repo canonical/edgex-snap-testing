@@ -17,26 +17,39 @@ import (
 func RunCommand(t *testing.T, commands ...string) (string, string) {
 	var stdout string
 	var stderr string
-	var err error
-
-	defer func() {
-		logCommand(t, stdout, stderr, err)
-	}()
 
 	for _, command := range commands {
+		if t != nil {
+			t.Logf("Running command: %s", command)
+		} else {
+			log.Printf("Running command: %s", command)
+		}
+
 		cmd := exec.Command("/bin/sh", "-c", command)
 
 		outStream, err := cmd.StdoutPipe()
 		if err != nil {
+			if t != nil {
+				t.Fatal(err)
+			} else {
+				log.Fatal(err)
+			}
 			return stdout, stderr
 		}
 
 		errStream, err := cmd.StderrPipe()
 		if err != nil {
+			if t != nil {
+				t.Fatal(err)
+			} else {
+				log.Fatal(err)
+			}
 			return stdout, stderr
 		}
 
 		var wg sync.WaitGroup
+		// wait for all standard output processing
+		defer wg.Wait()
 
 		// stdout reader
 		wg.Add(1)
@@ -44,71 +57,56 @@ func RunCommand(t *testing.T, commands ...string) (string, string) {
 			scanner := bufio.NewScanner(stream)
 			for scanner.Scan() {
 				line := scanner.Text()
-				stdout += line
-				stdout += "\n"
+				if t != nil {
+					t.Logf("stdout: %s", line)
+				} else {
+					log.Printf("stdout: %s", line)
+				}
+				stdout += line + "\n"
 			}
 			wg.Done()
 		}(outStream)
 
+		// stderr reader
 		wg.Add(1)
 		go func(stream io.ReadCloser) {
 			scanner := bufio.NewScanner(stream)
 			for scanner.Scan() {
 				line := scanner.Text()
-				stderr = line
-				stderr += "\n"
+				if t != nil {
+					t.Logf("stderr: %s", line)
+				} else {
+					log.Printf("stderr: %s", line)
+				}
+				stderr += line + "\n"
 			}
 			wg.Done()
 		}(errStream)
 
-		// stderr reader
+		// start execution
 		err = cmd.Start()
 		if err != nil {
-			return stdout, stderr
-		}
-		wg.Wait()
+			if t != nil {
+				t.Fatal(err)
+			} else {
+				log.Fatal(err)
 	}
 	return stdout, stderr
 }
 
-// logCommand logs output and err of executed commands, it is used together with RunCommand
-func logCommand(t *testing.T, stdout string, stderr string, err error) {
-
-	// caller passes t *testing.T
-	if t != nil {
-		if stdout != "" {
-			t.Log(stdout)
-		}
-		if stderr != "" {
+		// wait until it exits
+		err = cmd.Wait()
 			if err != nil {
-				// fatal error, non-zero exit
-				t.Fatal(stderr)
-			} else {
-				t.Logf("Error: %s", stderr)
-			}
-		}
-		if err != nil {
-			// fatal error, but no stderr
+			if t != nil {
 			t.Fatal(err)
-		}
 	} else {
-		// caller does not passes t *testing.T
-		if stdout != "" {
-			log.Println(stdout)
+				log.Fatal(err)
 		}
-		if stderr != "" {
-			if err != nil {
-				// fatal error, non-zero exit
-				log.Fatalln(stderr)
-			} else {
-				log.Printf("Error: %s", stderr)
+			return stdout, stderr
 			}
+
 		}
-		if err != nil {
-			// fatal error, but no stderr
-			log.Fatalln(err)
-		}
-	}
+	return stdout, stderr
 }
 
 // WaitServiceOnline dials port(s)to check if the service comes online until it reaches the maximum retry
