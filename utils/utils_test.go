@@ -2,6 +2,7 @@ package utils
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -9,13 +10,28 @@ import (
 
 func TestCommand(t *testing.T) {
 	t.Run("one command", func(t *testing.T) {
-		RunCommand(t, `echo "hi" && sleep 1 && echo "hi2"`)
+		stdout, stderr := RunCommand(t, `echo "hi"`)
+		assert.Empty(t, stderr)
+		require.Equal(t, "hi\n", stdout)
 	})
+
+	t.Run("exit after slow command", func(t *testing.T) {
+		start := time.Now()
+		stdout, _ := RunCommand(t, `echo "hi" && sleep 1 && echo "hi2"`)
+		// must return after 1s±200ms
+		require.WithinDuration(t,
+			start.Add(1*time.Second),
+			time.Now(),
+			200*time.Millisecond)
+		require.Equal(t, "hi\nhi2\n", stdout)
+	})
+
 	t.Run("multiple commands", func(t *testing.T) {
-		RunCommand(t,
-			`echo "hi" && sleep 1 && echo "hi2"`,
-			`echo "hi3"`,
+		stdout, _ := RunCommand(t,
+			`echo "hi"`,
+			`echo "hi2"`,
 		)
+		require.Equal(t, "hi\nhi2\n", stdout)
 	})
 
 	t.Run("bad command", func(t *testing.T) {
@@ -57,19 +73,4 @@ func TestCommand(t *testing.T) {
 			assert.Contains(t, stdout, "hi")
 		})
 	})
-}
-
-func TestCommandLog(t *testing.T) {
-	// t.Run("bad command", func(t *testing.T) {
-	// 	stdout, stderr, err := Command(t, `bad_command`)
-	// 	CommandLog(t, stdout, stderr, err)
-	// })
-	// t.Run("good command", func(t *testing.T) {
-	// 	stdout, stderr, err := Command(t, `ls`)
-	// 	CommandLog(t, stdout, stderr, err)
-	// })
-
-	// TODO:
-	// test CommandLog(t, stdout, stderr, err)
-	// without Command by passing dummy input
 }

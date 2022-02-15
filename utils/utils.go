@@ -90,45 +90,48 @@ func RunCommand(t *testing.T, commands ...string) (string, string) {
 				t.Fatal(err)
 			} else {
 				log.Fatal(err)
-	}
-	return stdout, stderr
-}
+			}
+			return stdout, stderr
+		}
 
 		// wait until it exits
 		err = cmd.Wait()
-			if err != nil {
+		if err != nil {
 			if t != nil {
-			t.Fatal(err)
-	} else {
+				t.Fatal(err)
+			} else {
 				log.Fatal(err)
-		}
-			return stdout, stderr
 			}
-
+			return stdout, stderr
 		}
+
+	}
 	return stdout, stderr
 }
 
 // WaitServiceOnline dials port(s)to check if the service comes online until it reaches the maximum retry
 func WaitServiceOnline(t *testing.T, ports []string) error {
 	const dialTimeout = 2 * time.Second
+	const maxRetry = 60
 
 	for _, port := range ports {
 		serviceIsOnline := false
 		var returnErr error
 
-		for i := 0; !serviceIsOnline && i < 60; i++ {
+		for i := 0; !serviceIsOnline && i < maxRetry; i++ {
+			t.Logf("Waiting for service. Dialing port %s. Retry %d/%d", port, i+1, maxRetry)
 			conn, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", port), dialTimeout)
-			time.Sleep(1 * time.Second)
-			t.Logf("Waiting for the service to come online. Current retry count:  %d /60", i+1)
 			if conn != nil {
 				serviceIsOnline = true
 				t.Logf("Service online now. Port %s is listening", port)
 			}
 			returnErr = err
+			time.Sleep(1 * time.Second)
 		}
 
-		require.Equal(t, true, serviceIsOnline, "Service timed out, reached max retry count of 60\n", returnErr)
+		require.Equal(t, true, serviceIsOnline,
+			"Service timed out, reached max %d retries. Error:\n%v", maxRetry, returnErr)
+		// TODO: check if this is every called after require.Equal?
 		if t.Failed() {
 			return returnErr
 		}
