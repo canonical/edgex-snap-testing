@@ -1,11 +1,10 @@
 package test
 
 import (
+	"edgex-snap-testing/utils"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
-	"MQTT-test-project/utils"
 )
 
 var port = []string{"59982"}

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"edgex-snap-testing/utils"
 	"log"
 	"os"
 	"testing"

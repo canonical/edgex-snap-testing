@@ -1,11 +1,10 @@
 package test
 
 import (
+	"edgex-snap-testing/utils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"MQTT-test-project/utils"
 )
 
 func setupSubtestConfiguration(t *testing.T) {
