@@ -9,38 +9,26 @@ import (
 	"testing"
 )
 
+var testingFatal = false
+
 // RunCommand executes one or more commands
-func RunCommand(t *testing.T, commands ...string) (string, string) {
-	var stdout string
-	var stderr string
+func RunCommand(t *testing.T, commands ...string) (stdout, stderr string) {
 
 	for _, command := range commands {
-		if t != nil {
-			t.Logf("Running command: %s", command)
-		} else {
-			log.Printf("Running command: %s", command)
-		}
+		logf(t, "Running command: %s", command)
 
 		cmd := exec.Command("/bin/sh", "-c", command)
 
 		outStream, err := cmd.StdoutPipe()
 		if err != nil {
-			if t != nil {
-				t.Fatal(err)
-			} else {
-				log.Fatal(err)
-			}
-			return stdout, stderr
+			fatalf(t, err.Error())
+			return
 		}
 
 		errStream, err := cmd.StderrPipe()
 		if err != nil {
-			if t != nil {
-				t.Fatal(err)
-			} else {
-				log.Fatal(err)
-			}
-			return stdout, stderr
+			fatalf(t, err.Error())
+			return
 		}
 
 		var wg sync.WaitGroup
@@ -53,11 +41,7 @@ func RunCommand(t *testing.T, commands ...string) (string, string) {
 			scanner := bufio.NewScanner(stream)
 			for scanner.Scan() {
 				line := scanner.Text()
-				if t != nil {
-					t.Logf("stdout: %s", line)
-				} else {
-					log.Printf("stdout: %s", line)
-				}
+				logf(t, "[stdout] %s", line)
 				stdout += line + "\n"
 			}
 			wg.Done()
@@ -69,11 +53,7 @@ func RunCommand(t *testing.T, commands ...string) (string, string) {
 			scanner := bufio.NewScanner(stream)
 			for scanner.Scan() {
 				line := scanner.Text()
-				if t != nil {
-					t.Logf("stderr: %s", line)
-				} else {
-					log.Printf("stderr: %s", line)
-				}
+				logf(t, "[stderr] %s", line)
 				stderr += line + "\n"
 			}
 			wg.Done()
@@ -82,25 +62,39 @@ func RunCommand(t *testing.T, commands ...string) (string, string) {
 		// start execution
 		err = cmd.Start()
 		if err != nil {
-			if t != nil {
-				t.Fatal(err)
-			} else {
-				log.Fatal(err)
-			}
-			return stdout, stderr
+			fatalf(t, err.Error())
+			return
 		}
 
 		// wait until it exits
 		err = cmd.Wait()
 		if err != nil {
-			if t != nil {
-				t.Fatal(err)
-			} else {
-				log.Fatal(err)
-			}
-			return stdout, stderr
+			fatalf(t, err.Error())
+			return
 		}
 
 	}
-	return stdout, stderr
+	return
+}
+
+func logf(t *testing.T, format string, args ...interface{}) {
+	if t != nil {
+		t.Logf(format, args...)
+	} else {
+		log.Printf(format, args...)
+	}
+}
+
+func fatalf(t *testing.T, format string, args ...interface{}) {
+	// reduce the severity to a log message to not exit when testing
+	if testingFatal {
+		logf(t, "fatal error: "+format, args...)
+		return
+	}
+
+	if t != nil {
+		t.Fatalf(format, args...)
+	} else {
+		log.Fatalf(format, args...)
+	}
 }

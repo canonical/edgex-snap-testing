@@ -8,11 +8,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCommand(t *testing.T) {
+func TestRunCommand(t *testing.T) {
+
 	t.Run("one command", func(t *testing.T) {
 		stdout, stderr := RunCommand(t, `echo "hi"`)
 		assert.Empty(t, stderr)
-		require.Equal(t, "hi\n", stdout)
+		assert.Equal(t, "hi\n", stdout)
 	})
 
 	t.Run("exit after slow command", func(t *testing.T) {
@@ -31,46 +32,57 @@ func TestCommand(t *testing.T) {
 			`echo "hi"`,
 			`echo "hi2"`,
 		)
-		require.Equal(t, "hi\nhi2\n", stdout)
+		assert.Equal(t, "hi\nhi2\n", stdout)
 	})
 
 	t.Run("bad command", func(t *testing.T) {
-		_, stderr := RunCommand(t, `bad_command`)
-		require.NotEmpty(t, stderr)
-	})
+		testingFatal = true
+		t.Cleanup(func() {
+			testingFatal = false
+		})
 
-	t.Run("redirect stdout to stderr", func(t *testing.T) {
-		stdout, stderr := RunCommand(t, `echo "hello" >&2`)
+		stdout, stderr := RunCommand(t, `bad_command`)
 		assert.Empty(t, stdout)
-		require.Contains(t, stderr, "hello")
+		assert.Contains(t, stderr, "not found")
 	})
 
-	t.Run("bad command, redirects stderr to stdout", func(t *testing.T) {
-		// Do not pass t which raises the error because we want to
-		// validate the error handling
-		stdout, stderr := RunCommand(nil, `bad_command 2>&1`)
-		assert.Empty(t, stderr)
-		require.Contains(t, stdout, "not found")
+	t.Run("print to stderr", func(t *testing.T) {
+		stdout, stderr := RunCommand(t, `echo "failing" >&2`)
+		assert.Empty(t, stdout)
+		assert.Equal(t, "failing\n", stderr)
 	})
 
-	t.Run("bad and good commands", func(t *testing.T) {
-		// Do not pass t which raises the error because we want to
-		// validate the error handling
-		t.Run("bad+good", func(t *testing.T) {
-			stdout, stderr := RunCommand(nil,
-				`bad_command`,
-				`echo 'hi'`,
-			)
-			require.Contains(t, stderr, "not found")
-			assert.Contains(t, stdout, "hi")
+	t.Run("stderr then stdout", func(t *testing.T) {
+		stdout, stderr := RunCommand(t, `echo "failing" >&2; echo "succeeding"`)
+		assert.Equal(t, "failing\n", stderr)
+		assert.Equal(t, "succeeding\n", stdout)
+	})
+
+	t.Run("bad then good", func(t *testing.T) {
+		testingFatal = true
+		t.Cleanup(func() {
+			testingFatal = false
 		})
-		t.Run("good+bad", func(t *testing.T) {
-			stdout, stderr := RunCommand(nil,
-				`echo 'hi'`,
-				`bad_command`,
-			)
-			require.Contains(t, stderr, "not found")
-			assert.Contains(t, stdout, "hi")
+
+		stdout, stderr := RunCommand(t,
+			`bad_command`, // it must stop after this
+			`echo 'hi'`,
+		)
+		assert.Contains(t, stderr, "not found")
+		assert.NotContains(t, stdout, "hi")
+	})
+
+	t.Run("good then bad", func(t *testing.T) {
+		testingFatal = true
+		t.Cleanup(func() {
+			testingFatal = false
 		})
+
+		stdout, stderr := RunCommand(t,
+			`echo 'hi'`,
+			`bad_command`,
+		)
+		assert.Contains(t, stdout, "hi")
+		assert.Contains(t, stderr, "not found")
 	})
 }
