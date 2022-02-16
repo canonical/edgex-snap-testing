@@ -11,11 +11,11 @@ import (
 
 var testingFatal = false
 
-// RunCommand executes one or more commands
-func RunCommand(t *testing.T, commands ...string) (stdout, stderr string) {
+// Exec executes one or more commands
+func Exec(t *testing.T, commands ...string) (stdout, stderr string) {
 
 	for _, command := range commands {
-		logf(t, "Running command: %s", command)
+		logf(t, "[exec] %s", command)
 
 		cmd := exec.Command("/bin/sh", "-c", command)
 

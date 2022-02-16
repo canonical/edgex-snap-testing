@@ -8,7 +8,7 @@ import (
 
 func SnapInstall(t *testing.T, names ...string) {
 	for _, name := range names {
-		RunCommand(t, fmt.Sprintf(
+		Exec(t, fmt.Sprintf(
 			"sudo snap install %s --channel=%s",
 			name,
 			env.Channel,
@@ -18,7 +18,7 @@ func SnapInstall(t *testing.T, names ...string) {
 
 func SnapRemove(t *testing.T, names ...string) {
 	for _, name := range names {
-		RunCommand(t, fmt.Sprintf(
+		Exec(t, fmt.Sprintf(
 			"sudo snap remove --purge %s",
 			name,
 		))
@@ -27,21 +27,21 @@ func SnapRemove(t *testing.T, names ...string) {
 
 func SnapInstallLocal(t *testing.T, workDir string) {
 	// snap install will error and exit if multiple snaps exist
-	RunCommand(t, fmt.Sprintf(
+	Exec(t, fmt.Sprintf(
 		"sudo snap install --dangerous %s/*.snap",
 		workDir,
 	))
 }
 
 func SnapBuild(t *testing.T, workDir string) {
-	RunCommand(t, fmt.Sprintf(
+	Exec(t, fmt.Sprintf(
 		"cd %s && snapcraft",
 		workDir,
 	))
 }
 
 func SnapConnect(t *testing.T, plug, slot string) {
-	RunCommand(t, fmt.Sprintf(
+	Exec(t, fmt.Sprintf(
 		"sudo snap connect %s %s",
 		plug, slot,
 	))

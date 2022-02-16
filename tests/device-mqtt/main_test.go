@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 	// TODO: should the logs be fetched in each test?
 	// for that, need to use journalctl instead with --since
 	if exitCode != 0 {
-		stdout, _ := utils.RunCommand(nil,
+		stdout, _ := utils.Exec(nil,
 			"sudo snap logs -n=all edgex-device-mqtt")
 		log.Printf("Snap logs:\n%s\n", stdout)
 	}

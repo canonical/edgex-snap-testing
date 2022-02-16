@@ -8,17 +8,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRunCommand(t *testing.T) {
+func TestExec(t *testing.T) {
 
 	t.Run("one command", func(t *testing.T) {
-		stdout, stderr := RunCommand(t, `echo "hi"`)
+		stdout, stderr := Exec(t, `echo "hi"`)
 		assert.Empty(t, stderr)
 		assert.Equal(t, "hi\n", stdout)
 	})
 
 	t.Run("exit after slow command", func(t *testing.T) {
 		start := time.Now()
-		stdout, _ := RunCommand(t, `echo "hi" && sleep 1 && echo "hi2"`)
+		stdout, _ := Exec(t, `echo "hi" && sleep 1 && echo "hi2"`)
 		// must return after 1s±200ms
 		require.WithinDuration(t,
 			start.Add(1*time.Second),
@@ -28,7 +28,7 @@ func TestRunCommand(t *testing.T) {
 	})
 
 	t.Run("multiple commands", func(t *testing.T) {
-		stdout, _ := RunCommand(t,
+		stdout, _ := Exec(t,
 			`echo "hi"`,
 			`echo "hi2"`,
 		)
@@ -41,19 +41,19 @@ func TestRunCommand(t *testing.T) {
 			testingFatal = false
 		})
 
-		stdout, stderr := RunCommand(t, `bad_command`)
+		stdout, stderr := Exec(t, `bad_command`)
 		assert.Empty(t, stdout)
 		assert.Contains(t, stderr, "not found")
 	})
 
 	t.Run("print to stderr", func(t *testing.T) {
-		stdout, stderr := RunCommand(t, `echo "failing" >&2`)
+		stdout, stderr := Exec(t, `echo "failing" >&2`)
 		assert.Empty(t, stdout)
 		assert.Equal(t, "failing\n", stderr)
 	})
 
 	t.Run("stderr then stdout", func(t *testing.T) {
-		stdout, stderr := RunCommand(t, `echo "failing" >&2; echo "succeeding"`)
+		stdout, stderr := Exec(t, `echo "failing" >&2; echo "succeeding"`)
 		assert.Equal(t, "failing\n", stderr)
 		assert.Equal(t, "succeeding\n", stdout)
 	})
@@ -64,7 +64,7 @@ func TestRunCommand(t *testing.T) {
 			testingFatal = false
 		})
 
-		stdout, stderr := RunCommand(t,
+		stdout, stderr := Exec(t,
 			`bad_command`, // it must stop after this
 			`echo 'hi'`,
 		)
@@ -78,7 +78,7 @@ func TestRunCommand(t *testing.T) {
 			testingFatal = false
 		})
 
-		stdout, stderr := RunCommand(t,
+		stdout, stderr := Exec(t,
 			`echo 'hi'`,
 			`bad_command`,
 		)

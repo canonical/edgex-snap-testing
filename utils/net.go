@@ -67,7 +67,7 @@ func PortConnectionAllInterface(t *testing.T, ports []string) bool {
 
 	for _, port := range ports {
 
-		stdout, _ := RunCommand(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
+		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
 		if stdout == "" {
 			isListening = false
 		} else {
@@ -83,7 +83,7 @@ func PortConnectionLocalhost(t *testing.T, ports []string) bool {
 
 	for _, port := range ports {
 
-		stdout, _ := RunCommand(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
+		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
 		if stdout == "" {
 			isOpen = false
 		} else {
