@@ -15,11 +15,42 @@ runs:
       run: |
         sudo snap install snapcraft --classic
     
-    - name: Setup LXD
+    # - name: Setup LXD
+    #   shell: bash
+    #   uses: whywaita/setup-lxd@v1
+    #   with:
+    #     lxd_version: latest/stable
+    #
+    # The above doesn't work, even though it is now supported:
+    # https://github.community/t/uses-step-in-composite-action/181289/8
+    # Perhaps the Github runners are not all up to date.
+    #
+    # Instead we directly include the source taken from:
+    # https://github.com/whywaita/setup-lxd/blob/master/action.yaml
+    - name: initalize LXD
+      run: |
+        sudo snap install lxd --channel=latest/stable
+        sudo chmod o+g '/var/snap/lxd/common/lxd/unix.socket'
+        cat <<EOF | lxd init --preseed
+        storage_pools:
+        - name: default
+          driver: dir
+        networks:
+        - name: lxdbr0
+          type: bridge
+          config:
+            ipv4.address: auto
+            ipv6.address: none
+        profiles:
+        - name: default
+          devices:
+            root:
+              path: /
+              pool: default
+              type: disk
+        EOF
+        lxc profile device add default eth0 nic name=eth0 network=lxdbr0
       shell: bash
-      uses: whywaita/setup-lxd@v1
-      with:
-        lxd_version: latest/stable
 
     - name: Run tests
       shell: bash
