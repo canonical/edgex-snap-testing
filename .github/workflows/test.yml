@@ -21,4 +21,4 @@ jobs:
         go-version: 1.*
 
     - name: Unit Tests
-      run: go test ./utils
+      run: go test -v ./utils

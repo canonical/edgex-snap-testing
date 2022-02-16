@@ -66,10 +66,10 @@ func TestExec(t *testing.T) {
 
 		stdout, stderr := Exec(t,
 			`bad_command`, // it must stop after this
-			`echo 'hi'`,
+			`echo 'good'`,
 		)
 		assert.Contains(t, stderr, "not found")
-		assert.NotContains(t, stdout, "hi")
+		assert.NotContains(t, stdout, "good")
 	})
 
 	t.Run("good then bad", func(t *testing.T) {
@@ -79,10 +79,10 @@ func TestExec(t *testing.T) {
 		})
 
 		stdout, stderr := Exec(t,
-			`echo 'hi'`,
+			`echo 'good'`,
 			`bad_command`,
 		)
-		assert.Contains(t, stdout, "hi")
+		assert.Contains(t, stdout, "good")
 		assert.Contains(t, stderr, "not found")
 	})
 }
