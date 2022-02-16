@@ -30,7 +30,7 @@ func WaitServiceOnline(t *testing.T, ports []string) error {
 
 		require.Equal(t, true, serviceIsOnline,
 			"Service timed out, reached max %d retries. Error:\n%v", maxRetry, returnErr)
-		// TODO: check if this is every called after require.Equal?
+		// TODO: check if this is ever called after require.Equal?
 		if t.Failed() {
 			return returnErr
 		}
