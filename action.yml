@@ -1,6 +1,6 @@
 name: EdgeX Snap Tester
 description: |
-  Github action to test packaging of EdgeX snaps on source PRs
+  Github action for smoke testing of EdgeX snaps
 
 inputs:
   name:
@@ -10,15 +10,22 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Build the snap
+    - name: Install Snapcraft
       shell: bash
       run: |
-        echo "TODO"
+        sudo snap install snapcraft --classic
+    
+    - name: Setup LXD
+      shell: bash
+      uses: whywaita/setup-lxd@v1
+      with:
+        lxd_version: latest/stable
 
     - name: Run tests
       shell: bash
+      env:
+        SNAPCRAFT_BUILD_ENVIRONMENT: lxd
       run: |
         echo Running tests for: ${{ inputs.name }}
         cd ${{github.action_path}}
         go test -v ${{github.action_path}}/tests/${{inputs.name}}
-    
