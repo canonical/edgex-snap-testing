@@ -25,9 +25,9 @@ runs:
     # https://github.community/t/uses-step-in-composite-action/181289/8
     # Perhaps the Github runners are not all up to date.
     #
-    # Instead we directly include the source taken from:
+    # Instead we use the source adapted from:
     # https://github.com/whywaita/setup-lxd/blob/master/action.yaml
-    - name: initalize LXD
+    - name: Install LXD
       run: |
         sudo snap install lxd --channel=latest/stable
         sudo chmod o+g '/var/snap/lxd/common/lxd/unix.socket'
@@ -54,9 +54,10 @@ runs:
 
     - name: Run tests
       shell: bash
+      # Set working directory to this repo, where tests are
+      working-directory: ${{ github.action_path }}
       env:
         SNAPCRAFT_BUILD_ENVIRONMENT: lxd
+        SNAPCRAFT_PROJECT_DIR: ${{ github.workspace }}
       run: |
-        echo Running tests for: ${{ inputs.name }}
-        cd ${{github.action_path}}
         go test -v ${{github.action_path}}/tests/${{inputs.name}}
