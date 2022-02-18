@@ -5,14 +5,14 @@ import "os"
 const (
 	// environment variables
 	// used to override defaults
-	channel             = "CHANNEL"
-	snapcraftProjectDir = "SNAPCRAFT_PROJECT_DIR"
+	channel = "CHANNEL"
+	snap    = "SNAP"
 )
 
 var (
 	// global defaults
-	Channel             = "latest/edge"
-	SnapcraftProjectDir = ""
+	Channel = "latest/edge"
+	Snap    = ""
 )
 
 func init() {
@@ -20,7 +20,7 @@ func init() {
 		Channel = v
 	}
 
-	if v := os.Getenv(snapcraftProjectDir); v != "" {
-		SnapcraftProjectDir = v
+	if v := os.Getenv(snap); v != "" {
+		Snap = v
 	}
 }
