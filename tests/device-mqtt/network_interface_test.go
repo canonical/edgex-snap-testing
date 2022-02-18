@@ -1,18 +1,17 @@
 package test
 
 import (
+	"edgex-snap-testing/utils"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
-	"MQTT-test-project/utils"
 )
 
 var port = []string{"59982"}
 
 func setupSubtestNetworkInterface(t *testing.T) {
 	t.Log("[SUBTEST SETUP]")
-	utils.RunCommand(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
+	utils.Exec(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
 
 	err := utils.WaitServiceOnline(t, port)
 	require.NoError(t, err, "Error waiting for services to come online.")
@@ -23,7 +22,7 @@ func TestNetworkInterface(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Log("[SUBTEST CLEANUP]")
-		utils.RunCommand(t, "sudo snap stop --disable edgex-device-mqtt.device-mqtt")
+		utils.Exec(t, "sudo snap stop --disable edgex-device-mqtt.device-mqtt")
 	})
 
 	t.Run("listen-all-interfaces", func(t *testing.T) {

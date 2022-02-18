@@ -5,6 +5,7 @@ on:
 #     branches: [ main ]
   pull_request:
     branches: [ main ]
+    paths: [ '**.go' ]
   # allow running manually
   workflow_dispatch:
 
@@ -20,4 +21,4 @@ jobs:
         go-version: 1.*
 
     - name: Unit Tests
-      run: go test ./utils
+      run: go test -v ./utils
