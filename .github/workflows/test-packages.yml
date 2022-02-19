@@ -1,12 +1,11 @@
-name: Test
+name: Test packages
 
 on:
-#   push:
-#     branches: [ main ]
   pull_request:
     branches: [ main ]
-    paths: [ '**.go' ]
-  # allow running manually
+    paths: 
+      - 'utils/**.go'
+  # manuall trigger
   workflow_dispatch:
 
 jobs:
