@@ -1,0 +1,65 @@
+name: Snap Testing Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: Name of the testing suite
+        required: true
+        type: string
+  # manual trigger
+  workflow_dispatch:
+    inputs:
+      name:
+        description: Name of the testing suite
+        required: true
+        type: string
+      repository:
+        description: Override repository URL for remote trigger from testing repo
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      snap: ${{steps.snapcraft.outputs.snap}}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          repository: {{input.repository}}
+
+      - name: Build snap
+        id: snapcraft
+        uses: snapcore/action-build@v1
+      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{steps.snapcraft.outputs.snap}}
+          path: ${{steps.snapcraft.outputs.snap}}
+          retention-days: 7
+
+  test:
+    needs: build  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the snap from previous job
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{needs.build.outputs.snap}}
+
+
+      - name: View context attributes
+        uses: actions/github-script@v5
+        with:
+          script: console.log(context)
+
+      - name: Run snap tests
+        uses: canonical/edgex-snap-testing@action-test-runner-2
+        with:
+          name: ${{inputs.name}}
+          snap: ${{needs.build.outputs.snap}}
+
+
