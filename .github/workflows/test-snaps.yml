@@ -1,0 +1,32 @@
+name: Test Snaps
+
+on:
+  pull_request:
+    branches: [ main ]
+  # allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: device-mqtt
+            repo: edgexfoundry/device-mqtt-go
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          repository: ${{ matrix.repo }}
+
+      - name: Build snap
+        id: build
+        uses: snapcore/action-build@v1
+        
+      - name: Run snap tests
+        uses: canonical/edgex-snap-testing@reusable-workflow
+        with:
+          name: ${{ matrix.name }}
+          snap: ${{ steps.build.outputs.snap }}
