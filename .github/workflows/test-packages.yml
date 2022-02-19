@@ -1,4 +1,4 @@
-name: Test packages
+name: Test Packages
 
 on:
   pull_request:
