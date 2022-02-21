@@ -3,10 +3,12 @@ description: |
   This action clones the source code, builds the snap using and 
   uploads the resulting snap as a build artifact
 
-# inputs:
-#   name:
-#     description: Name of the testing suite
-#     required: true
+inputs:
+  repo:
+    description: Source code repo with snap
+    required: false
+    default: ${{github.repository}}
+
 outputs:
   snap:
     description: Relative path to built snap
@@ -16,18 +18,20 @@ runs:
   using: composite
 
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    # Clone the source project
+    - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-        # repository: {{input.repository}}
+        repository: {{input.repo}}
 
-    - name: Build snap
+    # Build the snap
+    - uses: snapcore/action-build@v1
       id: snapcraft
-      uses: snapcore/action-build@v1
     
+    # Upload the snap as build artifact
     - uses: actions/upload-artifact@v2
       with:
         name: ${{steps.snapcraft.outputs.snap}}
         path: ${{steps.snapcraft.outputs.snap}}
+        if-no-files-found: error
         retention-days: 7

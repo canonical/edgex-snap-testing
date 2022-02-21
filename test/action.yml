@@ -15,20 +15,15 @@ runs:
   using: composite
 
   steps:
-    - shell: bash
-      run: |
-        echo ${{ inputs.name }}
-        echo ${{ inputs.snap }}
     # Download the snap from build artifacts
     - uses: actions/download-artifact@v2
       with:
-        name: ${{ inputs.snap }}
+        name: ${{inputs.snap}}
 
     # Run smoke tests
     - shell: bash
-      # Set working directory to this repo, where tests are
-      working-directory: ${{ github.action_path }}
+      working-directory: ${{github.action_path}}
       env:
-        SNAP: ${{ github.workspace }}/${{ inputs.snap }}
+        SNAP: ${{github.workspace}}/${{inputs.snap}}
       run: |
-        go test -v ${{ github.action_path }}/tests/${{ inputs.name }}
+        go test -v ./${{inputs.name}}
