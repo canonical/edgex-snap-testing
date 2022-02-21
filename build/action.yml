@@ -1,0 +1,33 @@
+name: EdgeX Snap Builder
+description: |
+  This action clones the source code, builds the snap using and 
+  uploads the resulting snap as a build artifact
+
+# inputs:
+#   name:
+#     description: Name of the testing suite
+#     required: true
+outputs:
+  snap:
+    description: Relative path to built snap
+    value: ${{steps.snapcraft.outputs.snap}}
+
+runs:
+  using: composite
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        # repository: {{input.repository}}
+
+    - name: Build snap
+      id: snapcraft
+      uses: snapcore/action-build@v1
+    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{steps.snapcraft.outputs.snap}}
+        path: ${{steps.snapcraft.outputs.snap}}
+        retention-days: 7
