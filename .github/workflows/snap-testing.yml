@@ -1,0 +1,31 @@
+# This workflow performs local snap testing on listed snaps
+name: Snap Testing
+
+on:
+  pull_request:
+    branches: [ main ]
+  # allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: device-mqtt
+            repo: edgexfoundry/device-mqtt-go
+
+    steps:
+      - name: Build and upload snap
+        id: build
+        uses: canonical/edgex-snap-testing/build@multiple-actions
+        with:
+          repo: ${{matrix.repo}}
+
+      - name: Download and test snap
+        uses: canonical/edgex-snap-testing/test@multiple-actions
+        with:
+          name: device-mqtt
+          snap: ${{steps.build.outputs.snap}}
