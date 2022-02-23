@@ -18,14 +18,17 @@ jobs:
             repo: edgexfoundry/device-mqtt-go
 
     steps:
+      - name: Checkout the local actions
+        uses: actions/checkout@v2
+
       - name: Build and upload snap
         id: build
-        uses: canonical/edgex-snap-testing/build@multiple-actions
+        uses: ./build
         with:
           repo: ${{matrix.repo}}
 
       - name: Download and test snap
-        uses: canonical/edgex-snap-testing/test@multiple-actions
+        uses: ./test
         with:
           name: device-mqtt
           snap: ${{steps.build.outputs.snap}}
