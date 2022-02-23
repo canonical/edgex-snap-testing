@@ -1,0 +1,23 @@
+# This workflow performs unit testing on testing utility packages
+name: Unit Testing
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths: 
+      - 'utils/**.go'
+  # manuall trigger
+  workflow_dispatch:
+
+jobs:
+  test-utils:
+    name: Test Utils
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: 1.*
+
+    - run: go test -v ./utils

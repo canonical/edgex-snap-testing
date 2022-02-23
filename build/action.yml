@@ -1,0 +1,37 @@
+name: EdgeX Snap Builder
+description: |
+  This action clones the source code, builds the snap using and 
+  uploads the resulting snap as a build artifact
+
+inputs:
+  repo:
+    description: Source code repo with snap
+    required: false
+    default: ${{github.repository}}
+
+outputs:
+  snap:
+    description: Relative path to built snap
+    value: ${{steps.build.outputs.snap}}
+
+runs:
+  using: composite
+
+  steps:
+    # Clone the source project
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        repository: ${{inputs.repo}}
+
+    # Build the snap
+    - uses: snapcore/action-build@v1
+      id: build
+    
+    # Upload the snap as build artifact
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{steps.build.outputs.snap}}
+        path: ${{steps.build.outputs.snap}}
+        if-no-files-found: error
+        retention-days: 7

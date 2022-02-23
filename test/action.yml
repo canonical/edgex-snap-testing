@@ -1,0 +1,29 @@
+name: EdgeX Snap Tester
+description: |
+  Github action downloads a locally built snap and runs various smoke tests
+  to validate the snap packaging
+
+inputs:
+  name:
+    description: Name of the testing suite
+    required: true
+  snap:
+    description: Relative path to local snap
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    # Download the snap from build artifacts
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{inputs.snap}}
+
+    # Run smoke tests
+    - shell: bash
+      working-directory: ${{github.action_path}}
+      env:
+        SNAP: ${{github.workspace}}/${{inputs.snap}}
+      run: |
+        go test -v ./${{inputs.name}}

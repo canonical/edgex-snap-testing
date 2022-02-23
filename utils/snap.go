@@ -1,19 +1,16 @@
 package utils
 
 import (
-	"edgex-snap-testing/env"
 	"fmt"
 	"testing"
 )
 
-func SnapInstall(t *testing.T, names ...string) {
-	for _, name := range names {
-		Exec(t, fmt.Sprintf(
-			"sudo snap install %s --channel=%s",
-			name,
-			env.Channel,
-		))
-	}
+func SnapInstall(t *testing.T, name, channel string) {
+	Exec(t, fmt.Sprintf(
+		"sudo snap install %s --channel=%s",
+		name,
+		channel,
+	))
 }
 
 func SnapRemove(t *testing.T, names ...string) {
@@ -25,11 +22,10 @@ func SnapRemove(t *testing.T, names ...string) {
 	}
 }
 
-func SnapInstallLocal(t *testing.T, workDir string) {
-	// snap install will error and exit if multiple snaps exist
+func SnapInstallLocal(t *testing.T, path string) {
 	Exec(t, fmt.Sprintf(
-		"sudo snap install --dangerous %s/*.snap",
-		workDir,
+		"sudo snap install --dangerous %s",
+		path,
 	))
 }
 

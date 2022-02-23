@@ -20,14 +20,13 @@ func TestMain(m *testing.M) {
 
 	// install the device snap before edgexfoundry
 	// to catch build error sooner and stop
-	if env.SnapcraftProjectDir == "" {
-		utils.SnapInstall(nil, "edgex-device-mqtt")
+	if env.Snap == "" {
+		utils.SnapInstall(nil, "edgex-device-mqtt", env.Channel)
 	} else {
-		utils.SnapBuild(nil, env.SnapcraftProjectDir)
-		utils.SnapInstallLocal(nil, env.SnapcraftProjectDir)
+		utils.SnapInstallLocal(nil, env.Snap)
 	}
 
-	utils.SnapInstall(nil, "edgexfoundry")
+	utils.SnapInstall(nil, "edgexfoundry", env.Channel)
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually regardless
