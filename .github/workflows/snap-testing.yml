@@ -34,5 +34,5 @@ jobs:
       - name: Download and test snap
         uses: ./test
         with:
-          name: device-mqtt
+          name: ${{matrix.name}}
           snap: ${{steps.build.outputs.snap}}
