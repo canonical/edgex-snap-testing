@@ -7,12 +7,14 @@ const (
 	// used to override defaults
 	channel = "CHANNEL"
 	snap    = "SNAP"
+	workDir = "WORKDIR"
 )
 
 var (
 	// global defaults
 	Channel = "latest/edge"
 	Snap    = ""
+	WorkDir = ""
 )
 
 func init() {
@@ -22,5 +24,8 @@ func init() {
 
 	if v := os.Getenv(snap); v != "" {
 		Snap = v
+	}
+	if v := os.Getenv(workDir); v != "" {
+		WorkDir = v
 	}
 }
