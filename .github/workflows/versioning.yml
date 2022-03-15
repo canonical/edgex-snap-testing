@@ -1,0 +1,14 @@
+# This workflow is to move the vN tag to the latest commit with compatible semantic versioning
+name: Move the Major version
+
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  actions-tagger:
+    runs-on: windows-latest
+    steps:
+      - uses: Actions-R-Us/actions-tagger@v2.0.2
+        with:
+          publish_latest_tag: false
