@@ -50,7 +50,15 @@ func TestMain(m *testing.M) {
 	}
 
 	// security off
-	utils.Exec(nil, "sudo snap set edgexfoundry security-proxy=off")
+	utils.Exec(nil, "sudo snap set edgexfoundry security-secret-store=off")
+	utils.SnapRemove(nil,
+		"edgex-ekuiper")
+	if env.Snap == "" {
+		utils.SnapInstall(nil, "edgex-ekuiper", env.ekuiperChannel)
+	} else {
+		utils.SnapInstallLocal(nil, env.Snap)
+	}
+
 	exitCode = m.Run()
 
 TEARDOWN:
