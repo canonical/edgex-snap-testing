@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -41,4 +42,12 @@ func SnapConnect(t *testing.T, plug, slot string) {
 		"sudo snap connect %s %s",
 		plug, slot,
 	))
+}
+
+func SnapVersion(t *testing.T, name string) string {
+	out, _ := Exec(t, fmt.Sprintf(
+		"snap info %s | grep installed | awk '{print $2}'",
+		name,
+	))
+	return strings.TrimSpace(out)
 }

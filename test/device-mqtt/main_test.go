@@ -8,20 +8,24 @@ import (
 	"testing"
 )
 
+const (
+	thisSnap = "edgex-device-mqtt"
+)
+
 func TestMain(m *testing.M) {
 
 	log.Println("[GLOBAL SETUP]")
 
 	// start clean
 	utils.SnapRemove(nil,
-		"edgex-device-mqtt",
+		thisSnap,
 		"edgexfoundry",
 	)
 
 	// install the device snap before edgexfoundry
 	// to catch build error sooner and stop
 	if env.Snap == "" {
-		utils.SnapInstall(nil, "edgex-device-mqtt", env.Channel)
+		utils.SnapInstall(nil, thisSnap, env.Channel)
 	} else {
 		utils.SnapInstallLocal(nil, env.Snap)
 	}
@@ -32,7 +36,7 @@ func TestMain(m *testing.M) {
 	// connect manually regardless
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		"edgex-device-mqtt:edgex-secretstore-token",
+		thisSnap+":edgex-secretstore-token",
 	)
 
 	exitCode := m.Run()
@@ -48,7 +52,7 @@ func TestMain(m *testing.M) {
 	}
 
 	utils.SnapRemove(nil,
-		"edgex-device-mqtt",
+		thisSnap,
 		"edgexfoundry",
 	)
 
