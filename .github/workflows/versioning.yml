@@ -1,5 +1,7 @@
-# This workflow is to move the vN tag to the latest commit with compatible semantic versioning
-name: Move the Major version
+# This workflow is to move the vN tag to the latest commit with
+# compatible semantic versioning.
+# This is to allow consumer workflows to follow the latest releases in a major.
+name: Move Major Tag
 
 on:
   release:
