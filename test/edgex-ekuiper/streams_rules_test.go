@@ -17,7 +17,6 @@ func setupSubtestStreamsAndRules(t *testing.T) {
 	t.Log("[SUBTEST SETUP]")
 	utils.Exec(t,
 		"sudo snap start --enable edgex-ekuiper.kuiper",
-		"sudo snap restart edgex-ekuiper.kuiper",
 		"sudo snap set edgexfoundry app-service-configurable=on",
 		"sudo snap set edgexfoundry device-virtual=on")
 }
