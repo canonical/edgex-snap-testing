@@ -76,7 +76,7 @@ func TestStreamsAndRuels(t *testing.T) {
 	utils.WaitServiceOnline(t, deviceVirtualPort)
 
 	// wait device-virtual producing readings with maximum 60 seconds
-	for i := 1; i <= 60; i++ {
+	for i := 1; ; i++ {
 		time.Sleep(1 * time.Second)
 		req, err := http.NewRequest("GET", "http://localhost:59880/api/v2/event/count", nil)
 		if err != nil {
@@ -107,11 +107,15 @@ func TestStreamsAndRuels(t *testing.T) {
 		count := mapContainer["Count"]
 		countToInt, _ := strconv.Atoi(string(count))
 
-		// fmt.Printf("count:%d\n", countToInt)
-		fmt.Printf("waiting for device-virtual produce readings, current retry count:%d/60\n", i)
+		fmt.Printf("waiting for device-virtual produce readings, current retry count: %d/60\n", i)
 
-		if countToInt > 0 {
-			fmt.Printf("waiting for device-virtual produce readings, reached maximum retry count of 60")
+		if i <= 60 && countToInt > 0 {
+			fmt.Println("device-virtual is producing readings now")
+			break
+		}
+
+		if i > 60 && countToInt <= 0 {
+			fmt.Println("waiting for device-virtual produce readings, reached maximum retry count of 60")
 			break
 		}
 	}
