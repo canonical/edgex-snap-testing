@@ -8,9 +8,6 @@ import (
 	"testing"
 )
 
-// This variable should be removed once 1.4.3 edegx-ekuiper can be promoted to the latest/edge channel
-var temporaryChannel = "latest/beta"
-
 func TestMain(m *testing.M) {
 
 	log.Println("[GLOBAL SETUP]")
@@ -24,9 +21,7 @@ func TestMain(m *testing.M) {
 	// install the ekuiper snap before edgexfoundry
 	// to catch build error sooner and stop
 	if env.Snap == "" {
-
-		// utils.SnapInstall(nil, "edgex-ekuiper", env.Channel)
-		utils.SnapInstall(nil, "edgex-ekuiper", temporaryChannel)
+		utils.SnapInstall(nil, "edgex-ekuiper", env.EKuiperChannel)
 	} else {
 		utils.SnapInstallLocal(nil, env.Snap)
 	}
@@ -54,7 +49,7 @@ func TestMain(m *testing.M) {
 	utils.SnapRemove(nil,
 		"edgex-ekuiper")
 	if env.Snap == "" {
-		utils.SnapInstall(nil, "edgex-ekuiper", env.ekuiperChannel)
+		utils.SnapInstall(nil, "edgex-ekuiper", env.EKuiperChannel)
 	} else {
 		utils.SnapInstallLocal(nil, env.Snap)
 	}
