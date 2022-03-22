@@ -16,7 +16,7 @@ jobs:
         include:
           - name: device-mqtt
             repo: edgexfoundry/device-mqtt-go
-          - name: edgex-ekuiper
+          - name: ekuiper
             repo: canonical/edgex-ekuiper-snap
 
     # use local actions to build and test

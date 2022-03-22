@@ -1,7 +1,7 @@
 package test
 
 import (
-	"edgex-snap-testing/utils"
+	"edgex-snap-testing/test/utils"
 	"testing"
 
 	"github.com/stretchr/testify/require"

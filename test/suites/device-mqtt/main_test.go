@@ -1,8 +1,8 @@
 package test
 
 import (
-	"edgex-snap-testing/env"
-	"edgex-snap-testing/utils"
+	"edgex-snap-testing/test/utils"
+	"edgex-snap-testing/test/utils/env"
 	"log"
 	"os"
 	"testing"
