@@ -33,13 +33,13 @@ func TestStreamsAndRuels(t *testing.T) {
 	})
 
 	t.Run("create-stream", func(t *testing.T) {
-		t.Log("Test if create stream works")
+		t.Log("Test if stream creation works")
 
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
 	})
 
 	t.Run("create-rule-log", func(t *testing.T) {
-		t.Log("Test if create rule_log works")
+		t.Log("Test if rule_log creation works")
 
 		utils.Exec(t,
 			`edgex-ekuiper.kuiper-cli create rule rule_log '
@@ -54,7 +54,7 @@ func TestStreamsAndRuels(t *testing.T) {
 	})
 
 	t.Run("create-rule-edgex-message-bus", func(t *testing.T) {
-		t.Log("Test if create rule_mqtt works")
+		t.Log("Test if rule_mqtt creation works")
 
 		utils.Exec(t,
 			`edgex-ekuiper.kuiper-cli create rule rule_edgex_message_bus '

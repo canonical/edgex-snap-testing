@@ -24,16 +24,16 @@ func TestNetworkInterface(t *testing.T) {
 	})
 
 	t.Run("kuiper-server", func(t *testing.T) {
-		t.Log("Test if kuiper server is listening on port 20498")
+		t.Logf("Test if kuiper server is listening on port %s", serverPort)
 
 		err := utils.WaitServiceOnline(t, serverPort)
-		require.NoError(t, err, "kuiper server is not listening on port 20498.")
+		require.NoErrorf(t, err, "kuiper server is not listening on port %s", serverPort)
 	})
 
 	t.Run("restful-api", func(t *testing.T) {
-		t.Log("Test if restful api is listening on port 59720")
+		t.Logf("Test if restful api is listening on port %s", restfulApiPort)
 
 		err := utils.WaitServiceOnline(t, restfulApiPort)
-		require.NoError(t, err, "restful api is not listening on port 59720.")
+		require.NoErrorf(t, err, "restful api is not listening on port %s", restfulApiPort)
 	})
 }
