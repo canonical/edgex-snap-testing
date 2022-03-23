@@ -2,7 +2,6 @@ package test
 
 import (
 	"edgex-snap-testing/test/utils"
-	"edgex-snap-testing/test/utils/env"
 	"log"
 	"os"
 	"testing"
@@ -20,13 +19,12 @@ func TestMain(m *testing.M) {
 
 	// install the device snap before edgexfoundry
 	// to catch build error sooner and stop
-	if env.Snap == "" {
-		utils.SnapInstall(nil, "edgex-device-mqtt", env.Channel)
+	if utils.LocalSnap != "" {
+		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallLocal(nil, env.Snap)
+		utils.SnapInstallFromStore(nil, "edgex-device-mqtt", utils.ServiceChannel)
 	}
-
-	utils.SnapInstall(nil, "edgexfoundry", env.Channel)
+	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually regardless

@@ -6,11 +6,26 @@ import (
 	"testing"
 )
 
-func SnapInstall(t *testing.T, name, channel string) {
+// func SnapInstall(t *testing.T, name string) {
+// 	if strings.HasSuffix(name, ".snap") {
+// 		SnapInstallFromFile(nil, name)
+// 	} else {
+// 		SnapInstallFromStore(nil, name, ServiceChannel)
+// 	}
+// }
+
+func SnapInstallFromStore(t *testing.T, name, channel string) {
 	Exec(t, fmt.Sprintf(
 		"sudo snap install %s --channel=%s",
 		name,
 		channel,
+	))
+}
+
+func SnapInstallFromFile(t *testing.T, path string) {
+	Exec(t, fmt.Sprintf(
+		"sudo snap install --dangerous %s",
+		path,
 	))
 }
 
@@ -21,13 +36,6 @@ func SnapRemove(t *testing.T, names ...string) {
 			name,
 		))
 	}
-}
-
-func SnapInstallLocal(t *testing.T, path string) {
-	Exec(t, fmt.Sprintf(
-		"sudo snap install --dangerous %s",
-		path,
-	))
 }
 
 func SnapBuild(t *testing.T, workDir string) {
