@@ -4,17 +4,17 @@ Test scripts for EdgeX Foundry snaps.
 ## Test manually
 Test all:
 ```bash
-go test -v ./test/...
+go test -v ./test/suites/...
 ```
 
 Test one, e.g.:
 ```bash
-go test -v ./test/device-mqtt
+go test -v ./test/suites/device-mqtt
 ```
 
 Test the testing utils:
 ```bash
-go test -v ./utils
+go test -v ./test/utils/...
 ```
 
 ### Override behavior
@@ -39,22 +39,20 @@ on:
 
 jobs:
   build:
-    name: Build Snap
     runs-on: ubuntu-latest
     steps:
       - name: Build and upload snap
         id: build
-        uses: canonical/edgex-snap-testing/build@main
+        uses: canonical/edgex-snap-testing/build@v2
     outputs:
       snap: ${{steps.build.outputs.snap}}
 
   test:
-    name: Test Snap
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download and test snap
-        uses: canonical/edgex-snap-testing/test@main
+        uses: canonical/edgex-snap-testing/test@v2
         with:
           name: device-mqtt
           snap: ${{needs.build.outputs.snap}}

@@ -8,24 +8,20 @@ import (
 	"testing"
 )
 
-const (
-	thisSnap = "edgex-device-mqtt"
-)
-
 func TestMain(m *testing.M) {
 
 	log.Println("[GLOBAL SETUP]")
 
 	// start clean
 	utils.SnapRemove(nil,
-		thisSnap,
+		"edgex-device-mqtt",
 		"edgexfoundry",
 	)
 
 	// install the device snap before edgexfoundry
 	// to catch build error sooner and stop
 	if env.Snap == "" {
-		utils.SnapInstall(nil, thisSnap, env.Channel)
+		utils.SnapInstall(nil, "edgex-device-mqtt", env.Channel)
 	} else {
 		utils.SnapInstallLocal(nil, env.Snap)
 	}
@@ -36,23 +32,20 @@ func TestMain(m *testing.M) {
 	// connect manually regardless
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		thisSnap+":edgex-secretstore-token",
+		"edgex-device-mqtt:edgex-secretstore-token",
 	)
 
 	exitCode := m.Run()
 
 	log.Println("[GLOBAL TEARDOWN]")
 
-	// TODO: should the logs be fetched in each test?
-	// for that, need to use journalctl instead with --since
 	if exitCode != 0 {
-		stdout, _ := utils.Exec(nil,
-			"sudo snap logs -n=all edgex-device-mqtt")
-		log.Printf("Snap logs:\n%s\n", stdout)
+		log.Printf("Snap logs:\n%s\n",
+			utils.SnapLogs(nil, "edgex-device-mqtt"))
 	}
 
 	utils.SnapRemove(nil,
-		thisSnap,
+		"edgex-device-mqtt",
 		"edgexfoundry",
 	)
 

@@ -51,3 +51,12 @@ func SnapVersion(t *testing.T, name string) string {
 	))
 	return strings.TrimSpace(out)
 }
+
+// TODO: should the logs be fetched in each test?
+// for that, need to use journalctl instead with --since
+func SnapLogs(t *testing.T, name string) string {
+	stdout, _ := Exec(t, fmt.Sprintf(
+		"sudo snap logs -n=all %s",
+		name))
+	return stdout
+}

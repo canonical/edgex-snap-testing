@@ -6,5 +6,5 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	common.Version(t, thisSnap)
+	common.Version(t, "edgex-device-mqtt")
 }
