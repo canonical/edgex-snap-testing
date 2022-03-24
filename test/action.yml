@@ -26,4 +26,4 @@ runs:
       env:
         LOCAL_SNAP: ${{github.workspace}}/${{inputs.snap}}
       run: |
-        go test -v ./suites/${{inputs.name}}
+        go test -p 1 -v ./suites/${{inputs.name}}

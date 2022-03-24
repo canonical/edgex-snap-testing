@@ -2,19 +2,21 @@
 Test scripts for EdgeX Foundry snaps.
 
 ## Test manually
-Test all:
-```bash
-go test -v ./test/suites/...
-```
-
 Test one, e.g.:
 ```bash
-go test -v ./test/suites/device-mqtt
+go test -p 1 ./test/suites/device-mqtt
+```
+The `-p 1` is set to force sequential run and avoid snapd and logical error.
+Set `-v` for verbose output.
+
+To test all:
+```bash
+go test -p 1 ./test/suites/...
 ```
 
 Test the testing utils:
 ```bash
-go test -v ./test/utils/...
+go test ./test/utils/...
 ```
 
 ### Override behavior
