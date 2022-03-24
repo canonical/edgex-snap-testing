@@ -1,7 +1,7 @@
 # EdgeX Snap Tests
 Test scripts, Github actions, and workflows for the [EdgeX Foundry](https://docs.edgexfoundry.org/) snaps.
 
-## Test manually
+## Test locally
 Test one, e.g.:
 ```bash
 go test -p 1 ./test/suites/device-mqtt
@@ -20,7 +20,7 @@ Test the testing utils:
 go test ./test/utils/...
 ```
 
-### Override behavior
+## Override behavior
 Use environment variables, as defined in [env/env.go](./env/env.go)
 
 ## Test using Github Actions
@@ -59,4 +59,31 @@ jobs:
         with:
           name: device-mqtt
           snap: ${{needs.build.outputs.snap}}
+```
+
+### Workflow diagram
+```mermaid
+graph LR
+
+    subgraph tests [Edgex Snap Testing Project]
+        
+        builda[[Build Action]] --> snapcraft[Snap Build]
+        testa[[Test Action]] --> gotests[Test Suites]
+        
+        gotests -- PR --> localtestj[Local Test Job]
+        localtestj --> testa
+        
+    end
+
+    subgraph source [Source Project]
+        Source -- PR<br/>Push<br/>Manual Trigger --> buildj
+        
+        subgraph snap [Snap Testing Workflow]
+            buildj --> testj
+            buildj[Build Job] --> builda
+            snapcraft --> artifacts[Artifact Snap]
+            artifacts -.-> buildj
+            testj[Test Job] --> testa
+        end
+    end
 ```
