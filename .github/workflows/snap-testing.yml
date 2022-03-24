@@ -16,19 +16,15 @@ jobs:
         include:
           - name: device-mqtt
             repo: edgexfoundry/device-mqtt-go
+
           - name: ekuiper
             repo: canonical/edgex-ekuiper-snap
+            channel: 1/edge
 
-    # use local actions to build and test
+    # use local action to test
     steps:
       - name: Checkout the local actions
         uses: actions/checkout@v2
-
-      - name: Build and upload snap
-        id: build
-        uses: ./build
-        with:
-          repo: ${{matrix.repo}}
 
       - name: Checkout the local actions again
         uses: actions/checkout@v2
@@ -37,4 +33,4 @@ jobs:
         uses: ./test
         with:
           name: ${{matrix.name}}
-          snap: ${{steps.build.outputs.snap}}
+          channel: ${{matrix.channel}}
