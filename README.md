@@ -21,7 +21,7 @@ go test ./test/utils/...
 ```
 
 ## Override behavior
-Use environment variables, as defined in [env/env.go](./env/env.go)
+Use environment variables, as defined in [test/utils/env.go](./test/utils/env.go)
 
 ## Test using Github Actions
 This project includes two Github Actions that can be used in workflows to test snaps:
