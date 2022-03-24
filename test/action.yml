@@ -1,9 +1,10 @@
 name: EdgeX Snap Tester
 description: |
-  Github action downloads a snap and runs various smoke tests
-  to validate the snap packaging.
+  This Github action runs various smoke tests to validate the snap packaging.
 
-  The snap can be optionally downloaded from build artifacts.
+  When 'snap' input is set, the snap is downloaded from build artifacts and
+  its absolute path is passed to the tests.
+  In this case, the value of channel is not used.
 
 inputs:
   name:
@@ -13,7 +14,9 @@ inputs:
     description: Relative path to local snap
     required: false
   channel:
-    description: Channel for downloading the snap from store
+    description: |
+      Channel for downloading the snap from store.
+      This is useful only when 'snap' input is not set.
     required: false
     default: latest/edge
 
