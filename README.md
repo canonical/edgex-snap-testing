@@ -1,5 +1,5 @@
 # EdgeX Snap Tests
-Test scripts for EdgeX Foundry snaps.
+Test scripts, Github actions, and workflows for the [EdgeX Foundry](https://docs.edgexfoundry.org/) snaps.
 
 ## Test manually
 Test one, e.g.:
@@ -7,6 +7,7 @@ Test one, e.g.:
 go test -p 1 ./test/suites/device-mqtt
 ```
 The `-p 1` is set to force sequential run and avoid snapd and logical error.
+
 Set `-v` for verbose output.
 
 To test all:
@@ -27,9 +28,9 @@ This project includes two Github Actions that can be used in workflows to test s
 * [build](./build): Checkout code, build the snap, upload snap as build artifact
 * [test](./test): Download snap, run smoke tests
 
-A workflow that uses both the actions from `main` branch may look as follows:
+A workflow that uses both the actions from `v2` branch may look as follows:
 
-`.github/workflows/test-snap.yml`
+`.github/workflows/snap.yml`
 ```yaml
 name: Snap Testing
 
