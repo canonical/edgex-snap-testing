@@ -22,23 +22,23 @@ runs:
 
   steps:
     # Download the snap from build artifacts
-    - if: ${{inputs.snap}}
+    - if: ${{inputs.snap != ''}}
       uses: actions/download-artifact@v2
       with:
         name: ${{inputs.snap}}
 
     # Set the absolute path
-    - if: ${{inputs.snap}}
+    - if: ${{inputs.snap != ''}}
       shell: bash
       id: path
       run: |
-        echo ::set-output local_snap=${{github.workspace}}/${{inputs.snap}}
+        echo "::set-output name=local_snap::${{github.workspace}}/${{inputs.snap}}"
 
     # Run smoke tests
     - shell: bash
       working-directory: ${{github.action_path}}
       env:
         LOCAL_SNAP: ${{steps.path.outputs.local_snap}}
-        SERVICE_CHANNEL: ${{inputs.snap}}
+        SERVICE_CHANNEL: ${{inputs.channel}}
       run: |
         go test -p 1 -v ./suites/${{inputs.name}}
