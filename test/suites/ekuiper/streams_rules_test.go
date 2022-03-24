@@ -1,7 +1,7 @@
 package test
 
 import (
-	"edgex-snap-testing/utils"
+	"edgex-snap-testing/test/utils"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
