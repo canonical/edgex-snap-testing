@@ -25,8 +25,8 @@ Use environment variables, as defined in [test/utils/env.go](./test/utils/env.go
 
 ## Test using Github Actions
 This project includes two Github Actions that can be used in workflows to test snaps:
-* [build](./build): Checkout code, build the snap, upload snap as build artifact
-* [test](./test): Download snap, run smoke tests
+* [build](./build): Checkout code, build the snap, and upload snap as build artifact
+* [test](./test): Download the snap from build artifacts (optional) and run smoke tests
 
 A workflow that uses both the actions from `v2` branch may look as follows:
 

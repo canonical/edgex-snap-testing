@@ -1,7 +1,10 @@
 name: EdgeX Snap Tester
 description: |
-  Github action downloads a locally built snap and runs various smoke tests
-  to validate the snap packaging
+  This Github action runs various smoke tests to validate the snap packaging.
+
+  When 'snap' input is set, the snap is downloaded from build artifacts and
+  its absolute path is passed to the tests.
+  In this case, the value of channel is not used.
 
 inputs:
   name:
@@ -9,21 +12,36 @@ inputs:
     required: true
   snap:
     description: Relative path to local snap
-    required: true
+    required: false
+  channel:
+    description: |
+      Channel for downloading the snap from store.
+      This is useful only when 'snap' input is not set.
+    required: false
+    default: latest/edge
 
 runs:
   using: composite
 
   steps:
     # Download the snap from build artifacts
-    - uses: actions/download-artifact@v2
+    - if: ${{inputs.snap != ''}}
+      uses: actions/download-artifact@v2
       with:
         name: ${{inputs.snap}}
+
+    # Set the absolute path
+    - if: ${{inputs.snap != ''}}
+      shell: bash
+      id: path
+      run: |
+        echo "::set-output name=local_snap::${{github.workspace}}/${{inputs.snap}}"
 
     # Run smoke tests
     - shell: bash
       working-directory: ${{github.action_path}}
       env:
-        LOCAL_SNAP: ${{github.workspace}}/${{inputs.snap}}
+        LOCAL_SNAP: ${{steps.path.outputs.local_snap}}
+        SERVICE_CHANNEL: ${{inputs.channel}}
       run: |
         go test -p 1 -v ./suites/${{inputs.name}}
