@@ -16,15 +16,16 @@ const deviceVirtualPort = "59900"
 func TestStreamsAndRules(t *testing.T) {
 
 	t.Cleanup(func() {
-		t.Log("[SUBTEST CLEANUP]")
 		utils.Exec(t,
-			"sudo snap stop --disable edgex-ekuiper.kuiper",
-			"sudo snap set edgexfoundry app-service-configurable=off",
-			"sudo snap set edgexfoundry device-virtual=off")
+			"sudo snap stop edgex-ekuiper.kuiper",
+			"sudo snap stop edgexfoundry.app-service-configurable",
+			"sudo snap stop edgexfoundry.device-virtual")
 	})
 
-	t.Run("create-stream", func(t *testing.T) {
-		t.Log("Test if stream creation works")
+	utils.Exec(t,
+		"sudo snap start edgex-ekuiper.kuiper",
+		"sudo snap start edgexfoundry.app-service-configurable",
+		"sudo snap start edgexfoundry.device-virtual")
 
 	t.Run("create stream", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
