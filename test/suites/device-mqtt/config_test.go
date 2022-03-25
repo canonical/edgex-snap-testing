@@ -7,11 +7,10 @@ import (
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
+	// start clean
+	utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
 
 	t.Run("change service port", func(t *testing.T) {
-		// start clean
-		utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
-
 		t.Cleanup(func() {
 			utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
 			utils.Exec(t, "sudo snap unset edgex-device-mqtt env.service.port")

@@ -3,8 +3,6 @@ package test
 import (
 	"edgex-snap-testing/test/utils"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -12,30 +10,18 @@ const (
 	restfulApiPort = "59720"
 )
 
-func setupSubtestNetworkInterface(t *testing.T) {
-	t.Log("[SUBTEST SETUP]")
-	utils.Exec(t, "sudo snap start --enable edgex-ekuiper.kuiper")
-}
-
 func TestNetworkInterface(t *testing.T) {
-	setupSubtestNetworkInterface(t)
-
 	t.Cleanup(func() {
-		t.Log("[SUBTEST CLEANUP]")
-		utils.Exec(t, "sudo snap stop --disable edgex-ekuiper.kuiper")
+		utils.Exec(t, "sudo snap stop edgex-ekuiper.kuiper")
 	})
 
-	t.Run("kuiper-server", func(t *testing.T) {
-		t.Logf("Test if kuiper server is listening on port %s", serverPort)
+	utils.Exec(t, "sudo snap start edgex-ekuiper.kuiper")
 
-		err := utils.WaitServiceOnline(t, serverPort)
-		require.NoErrorf(t, err, "kuiper server is not listening on port %s", serverPort)
+	t.Run("listen default port "+serverPort, func(t *testing.T) {
+		utils.WaitServiceOnline(t, serverPort)
 	})
 
-	t.Run("restful-api", func(t *testing.T) {
-		t.Logf("Test if restful api is listening on port %s", restfulApiPort)
-
-		err := utils.WaitServiceOnline(t, restfulApiPort)
-		require.NoErrorf(t, err, "restful api is not listening on port %s", restfulApiPort)
+	t.Run("listen default restful api port "+restfulApiPort, func(t *testing.T) {
+		utils.WaitServiceOnline(t, restfulApiPort)
 	})
 }
