@@ -15,10 +15,8 @@ jobs:
       matrix:
         include:
           - name: device-mqtt
-            repo: edgexfoundry/device-mqtt-go
 
           - name: ekuiper
-            repo: canonical/edgex-ekuiper-snap
             channel: 1/edge
 
     # use local action to test
