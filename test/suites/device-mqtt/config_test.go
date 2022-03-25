@@ -3,42 +3,31 @@ package test
 import (
 	"edgex-snap-testing/test/utils"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-func setupSubtestConfiguration(t *testing.T) {
-	t.Log("[SUBTEST SETUP]")
-	utils.Exec(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
+// Deprecated
+func TestEnvConfig(t *testing.T) {
+
+	t.Run("change service port", func(t *testing.T) {
+		// start clean
+		utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
+
+		t.Cleanup(func() {
+			utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
+			utils.Exec(t, "sudo snap unset edgex-device-mqtt env.service.port")
+		})
+
+		const newPort = "56789"
+
+		// make sure the port is available before using it
+		utils.CheckPortAvailable(t, newPort)
+
+		utils.Exec(t, "sudo snap set edgex-device-mqtt env.service.port="+newPort)
+		utils.Exec(t, "sudo snap start edgex-device-mqtt")
+		utils.WaitServiceOnline(t, newPort)
+	})
 }
 
-func TestConfiguration(t *testing.T) {
-	setupSubtestConfiguration(t)
-
-	t.Cleanup(func() {
-		t.Log("[SUBTEST CLEANUP]")
-		utils.Exec(t, "sudo snap stop --disable edgex-device-mqtt.device-mqtt")
-	})
-
-	t.Run("change-the-maximum-startup-duration", func(t *testing.T) {
-		startupDurationValue := "120"
-
-		utils.Exec(t, "sudo snap set edgex-device-mqtt startup-duration="+startupDurationValue)
-
-		stdout, _ := utils.Exec(t, "sudo snap get edgex-device-mqtt startup-duration")
-		assert.Equal(t, startupDurationValue+"\n", stdout, "maximum startup-duration does not set successfully")
-
-	})
-
-	t.Run("change-the-maximum-interval-between-retries", func(t *testing.T) {
-		t.Log("Test change the interval between retries")
-
-		startupIntervalValue := "3"
-
-		utils.Exec(t, "sudo snap set edgex-device-mqtt startup-interval="+startupIntervalValue)
-
-		stdout, _ := utils.Exec(t, "sudo snap get edgex-device-mqtt startup-interval")
-		assert.Equal(t, startupIntervalValue+"\n", stdout, "maximum startup-interval does not set successfully")
-
-	})
+func TestAppConfig(t *testing.T) {
+	t.Skip("TODO")
 }
