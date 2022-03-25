@@ -27,7 +27,7 @@ jobs:
       - name: Checkout the local actions again
         uses: actions/checkout@v2
 
-      - name: Download and test snap
+      - name: Test snap
         uses: ./test
         with:
           name: ${{matrix.name}}
