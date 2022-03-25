@@ -51,4 +51,7 @@ runs:
       shell: bash
       working-directory: ${{github.action_path}}
       run: |
+        echo "::group::Snap Logs"
         cat ./suites/${{inputs.name}}/snap.log
+        echo "::endgroup::"
+        
