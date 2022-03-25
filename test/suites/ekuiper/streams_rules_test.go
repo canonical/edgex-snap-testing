@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var deviceVirtualPort = []string{"59900"}
+const deviceVirtualPort = "59900"
 
 func setupSubtestStreamsAndRules(t *testing.T) {
 	t.Log("[SUBTEST SETUP]")

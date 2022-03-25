@@ -7,13 +7,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var port = []string{"59982"}
+const defaultServicePort = "59982"
 
 func setupSubtestNetworkInterface(t *testing.T) {
 	t.Log("[SUBTEST SETUP]")
 	utils.Exec(t, "sudo snap start --enable edgex-device-mqtt.device-mqtt")
 
-	err := utils.WaitServiceOnline(t, port)
+	err := utils.WaitServiceOnline(t, defaultServicePort)
 	require.NoError(t, err, "Error waiting for services to come online.")
 }
 
@@ -31,7 +31,7 @@ func TestNetworkInterface(t *testing.T) {
 		//stdout, stderr, err := utils.Command("sudo lsof -nPi :59982 | { grep \\* || true; }")
 		//utils.CommandLog(t, stdout, stderr, err)
 		//require.Empty(t, stdout, "This service is listening on all the configured network interface which is not allowed.")
-		isConnected := utils.PortConnectionAllInterface(t, port)
+		isConnected := utils.PortConnectionAllInterface(t, defaultServicePort)
 		require.False(t, isConnected, "This service is listening on all the configured network interface which is not allowed.")
 	})
 
@@ -41,7 +41,7 @@ func TestNetworkInterface(t *testing.T) {
 		//stdout, stderr, err := utils.Command("sudo lsof -nPi :59982 | { grep 127.0.0.1 || true; }")
 		//utils.CommandLog(t, stdout, stderr, err)
 		//require.NotEmpty(t, stdout, "This service is not bound to the local machine.")
-		isConnected := utils.PortConnectionLocalhost(t, port)
+		isConnected := utils.PortConnectionLocalhost(t, defaultServicePort)
 		require.True(t, isConnected, "This service is listening on all the configured network interface which is not allowed.")
 	})
 }
