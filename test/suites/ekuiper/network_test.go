@@ -7,8 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var serverPort = []string{"20498"}
-var restfulApiPort = []string{"59720"}
+const (
+	serverPort     = "20498"
+	restfulApiPort = "59720"
+)
 
 func setupSubtestNetworkInterface(t *testing.T) {
 	t.Log("[SUBTEST SETUP]")

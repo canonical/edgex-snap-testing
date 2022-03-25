@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -9,7 +10,7 @@ import (
 )
 
 // WaitServiceOnline dials port(s)to check if the service comes online until it reaches the maximum retry
-func WaitServiceOnline(t *testing.T, ports []string) error {
+func WaitServiceOnline(t *testing.T, ports ...string) error {
 	const dialTimeout = 2 * time.Second
 	const maxRetry = 60
 
@@ -39,7 +40,7 @@ func WaitServiceOnline(t *testing.T, ports []string) error {
 }
 
 // PortConnection checks if the port(s) are in use
-func PortConnection(host string, ports []string) (bool, error) {
+func PortConnection(host string, ports ...string) (bool, error) {
 	var isListening bool
 	var err error
 
@@ -62,7 +63,7 @@ func PortConnection(host string, ports []string) (bool, error) {
 }
 
 // PortConnectionAllInterface checks if the port(s) are in use for all interface
-func PortConnectionAllInterface(t *testing.T, ports []string) bool {
+func PortConnectionAllInterface(t *testing.T, ports ...string) bool {
 	var isListening bool
 
 	for _, port := range ports {
@@ -78,7 +79,7 @@ func PortConnectionAllInterface(t *testing.T, ports []string) bool {
 }
 
 // PortConnectionLocalhost checks if the port(s) are in use for localhost
-func PortConnectionLocalhost(t *testing.T, ports []string) bool {
+func PortConnectionLocalhost(t *testing.T, ports ...string) bool {
 	var isOpen bool
 
 	for _, port := range ports {
@@ -87,7 +88,7 @@ func PortConnectionLocalhost(t *testing.T, ports []string) bool {
 		if stdout == "" {
 			isOpen = false
 		} else {
-			isListening, err := PortConnection("127.0.0.1", []string{port})
+			isListening, err := PortConnection("127.0.0.1", port)
 			if isListening {
 				isOpen = true
 			} else {
@@ -97,4 +98,12 @@ func PortConnectionLocalhost(t *testing.T, ports []string) bool {
 		}
 	}
 	return isOpen
+}
+
+func CheckPortAvailable(t *testing.T, port string) {
+	stdout, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s | true", port))
+	if stdout != "" {
+		t.Fatalf("Port %s is not available", port)
+	}
+	t.Logf("Port %s is available.", port)
 }
