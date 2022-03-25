@@ -9,7 +9,7 @@ import (
 
 func TestMain(m *testing.M) {
 
-	log.Println("[GLOBAL SETUP]")
+	log.Println("[SETUP]")
 
 	// start clean
 	utils.SnapRemove(nil,
@@ -35,7 +35,7 @@ func TestMain(m *testing.M) {
 
 	exitCode := m.Run()
 
-	log.Println("[GLOBAL TEARDOWN]")
+	log.Println("[TEARDOWN]")
 
 	if exitCode != 0 {
 		log.Printf("Snap logs:\n%s\n",

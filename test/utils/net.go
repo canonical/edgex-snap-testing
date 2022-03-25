@@ -10,7 +10,7 @@ import (
 )
 
 // WaitServiceOnline dials port(s)to check if the service comes online until it reaches the maximum retry
-func WaitServiceOnline(t *testing.T, ports ...string) error {
+func WaitServiceOnline(t *testing.T, ports ...string) {
 	const dialTimeout = 2 * time.Second
 	const maxRetry = 60
 
@@ -31,12 +31,7 @@ func WaitServiceOnline(t *testing.T, ports ...string) error {
 
 		require.Equal(t, true, serviceIsOnline,
 			"Service timed out, reached max %d retries. Error:\n%v", maxRetry, returnErr)
-		// TODO: check if this is ever called after require.Equal?
-		if t.Failed() {
-			return returnErr
-		}
 	}
-	return nil
 }
 
 // PortConnection checks if the port(s) are in use

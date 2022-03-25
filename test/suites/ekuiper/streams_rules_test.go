@@ -13,16 +13,7 @@ import (
 
 const deviceVirtualPort = "59900"
 
-func setupSubtestStreamsAndRules(t *testing.T) {
-	t.Log("[SUBTEST SETUP]")
-	utils.Exec(t,
-		"sudo snap start --enable edgex-ekuiper.kuiper",
-		"sudo snap set edgexfoundry app-service-configurable=on",
-		"sudo snap set edgexfoundry device-virtual=on")
-}
-
-func TestStreamsAndRuels(t *testing.T) {
-	setupSubtestStreamsAndRules(t)
+func TestStreamsAndRules(t *testing.T) {
 
 	t.Cleanup(func() {
 		t.Log("[SUBTEST CLEANUP]")
@@ -35,12 +26,11 @@ func TestStreamsAndRuels(t *testing.T) {
 	t.Run("create-stream", func(t *testing.T) {
 		t.Log("Test if stream creation works")
 
+	t.Run("create stream", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
 	})
 
-	t.Run("create-rule-log", func(t *testing.T) {
-		t.Log("Test if rule_log creation works")
-
+	t.Run("create rule_log", func(t *testing.T) {
 		utils.Exec(t,
 			`edgex-ekuiper.kuiper-cli create rule rule_log '
 			{
@@ -53,9 +43,7 @@ func TestStreamsAndRuels(t *testing.T) {
 			}'`)
 	})
 
-	t.Run("create-rule-edgex-message-bus", func(t *testing.T) {
-		t.Log("Test if rule_mqtt creation works")
-
+	t.Run("create rule_edgex_message_bus", func(t *testing.T) {
 		utils.Exec(t,
 			`edgex-ekuiper.kuiper-cli create rule rule_edgex_message_bus '
 			{
@@ -120,13 +108,11 @@ func TestStreamsAndRuels(t *testing.T) {
 		}
 	}
 
-	t.Run("check-rule-log", func(t *testing.T) {
-		t.Log("Test if rule_log is running without errors")
+	t.Run("check rule_log", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli getstatus rule rule_log`)
 	})
 
-	t.Run("check-rule-edgex-message-bus", func(t *testing.T) {
-		t.Log("Test if rule_edgex_message_bus is running without errors")
+	t.Run("check rule_edgex_message_bus", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli getstatus rule rule_edgex_message_bus`)
 	})
 }
