@@ -45,3 +45,13 @@ runs:
         SERVICE_CHANNEL: ${{inputs.channel}}
       run: |
         go test -p 1 -v ./suites/${{inputs.name}}
+
+    # Print snap logs
+    - if: always()
+      shell: bash
+      working-directory: ${{github.action_path}}
+      run: |
+        echo "::group::Snap Logs"
+        cat ./suites/${{inputs.name}}/snap.log
+        echo "::endgroup::"
+        

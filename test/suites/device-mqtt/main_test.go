@@ -37,10 +37,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[GLOBAL TEARDOWN]")
 
-	if exitCode != 0 {
-		log.Printf("Snap logs:\n%s\n",
-			utils.SnapLogs(nil, "edgex-device-mqtt"))
-	}
+	utils.SnapDumpLogs(nil, "edgex-device-mqtt")
 
 	utils.SnapRemove(nil,
 		"edgex-device-mqtt",

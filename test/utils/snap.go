@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
@@ -62,9 +63,19 @@ func SnapVersion(t *testing.T, name string) string {
 
 // TODO: should the logs be fetched in each test?
 // for that, need to use journalctl instead with --since
-func SnapLogs(t *testing.T, name string) string {
-	stdout, _ := Exec(t, fmt.Sprintf(
-		"sudo snap logs -n=all %s",
-		name))
-	return stdout
+func SnapDumpLogs(t *testing.T, name string) {
+	const filename = "snap.log" // used in action.yml
+	Exec(t, fmt.Sprintf(
+		"sudo snap logs -n=all %s > %s",
+		name, filename))
+
+	wd, _ := os.Getwd()
+	fmt.Printf("Wrote snap logs to %s/%s\n", wd, filename)
 }
+
+// func SnapLogsJournal(t *testing.T, start time.Time, name string) {
+// 	Exec(t, fmt.Sprintf(
+// 		"journalctl --since \"%s\" --no-pager | grep \"%s\"\n\n",
+// 		time.Now().Format("2006-01-02 15:04:05"),
+// 		name))
+// }

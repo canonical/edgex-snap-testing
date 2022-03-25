@@ -58,10 +58,7 @@ func TestMain(m *testing.M) {
 TEARDOWN:
 	log.Println("[GLOBAL TEARDOWN]")
 
-	if exitCode != 0 {
-		log.Printf("Snap logs:\n%s\n",
-			utils.SnapLogs(nil, "edgex-ekuiper"))
-	}
+	utils.SnapDumpLogs(nil, "edgex-ekuiper")
 
 	utils.SnapRemove(nil,
 		"edgex-ekuiper",
