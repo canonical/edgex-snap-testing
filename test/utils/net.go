@@ -96,7 +96,7 @@ func PortConnectionLocalhost(t *testing.T, ports ...string) bool {
 }
 
 func CheckPortAvailable(t *testing.T, port string) {
-	stdout, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s | true", port))
+	stdout, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s || true", port))
 	if stdout != "" {
 		t.Fatalf("Port %s is not available", port)
 	}
