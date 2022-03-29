@@ -12,7 +12,7 @@ import (
 // WaitServiceOnline dials port(s)to check if the service comes online until it reaches the maximum retry
 func WaitServiceOnline(t *testing.T, ports ...string) {
 	const dialTimeout = 2 * time.Second
-	const maxRetry = 60
+	const maxRetry = 120
 
 	for _, port := range ports {
 		serviceIsOnline := false
