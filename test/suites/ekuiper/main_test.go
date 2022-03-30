@@ -7,6 +7,9 @@ import (
 	"testing"
 )
 
+const snap = "edgex-ekuiper"
+const snapService = "edgex-ekuiper.kuiper"
+
 func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")
@@ -43,7 +46,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// security off
-	utils.Exec(nil, "sudo snap set edgexfoundry security-secret-store=off")
+	utils.SnapSet(nil, "edgexfoundry", "security-secret-store", "off")
 	utils.SnapRemove(nil,
 		"edgex-ekuiper")
 

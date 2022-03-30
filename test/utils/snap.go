@@ -79,3 +79,12 @@ func SnapDumpLogs(t *testing.T, name string) {
 // 		time.Now().Format("2006-01-02 15:04:05"),
 // 		name))
 // }
+
+func SnapSet(t *testing.T, name, key, value string) {
+	Exec(t, fmt.Sprintf(
+		"snap set %s %s=%s",
+		name,
+		key,
+		value,
+	))
+}

@@ -21,7 +21,7 @@ func TestEnvConfig(t *testing.T) {
 		// make sure the port is available before using it
 		utils.CheckPortAvailable(t, newPort)
 
-		utils.Exec(t, "sudo snap set edgex-device-mqtt env.service.port="+newPort)
+		utils.SnapSet(t, snap, "env.service.port", newPort)
 		utils.Exec(t, "sudo snap start edgex-device-mqtt")
 		utils.WaitServiceOnline(t, newPort)
 	})

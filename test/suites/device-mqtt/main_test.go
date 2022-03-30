@@ -7,6 +7,9 @@ import (
 	"testing"
 )
 
+const snap = "edgex-device-mqtt"
+const snapService = "edgex-device-mqtt.device-mqtt"
+
 func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")
