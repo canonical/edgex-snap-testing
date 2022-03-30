@@ -53,6 +53,13 @@ func SnapConnect(t *testing.T, plug, slot string) {
 	))
 }
 
+func SnapDisconnect(t *testing.T, plug, slot string) {
+	Exec(t, fmt.Sprintf(
+		"sudo snap disconnect %s %s",
+		plug, slot,
+	))
+}
+
 func SnapVersion(t *testing.T, name string) string {
 	out, _ := Exec(t, fmt.Sprintf(
 		"snap info %s | grep installed | awk '{print $2}'",
