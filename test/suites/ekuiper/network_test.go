@@ -12,7 +12,7 @@ const (
 
 func TestNetworkInterface(t *testing.T) {
 	t.Cleanup(func() {
-		utils.Exec(t, "sudo snap stop edgex-ekuiper.kuiper")
+		utils.SnapStop(t, snapService)
 	})
 
 	utils.SnapStart(t, snapService)

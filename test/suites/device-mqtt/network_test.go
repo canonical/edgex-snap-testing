@@ -11,7 +11,7 @@ const defaultServicePort = "59982"
 
 func TestNetworkInterface(t *testing.T) {
 	t.Cleanup(func() {
-		utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
+		utils.SnapStop(t, snapService)
 	})
 
 	utils.SnapStart(t, snapService)

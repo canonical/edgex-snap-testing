@@ -16,10 +16,10 @@ const deviceVirtualPort = "59900"
 func TestStreamsAndRules(t *testing.T) {
 
 	t.Cleanup(func() {
-		utils.Exec(t,
-			"sudo snap stop edgex-ekuiper.kuiper",
-			"sudo snap stop edgexfoundry.app-service-configurable",
-			"sudo snap stop edgexfoundry.device-virtual")
+		utils.SnapStop(t,
+			snapService,
+			"edgexfoundry.app-service-configurable",
+			"edgexfoundry.device-virtual")
 	})
 
 	utils.SnapStart(t,
