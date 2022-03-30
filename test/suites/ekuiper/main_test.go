@@ -35,8 +35,8 @@ func TestMain(m *testing.M) {
 		"edgexfoundry:edgex-secretstore-token",
 		"edgex-ekuiper:edgex-secretstore-token",
 	)
-	utils.Exec(nil,
-		"sudo snap restart edgex-ekuiper.kuiper",
+	utils.SnapRestart(nil,
+		snapService,
 	)
 
 	// security on (default)

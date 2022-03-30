@@ -114,3 +114,12 @@ func SnapStop(t *testing.T, names ...string) {
 		))
 	}
 }
+
+func SnapRestart(t *testing.T, names ...string) {
+	for _, name := range names {
+		Exec(t, fmt.Sprintf(
+			"snap restart %s",
+			name,
+		))
+	}
+}
