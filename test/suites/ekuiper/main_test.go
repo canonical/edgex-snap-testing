@@ -44,14 +44,11 @@ func TestMain(m *testing.M) {
 
 	// security off
 	utils.Exec(nil, "sudo snap set edgexfoundry security-secret-store=off")
-	utils.SnapRemove(nil,
-		"edgex-ekuiper")
-
-	if utils.LocalSnap != "" {
-		utils.SnapInstallFromFile(nil, utils.LocalSnap)
-	} else {
-		utils.SnapInstallFromStore(nil, "edgex-ekuiper", utils.ServiceChannel)
-	}
+	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
+	utils.SnapDisconnect(nil,
+		"edgexfoundry:edgex-secretstore-token",
+		"edgex-ekuiper:edgex-secretstore-token",
+	)
 
 	exitCode = m.Run()
 
