@@ -6,5 +6,5 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	utils.CheckSemver(t, "edgex-device-mqtt")
+	utils.CheckSemver(t, snap)
 }

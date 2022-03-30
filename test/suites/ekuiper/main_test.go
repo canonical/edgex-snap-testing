@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 
 	// start clean
 	utils.SnapRemove(nil,
-		"edgex-ekuiper",
+		snap,
 		"edgexfoundry",
 	)
 
@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, "edgex-ekuiper", utils.ServiceChannel)
+		utils.SnapInstallFromStore(nil, snap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
@@ -33,7 +33,7 @@ func TestMain(m *testing.M) {
 	// connect manually regardless
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		"edgex-ekuiper:edgex-secretstore-token",
+		snap+":edgex-secretstore-token",
 	)
 	utils.SnapRestart(nil,
 		snapService,
@@ -48,12 +48,12 @@ func TestMain(m *testing.M) {
 	// security off
 	utils.SnapSet(nil, "edgexfoundry", "security-secret-store", "off")
 	utils.SnapRemove(nil,
-		"edgex-ekuiper")
+		snap)
 
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, "edgex-ekuiper", utils.ServiceChannel)
+		utils.SnapInstallFromStore(nil, snap, utils.ServiceChannel)
 	}
 
 	exitCode = m.Run()
@@ -61,10 +61,10 @@ func TestMain(m *testing.M) {
 TEARDOWN:
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, "edgex-ekuiper")
+	utils.SnapDumpLogs(nil, snap)
 
 	utils.SnapRemove(nil,
-		"edgex-ekuiper",
+		snap,
 		"edgexfoundry",
 	)
 
