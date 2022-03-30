@@ -88,3 +88,11 @@ func SnapSet(t *testing.T, name, key, value string) {
 		value,
 	))
 }
+
+func SnapUnset(t *testing.T, name, key string) {
+	Exec(t, fmt.Sprintf(
+		"snap unset %s %s",
+		name,
+		key,
+	))
+}
