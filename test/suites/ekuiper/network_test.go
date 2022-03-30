@@ -15,7 +15,7 @@ func TestNetworkInterface(t *testing.T) {
 		utils.Exec(t, "sudo snap stop edgex-ekuiper.kuiper")
 	})
 
-	utils.Exec(t, "sudo snap start edgex-ekuiper.kuiper")
+	utils.SnapStart(t, snapService)
 
 	t.Run("listen default port "+serverPort, func(t *testing.T) {
 		utils.WaitServiceOnline(t, serverPort)

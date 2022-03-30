@@ -22,7 +22,7 @@ func TestEnvConfig(t *testing.T) {
 		utils.CheckPortAvailable(t, newPort)
 
 		utils.SnapSet(t, snap, "env.service.port", newPort)
-		utils.Exec(t, "sudo snap start edgex-device-mqtt")
+		utils.SnapStart(t, snap)
 		utils.WaitServiceOnline(t, newPort)
 	})
 }

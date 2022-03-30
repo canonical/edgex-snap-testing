@@ -22,10 +22,10 @@ func TestStreamsAndRules(t *testing.T) {
 			"sudo snap stop edgexfoundry.device-virtual")
 	})
 
-	utils.Exec(t,
-		"sudo snap start edgex-ekuiper.kuiper",
-		"sudo snap start edgexfoundry.app-service-configurable",
-		"sudo snap start edgexfoundry.device-virtual")
+	utils.SnapStart(t,
+		snapService,
+		"edgexfoundry.app-service-configurable",
+		"edgexfoundry.device-virtual")
 
 	t.Run("create stream", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)

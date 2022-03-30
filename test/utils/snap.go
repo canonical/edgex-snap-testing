@@ -96,3 +96,12 @@ func SnapUnset(t *testing.T, name, key string) {
 		key,
 	))
 }
+
+func SnapStart(t *testing.T, names ...string) {
+	for _, name := range names {
+		Exec(t, fmt.Sprintf(
+			"snap start %s",
+			name,
+		))
+	}
+}

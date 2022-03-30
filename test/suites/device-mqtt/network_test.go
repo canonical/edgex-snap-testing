@@ -14,7 +14,7 @@ func TestNetworkInterface(t *testing.T) {
 		utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
 	})
 
-	utils.Exec(t, "sudo snap start edgex-device-mqtt.device-mqtt")
+	utils.SnapStart(t, snapService)
 
 	t.Run("listen default port "+defaultServicePort, func(t *testing.T) {
 		utils.WaitServiceOnline(t, defaultServicePort)
