@@ -9,6 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const profile = "http-export"
+const appRulesEngineServicePort = "59720"
+
 // Deprecated
 func TestEnvConfig(t *testing.T) {
 	// start clean
@@ -18,6 +21,7 @@ func TestEnvConfig(t *testing.T) {
 		t.Cleanup(func() {
 			utils.SnapStop(t, ascService)
 			utils.SnapUnset(t, ascSnap, "env.service.port")
+			utils.SnapSet(t, ascSnap, "env.service.port", appRulesEngineServicePort)
 		})
 
 		const newPort = "56789"
@@ -42,10 +46,12 @@ func TestProfileConfig(t *testing.T) {
 	t.Run("set profile", func(t *testing.T) {
 		t.Cleanup(func() {
 			utils.SnapStop(t, ascService)
+			utils.SnapUnset(t, ascSnap, "profile")
+			// set profile back to default for upcoming tests
+			utils.SnapSet(t, ascSnap, "profile", defaultProfile)
 		})
 
 		start := time.Now()
-		profile := "http-export"
 
 		// set profile
 		utils.SnapSet(t, ascSnap, "profile", profile)
