@@ -11,11 +11,11 @@ const defaultServicePort = "59701"
 
 func TestNetworkInterface(t *testing.T) {
 	t.Cleanup(func() {
-		utils.Exec(t, "sudo snap stop edgex-app-service-configurable.app-service-configurable")
+		utils.SnapStop(t, ascService)
 	})
 
-	utils.Exec(t, "sudo snap set edgex-app-service-configurable env.service.port="+defaultServicePort)
-	utils.Exec(t, "sudo snap start edgex-app-service-configurable.app-service-configurable")
+	utils.SnapSet(t, ascSnap, "env.service.port", defaultServicePort)
+	utils.SnapStart(t, ascService)
 
 	t.Run("listen default port "+defaultServicePort, func(t *testing.T) {
 		utils.WaitServiceOnline(t, defaultServicePort)

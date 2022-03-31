@@ -7,13 +7,16 @@ import (
 	"testing"
 )
 
+const ascSnap = "edgex-app-service-configurable"
+const ascService = "edgex-app-service-configurable.app-service-configurable"
+
 func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")
 
 	// start clean
 	utils.SnapRemove(nil,
-		"edgex-app-service-configurable",
+		ascSnap,
 		"edgexfoundry",
 	)
 
@@ -22,7 +25,7 @@ func TestMain(m *testing.M) {
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, "edgex-app-service-configurable", utils.ServiceChannel)
+		utils.SnapInstallFromStore(nil, ascSnap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
@@ -30,20 +33,20 @@ func TestMain(m *testing.M) {
 	// connect manually regardless
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		"edgex-app-service-configurable:edgex-secretstore-token",
+		ascSnap+":edgex-secretstore-token",
 	)
 
 	// set profile to rules engine
-	utils.Exec(nil, "sudo snap set edgex-app-service-configurable profile=rules-engine")
+	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
 
 	exitCode := m.Run()
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, "edgex-app-service-configurable")
+	utils.SnapDumpLogs(nil, ascSnap)
 
 	utils.SnapRemove(nil,
-		"edgex-app-service-configurable",
+		ascSnap,
 		"edgexfoundry",
 	)
 

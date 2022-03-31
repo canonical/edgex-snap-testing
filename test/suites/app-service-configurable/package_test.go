@@ -6,5 +6,5 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	utils.CheckSemver(t, "edgex-app-service-configurable")
+	utils.CheckSemver(t, ascSnap)
 }
