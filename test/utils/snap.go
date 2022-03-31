@@ -89,7 +89,7 @@ func SnapDumpLogs(t *testing.T, name string) {
 
 func SnapSet(t *testing.T, name, key, value string) {
 	Exec(t, fmt.Sprintf(
-		"snap set %s %s=%s",
+		"sudo snap set %s %s=%s",
 		name,
 		key,
 		value,
@@ -98,7 +98,7 @@ func SnapSet(t *testing.T, name, key, value string) {
 
 func SnapUnset(t *testing.T, name, key string) {
 	Exec(t, fmt.Sprintf(
-		"snap unset %s %s",
+		"sudo snap unset %s %s",
 		name,
 		key,
 	))
@@ -107,7 +107,7 @@ func SnapUnset(t *testing.T, name, key string) {
 func SnapStart(t *testing.T, names ...string) {
 	for _, name := range names {
 		Exec(t, fmt.Sprintf(
-			"snap start %s",
+			"sudo snap start %s",
 			name,
 		))
 	}
@@ -116,7 +116,7 @@ func SnapStart(t *testing.T, names ...string) {
 func SnapStop(t *testing.T, names ...string) {
 	for _, name := range names {
 		Exec(t, fmt.Sprintf(
-			"snap stop %s",
+			"sudo snap stop %s",
 			name,
 		))
 	}
@@ -125,7 +125,7 @@ func SnapStop(t *testing.T, names ...string) {
 func SnapRestart(t *testing.T, names ...string) {
 	for _, name := range names {
 		Exec(t, fmt.Sprintf(
-			"snap restart %s",
+			"sudo snap restart %s",
 			name,
 		))
 	}
