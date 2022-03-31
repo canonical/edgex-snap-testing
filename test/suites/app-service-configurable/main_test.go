@@ -9,6 +9,7 @@ import (
 
 const ascSnap = "edgex-app-service-configurable"
 const ascService = "edgex-app-service-configurable.app-service-configurable"
+const defaultProfile = "rules-engine"
 
 func TestMain(m *testing.M) {
 
@@ -37,7 +38,7 @@ func TestMain(m *testing.M) {
 	)
 
 	// set profile to rules engine
-	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
+	utils.SnapSet(nil, ascSnap, "profile", defaultProfile)
 
 	exitCode := m.Run()
 
