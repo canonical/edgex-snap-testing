@@ -86,3 +86,47 @@ func SnapDumpLogs(t *testing.T, name string) {
 // 		time.Now().Format("2006-01-02 15:04:05"),
 // 		name))
 // }
+
+func SnapSet(t *testing.T, name, key, value string) {
+	Exec(t, fmt.Sprintf(
+		"sudo snap set %s %s=%s",
+		name,
+		key,
+		value,
+	))
+}
+
+func SnapUnset(t *testing.T, name, key string) {
+	Exec(t, fmt.Sprintf(
+		"sudo snap unset %s %s",
+		name,
+		key,
+	))
+}
+
+func SnapStart(t *testing.T, names ...string) {
+	for _, name := range names {
+		Exec(t, fmt.Sprintf(
+			"sudo snap start %s",
+			name,
+		))
+	}
+}
+
+func SnapStop(t *testing.T, names ...string) {
+	for _, name := range names {
+		Exec(t, fmt.Sprintf(
+			"sudo snap stop %s",
+			name,
+		))
+	}
+}
+
+func SnapRestart(t *testing.T, names ...string) {
+	for _, name := range names {
+		Exec(t, fmt.Sprintf(
+			"sudo snap restart %s",
+			name,
+		))
+	}
+}

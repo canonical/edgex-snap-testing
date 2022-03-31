@@ -8,12 +8,12 @@ import (
 // Deprecated
 func TestEnvConfig(t *testing.T) {
 	// start clean
-	utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
+	utils.SnapStop(t, deviceMqttService)
 
 	t.Run("change service port", func(t *testing.T) {
 		t.Cleanup(func() {
-			utils.Exec(t, "sudo snap stop edgex-device-mqtt.device-mqtt")
-			utils.Exec(t, "sudo snap unset edgex-device-mqtt env.service.port")
+			utils.SnapStop(t, deviceMqttService)
+			utils.SnapUnset(t, deviceMqttSnap, "env.service.port")
 		})
 
 		const newPort = "56789"
@@ -21,8 +21,8 @@ func TestEnvConfig(t *testing.T) {
 		// make sure the port is available before using it
 		utils.CheckPortAvailable(t, newPort)
 
-		utils.Exec(t, "sudo snap set edgex-device-mqtt env.service.port="+newPort)
-		utils.Exec(t, "sudo snap start edgex-device-mqtt")
+		utils.SnapSet(t, deviceMqttSnap, "env.service.port", newPort)
+		utils.SnapStart(t, deviceMqttSnap)
 		utils.WaitServiceOnline(t, newPort)
 	})
 }
