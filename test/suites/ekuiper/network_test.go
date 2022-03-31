@@ -12,10 +12,10 @@ const (
 
 func TestNetworkInterface(t *testing.T) {
 	t.Cleanup(func() {
-		utils.SnapStop(t, snapService)
+		utils.SnapStop(t, ekuiperService)
 	})
 
-	utils.SnapStart(t, snapService)
+	utils.SnapStart(t, ekuiperService)
 
 	t.Run("listen default port "+serverPort, func(t *testing.T) {
 		utils.WaitServiceOnline(t, serverPort)

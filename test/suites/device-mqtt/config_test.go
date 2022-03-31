@@ -8,12 +8,12 @@ import (
 // Deprecated
 func TestEnvConfig(t *testing.T) {
 	// start clean
-	utils.SnapStop(t, snapService)
+	utils.SnapStop(t, deviceMqttService)
 
 	t.Run("change service port", func(t *testing.T) {
 		t.Cleanup(func() {
-			utils.SnapStop(t, snapService)
-			utils.SnapUnset(t, snap, "env.service.port")
+			utils.SnapStop(t, deviceMqttService)
+			utils.SnapUnset(t, deviceMqttSnap, "env.service.port")
 		})
 
 		const newPort = "56789"
@@ -21,8 +21,8 @@ func TestEnvConfig(t *testing.T) {
 		// make sure the port is available before using it
 		utils.CheckPortAvailable(t, newPort)
 
-		utils.SnapSet(t, snap, "env.service.port", newPort)
-		utils.SnapStart(t, snap)
+		utils.SnapSet(t, deviceMqttSnap, "env.service.port", newPort)
+		utils.SnapStart(t, deviceMqttSnap)
 		utils.WaitServiceOnline(t, newPort)
 	})
 }

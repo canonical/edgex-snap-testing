@@ -17,13 +17,13 @@ func TestStreamsAndRules(t *testing.T) {
 
 	t.Cleanup(func() {
 		utils.SnapStop(t,
-			snapService,
+			ekuiperService,
 			"edgexfoundry.app-service-configurable",
 			"edgexfoundry.device-virtual")
 	})
 
 	utils.SnapStart(t,
-		snapService,
+		ekuiperService,
 		"edgexfoundry.app-service-configurable",
 		"edgexfoundry.device-virtual")
 

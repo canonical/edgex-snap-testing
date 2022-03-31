@@ -6,5 +6,5 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	utils.CheckSemver(t, snap)
+	utils.CheckSemver(t, deviceMqttSnap)
 }

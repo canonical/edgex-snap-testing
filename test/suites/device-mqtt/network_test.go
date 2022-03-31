@@ -11,10 +11,10 @@ const defaultServicePort = "59982"
 
 func TestNetworkInterface(t *testing.T) {
 	t.Cleanup(func() {
-		utils.SnapStop(t, snapService)
+		utils.SnapStop(t, deviceMqttService)
 	})
 
-	utils.SnapStart(t, snapService)
+	utils.SnapStart(t, deviceMqttService)
 
 	t.Run("listen default port "+defaultServicePort, func(t *testing.T) {
 		utils.WaitServiceOnline(t, defaultServicePort)

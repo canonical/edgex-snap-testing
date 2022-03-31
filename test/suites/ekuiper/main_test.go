@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-const snap = "edgex-ekuiper"
-const snapService = "edgex-ekuiper.kuiper"
+const ekuiperSnap = "edgex-ekuiper"
+const ekuiperService = "edgex-ekuiper.kuiper"
 
 func TestMain(m *testing.M) {
 
@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 
 	// start clean
 	utils.SnapRemove(nil,
-		snap,
+		ekuiperSnap,
 		"edgexfoundry",
 	)
 
@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, snap, utils.ServiceChannel)
+		utils.SnapInstallFromStore(nil, ekuiperSnap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
@@ -33,10 +33,10 @@ func TestMain(m *testing.M) {
 	// connect manually regardless
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		snap+":edgex-secretstore-token",
+		ekuiperSnap+":edgex-secretstore-token",
 	)
 	utils.SnapRestart(nil,
-		snapService,
+		ekuiperService,
 	)
 
 	// security on (default)
@@ -50,7 +50,7 @@ func TestMain(m *testing.M) {
 	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
 	utils.SnapDisconnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		"edgex-ekuiper:edgex-secretstore-token",
+		ekuiperSnap+":edgex-secretstore-token",
 	)
 
 	exitCode = m.Run()
@@ -58,10 +58,10 @@ func TestMain(m *testing.M) {
 TEARDOWN:
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, snap)
+	utils.SnapDumpLogs(nil, ekuiperSnap)
 
 	utils.SnapRemove(nil,
-		snap,
+		ekuiperSnap,
 		"edgexfoundry",
 	)
 

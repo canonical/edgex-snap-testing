@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-const snap = "edgex-device-mqtt"
-const snapService = "edgex-device-mqtt.device-mqtt"
+const deviceMqttSnap = "edgex-device-mqtt"
+const deviceMqttService = "edgex-device-mqtt.device-mqtt"
 
 func TestMain(m *testing.M) {
 
@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 
 	// start clean
 	utils.SnapRemove(nil,
-		snap,
+		deviceMqttSnap,
 		"edgexfoundry",
 	)
 
@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, snap, utils.ServiceChannel)
+		utils.SnapInstallFromStore(nil, deviceMqttSnap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
@@ -33,17 +33,17 @@ func TestMain(m *testing.M) {
 	// connect manually regardless
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		snap+":edgex-secretstore-token",
+		deviceMqttSnap+":edgex-secretstore-token",
 	)
 
 	exitCode := m.Run()
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, snap)
+	utils.SnapDumpLogs(nil, deviceMqttSnap)
 
 	utils.SnapRemove(nil,
-		snap,
+		deviceMqttSnap,
 		"edgexfoundry",
 	)
 
