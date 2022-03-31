@@ -63,7 +63,7 @@ func TestProfileConfig(t *testing.T) {
 			utils.SnapStop(t, ascService)
 		})
 
-		time := time.Now()
+		start := time.Now()
 		profile := "http-export"
 
 		// set profile
@@ -72,7 +72,7 @@ func TestProfileConfig(t *testing.T) {
 
 		//check logs for the record of expected profile
 		time.Sleep(1 * time.Second)
-		logs := utils.SnapLogsJournal(t, time, ascSnap)
+		logs := utils.SnapLogsJournal(t, start, ascSnap)
 		expectLog := "app=app-" + profile
 		require.True(t, strings.Contains(logs, expectLog))
 	})
