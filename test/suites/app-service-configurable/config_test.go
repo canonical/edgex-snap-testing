@@ -53,3 +53,28 @@ func TestEnvConfig(t *testing.T) {
 func TestAppConfig(t *testing.T) {
 	t.Skip("TODO")
 }
+
+func TestProfileConfig(t *testing.T) {
+	// start clean
+	utils.SnapStop(t, ascService)
+
+	t.Run("set profile", func(t *testing.T) {
+		t.Cleanup(func() {
+			utils.SnapStop(t, ascService)
+		})
+
+		time := time.Now()
+		profile := "http-export"
+
+		// set profile
+		utils.SnapSet(t, ascSnap, "profile", profile)
+		utils.SnapStart(t, ascSnap)
+
+		//check logs for the record of expected profile
+		time.Sleep(1 * time.Second)
+		logs := utils.SnapLogsJournal(t, time, ascSnap)
+		expectLog := "app=app-" + profile
+		require.True(t, strings.Contains(logs, expectLog))
+	})
+
+}
