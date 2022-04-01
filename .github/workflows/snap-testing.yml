@@ -20,6 +20,8 @@ jobs:
           - name: ekuiper
             channel: 1/edge
 
+          - name: app-service-configurable
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
