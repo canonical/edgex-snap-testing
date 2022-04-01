@@ -82,10 +82,24 @@ func SnapDumpLogs(t *testing.T, name string) {
 }
 
 func SnapLogsJournal(t *testing.T, start time.Time, name string) string {
-	logs, _ := Exec(t, fmt.Sprintf(
-		"sudo journalctl --since \"%s\" --no-pager | grep \"%s\"\n\n",
-		time.Now().Format("2006-01-02 15:04:05"),
-		name))
+
+	const maxRetry = 10
+	var logs = ""
+	var logIsEmpty = true
+
+	for i := 0; logIsEmpty && i < maxRetry; i++ {
+		if logs == "" {
+			time.Sleep(1 * time.Second)
+			logs, _ = Exec(t, fmt.Sprintf(
+				"sudo journalctl --since \"%s\" --no-pager | grep \"%s\"|| true\n\n",
+				start.Format("2006-01-02 15:04:05"),
+				name))
+
+		} else {
+			logIsEmpty = false
+		}
+	}
+
 	return logs
 }
 
