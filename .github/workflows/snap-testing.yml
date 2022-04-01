@@ -21,6 +21,8 @@ jobs:
             channel: 1/edge
 
           - name: app-service-configurable
+
+          - name: device-gpio
           
     # use local action to test
     steps:
