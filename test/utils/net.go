@@ -5,13 +5,12 @@ import (
 	"net"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/require"
 )
+
+const dialTimeout = 2 * time.Second
 
 // RequireServiceOnline checks if a service comes online by dialing port(s) the ports for a limited period
 func RequireServiceOnline(t *testing.T, ports ...string) {
-	const timeout = 2 * time.Second
 	const maxRetry = 60
 
 	for _, port := range ports {
@@ -19,27 +18,27 @@ func RequireServiceOnline(t *testing.T, ports ...string) {
 		var returnErr error
 
 		for i := 0; !serviceIsOnline && i < maxRetry; i++ {
-			t.Logf("Waiting for service. Dialing port %s. Retry %d/%d", port, i+1, maxRetry)
-			conn, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", port), timeout)
+			t.Logf("Waiting for service port %s. Retry %d/%d", port, i+1, maxRetry)
+			conn, err := net.DialTimeout("tcp", net.JoinHostPort("localhost", port), dialTimeout)
 			if conn != nil {
 				serviceIsOnline = true
-				t.Logf("Service online now. Port %s is listening", port)
+				t.Logf("Service port %s is open", port)
 			}
 			returnErr = err
 			time.Sleep(1 * time.Second)
 		}
 
-		require.Equal(t, true, serviceIsOnline,
-			"Service timed out, reached max %d retries. Error:\n%v", maxRetry, returnErr)
+		if !serviceIsOnline {
+			t.Fatalf("Service timed out, reached max %d retries. Error:\n%v", maxRetry, returnErr)
+		}
 	}
 }
 
 // RequirePortOpen checks if the local port(s) accepts connections
 func RequirePortOpen(t *testing.T, host string, ports ...string) {
-	const timeout = 2 * time.Second
 
 	for _, port := range ports {
-		conn, err := net.DialTimeout("tcp", net.JoinHostPort("localhost", port), timeout)
+		conn, err := net.DialTimeout("tcp", net.JoinHostPort("localhost", port), dialTimeout)
 		if err != nil {
 			conn.Close()
 			t.Errorf("Port %s is not open: %s", port, err)
