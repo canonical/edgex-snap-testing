@@ -51,16 +51,27 @@ func TestProfileConfig(t *testing.T) {
 			utils.SnapSet(t, ascSnap, "profile", defaultProfile)
 		})
 
-		start := time.Now()
+		const maxRetry = 10
+
+		var start = time.Now()
+		var logs = ""
+		var logIsEmpty = true
+		var expectLog = "app=app-" + profile
 
 		// set profile
 		utils.SnapSet(t, ascSnap, "profile", profile)
 		utils.SnapStart(t, ascSnap)
 
-		//check logs for the record of expected profile
-		logs := utils.SnapLogsJournal(t, start, ascSnap)
-		expectLog := "app=app-" + profile
+		// check logs for the record of expected profile
+		for i := 0; logIsEmpty && i < maxRetry; i++ {
+			if logs == "" || !strings.Contains(logs, expectLog) {
+				time.Sleep(1 * time.Second)
+				logs = utils.SnapLogsJournal(t, start, ascSnap)
+			} else {
+				logIsEmpty = false
+			}
+		}
+
 		require.True(t, strings.Contains(logs, expectLog))
 	})
-
 }
