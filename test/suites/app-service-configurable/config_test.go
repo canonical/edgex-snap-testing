@@ -51,17 +51,19 @@ func TestProfileConfig(t *testing.T) {
 			utils.SnapSet(t, ascSnap, "profile", defaultProfile)
 		})
 
-		start := time.Now()
+		var start = time.Now()
 
 		// set profile
 		utils.SnapSet(t, ascSnap, "profile", profile)
 		utils.SnapStart(t, ascSnap)
 
+		// check logs for the record of expected profile
+
 		//check logs for the record of expected profile
 		time.Sleep(1 * time.Second)
 		logs := utils.SnapLogsJournal(t, start, ascSnap)
 		expectLog := "app=app-" + profile
+
 		require.True(t, strings.Contains(logs, expectLog))
 	})
-
 }
