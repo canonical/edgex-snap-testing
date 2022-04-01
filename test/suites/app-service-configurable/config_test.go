@@ -27,11 +27,11 @@ func TestEnvConfig(t *testing.T) {
 		const newPort = "56789"
 
 		// make sure the port is available before using it
-		utils.CheckPortAvailable(t, newPort)
+		utils.RequirePortAvailable(t, newPort)
 
 		utils.SnapSet(t, ascSnap, "env.service.port", newPort)
 		utils.SnapStart(t, ascSnap)
-		utils.WaitServiceOnline(t, newPort)
+		utils.RequireServiceOnline(t, newPort)
 	})
 }
 

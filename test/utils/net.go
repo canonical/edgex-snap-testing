@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// WaitServiceOnline dials port(s)to check if the service comes online until it reaches the maximum retry
-func WaitServiceOnline(t *testing.T, ports ...string) {
+// RequireServiceOnline dials port(s)to check if the service comes online until it reaches the maximum retry
+func RequireServiceOnline(t *testing.T, ports ...string) {
 	const dialTimeout = 2 * time.Second
 	const maxRetry = 60
 
@@ -34,71 +34,61 @@ func WaitServiceOnline(t *testing.T, ports ...string) {
 	}
 }
 
-// PortConnection checks if the port(s) are in use
-func PortConnection(host string, ports ...string) (bool, error) {
-	var isListening bool
-	var err error
-
-	for _, port := range ports {
-
-		conn, err := net.Dial("tcp", net.JoinHostPort(host, port))
-		if err != nil {
-			isListening = false
-			conn.Close()
-			return isListening, err
-		}
-
-		if conn != nil {
-			isListening = true
-			conn.Close()
-			return isListening, err
-		}
+// RequirePortOpen checks if a port accepts connections
+func RequirePortOpen(t *testing.T, host, port string) {
+	conn, err := net.Dial("tcp", net.JoinHostPort(host, port))
+	if err != nil {
+		conn.Close()
+		t.Fatalf("Port %s is not open: %s", port, err)
 	}
-	return isListening, err
+
+	if conn == nil {
+		t.Fatalf("Port %s is not open", port)
+	}
+
+	if conn != nil {
+		t.Logf("Port %v is open.", port)
+		conn.Close()
+	}
 }
 
-// PortConnectionAllInterface checks if the port(s) are in use for all interface
-func PortConnectionAllInterface(t *testing.T, ports ...string) bool {
-	var isListening bool
-
-	for _, port := range ports {
-
-		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
-		if stdout == "" {
-			isListening = false
-		} else {
-			isListening = true
-		}
-	}
-	return isListening
+// RequirePortOpenLocalhost checks if a local port accepts connections
+func RequirePortOpenLocalhost(t *testing.T, port string) {
+	RequirePortOpen(t, "localhost", port)
 }
 
-// PortConnectionLocalhost checks if the port(s) are in use for localhost
-func PortConnectionLocalhost(t *testing.T, ports ...string) bool {
-	var isOpen bool
-
-	for _, port := range ports {
-
-		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
-		if stdout == "" {
-			isOpen = false
-		} else {
-			isListening, err := PortConnection("127.0.0.1", port)
-			if isListening {
-				isOpen = true
-			} else {
-				isOpen = false
-				require.NoError(t, err, "Error in bind-address or bind-port.")
-			}
-		}
-	}
-	return isOpen
-}
-
-func CheckPortAvailable(t *testing.T, port string) {
+// RequirePortAvailable checks if a port is available, i.e. not used by a server
+func RequirePortAvailable(t *testing.T, port string) {
 	stdout, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s || true", port))
 	if stdout != "" {
 		t.Fatalf("Port %s is not available", port)
 	}
 	t.Logf("Port %s is available.", port)
+}
+
+// checkListenAllInterfaces checks if a port listens on all interfaces
+func checkListenAllInterfaces(t *testing.T, port string, mustListen bool) {
+	stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
+	isListening := (stdout != "")
+
+	if mustListen && !isListening {
+		t.Fatalf("Port %v not listening to all interfaces", port)
+	} else if !mustListen && isListening {
+		t.Fatalf("Port %v is listening to all interfaces", port)
+	}
+}
+
+// RequireNotListenAllInterfaces checks that a port is NOT listening on all interfaces
+func RequireNotListenAllInterfaces(t *testing.T, port string) {
+	checkListenAllInterfaces(t, port, false)
+}
+
+// RequireListenLoopback checks if a port listens on the loopback interface
+func RequireListenLoopback(t *testing.T, port string) {
+	stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
+	isListening := stdout != ""
+
+	if !isListening {
+		t.Fatalf("Port %v not listening on loopback interface", port)
+	}
 }

@@ -3,8 +3,6 @@ package test
 import (
 	"edgex-snap-testing/test/utils"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 const defaultServicePort = "59982"
@@ -17,16 +15,15 @@ func TestNetworkInterface(t *testing.T) {
 	utils.SnapStart(t, deviceMqttService)
 
 	t.Run("listen default port "+defaultServicePort, func(t *testing.T) {
-		utils.WaitServiceOnline(t, defaultServicePort)
+		utils.RequireServiceOnline(t, defaultServicePort)
 	})
 
 	t.Run("not listen on all interfaces", func(t *testing.T) {
-		isConnected := utils.PortConnectionAllInterface(t, defaultServicePort)
-		require.False(t, isConnected)
+		utils.RequireNotListenAllInterfaces(t, defaultServicePort)
 	})
 
 	t.Run("listen localhost", func(t *testing.T) {
-		isConnected := utils.PortConnectionLocalhost(t, defaultServicePort)
-		require.True(t, isConnected)
+		utils.RequireListenLoopback(t, defaultServicePort)
+		utils.RequirePortOpenLocalhost(t, defaultServicePort)
 	})
 }
