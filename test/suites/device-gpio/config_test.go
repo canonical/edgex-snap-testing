@@ -19,11 +19,11 @@ func TestEnvConfig(t *testing.T) {
 		const newPort = "56789"
 
 		// make sure the port is available before using it
-		utils.CheckPortAvailable(t, newPort)
+		utils.RequirePortAvailable(t, newPort)
 
 		utils.SnapSet(t, deviceGpioSnap, "env.service.port", newPort)
 		utils.SnapStart(t, deviceGpioSnap)
-		utils.WaitServiceOnline(t, newPort)
+		utils.RequireServiceOnline(t, newPort)
 	})
 }
 

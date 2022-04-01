@@ -6,5 +6,5 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	utils.CheckSemver(t, deviceGpioSnap)
+	utils.RequireSnapSemver(t, deviceGpioSnap)
 }
