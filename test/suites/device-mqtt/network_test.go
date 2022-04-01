@@ -19,11 +19,11 @@ func TestNetworkInterface(t *testing.T) {
 	})
 
 	t.Run("not listen on all interfaces", func(t *testing.T) {
-		utils.RequireNotListenAllInterfaces(t, defaultServicePort)
+		utils.RequireListenAllInterfaces(t, false, defaultServicePort)
 	})
 
 	t.Run("listen localhost", func(t *testing.T) {
 		utils.RequireListenLoopback(t, defaultServicePort)
-		utils.RequirePortOpenLocalhost(t, defaultServicePort)
+		utils.RequirePortOpen(t, defaultServicePort)
 	})
 }
