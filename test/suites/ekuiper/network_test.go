@@ -18,10 +18,10 @@ func TestNetworkInterface(t *testing.T) {
 	utils.SnapStart(t, ekuiperService)
 
 	t.Run("listen default port "+serverPort, func(t *testing.T) {
-		utils.RequireServiceOnline(t, serverPort)
+		utils.WaitServiceOnline(t, serverPort)
 	})
 
 	t.Run("listen default restful api port "+restfulApiPort, func(t *testing.T) {
-		utils.RequireServiceOnline(t, restfulApiPort)
+		utils.WaitServiceOnline(t, restfulApiPort)
 	})
 }

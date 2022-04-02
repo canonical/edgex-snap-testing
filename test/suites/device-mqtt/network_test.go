@@ -15,7 +15,7 @@ func TestNetworkInterface(t *testing.T) {
 	utils.SnapStart(t, deviceMqttService)
 
 	t.Run("listen default port "+defaultServicePort, func(t *testing.T) {
-		utils.RequireServiceOnline(t, defaultServicePort)
+		utils.WaitServiceOnline(t, defaultServicePort)
 	})
 
 	t.Run("not listen on all interfaces", func(t *testing.T) {

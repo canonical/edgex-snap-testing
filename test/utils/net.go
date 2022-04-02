@@ -9,27 +9,32 @@ import (
 
 const dialTimeout = 2 * time.Second
 
-// RequireServiceOnline checks if a service comes online by dialing port(s) the ports for a limited period
-func RequireServiceOnline(t *testing.T, ports ...string) {
+// WaitServiceOnline waits for a service to come online by dialing its port(s)
+// up to a maximum number
+func WaitServiceOnline(t *testing.T, ports ...string) {
 	const maxRetry = 60
 
+PORTS:
 	for _, port := range ports {
-		serviceIsOnline := false
 		var returnErr error
 
-		for i := 0; !serviceIsOnline && i < maxRetry; i++ {
-			t.Logf("Waiting for service port %s. Retry %d/%d", port, i+1, maxRetry)
-			conn, err := net.DialTimeout("tcp", net.JoinHostPort("localhost", port), dialTimeout)
+		for i := 1; i <= maxRetry; i++ {
+			t.Logf("Waiting for service port %s. Retry %d/%d", port, i, maxRetry)
+
+			conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
 			if conn != nil {
-				serviceIsOnline = true
-				t.Logf("Service port %s is open", port)
+				t.Logf("Service port %s is open.", port)
+				continue PORTS
 			}
 			returnErr = err
+
 			time.Sleep(1 * time.Second)
 		}
 
-		if !serviceIsOnline {
-			t.Fatalf("Service timed out, reached max %d retries. Error:\n%v", maxRetry, returnErr)
+		if returnErr != nil {
+			t.Fatalf("Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
+		} else {
+			t.Fatalf("Time out: reached max %d retries.", maxRetry)
 		}
 	}
 }
@@ -38,7 +43,7 @@ func RequireServiceOnline(t *testing.T, ports ...string) {
 func RequirePortOpen(t *testing.T, host string, ports ...string) {
 
 	for _, port := range ports {
-		conn, err := net.DialTimeout("tcp", net.JoinHostPort("localhost", port), dialTimeout)
+		conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
 		if err != nil {
 			conn.Close()
 			t.Errorf("Port %s is not open: %s", port, err)

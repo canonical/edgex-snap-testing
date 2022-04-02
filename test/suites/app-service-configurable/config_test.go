@@ -31,7 +31,7 @@ func TestEnvConfig(t *testing.T) {
 
 		utils.SnapSet(t, ascSnap, "env.service.port", newPort)
 		utils.SnapStart(t, ascSnap)
-		utils.RequireServiceOnline(t, newPort)
+		utils.WaitServiceOnline(t, newPort)
 	})
 }
 

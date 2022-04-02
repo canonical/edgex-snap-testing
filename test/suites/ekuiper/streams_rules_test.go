@@ -62,7 +62,7 @@ func TestStreamsAndRules(t *testing.T) {
 			}'`)
 	})
 
-	utils.RequireServiceOnline(t, deviceVirtualPort)
+	utils.WaitServiceOnline(t, deviceVirtualPort)
 
 	// wait device-virtual producing readings with maximum 60 seconds
 	for i := 1; ; i++ {
