@@ -36,6 +36,8 @@ func TestMain(m *testing.M) {
 		deviceRestSnap+":edgex-secretstore-token",
 	)
 
+	utils.SnapStart(nil, deviceRestSnap)
+
 	exitCode := m.Run()
 
 	log.Println("[TEARDOWN]")
