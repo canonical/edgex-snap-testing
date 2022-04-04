@@ -3,8 +3,6 @@ package test
 import (
 	"edgex-snap-testing/test/utils"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestNetworkInterface(t *testing.T) {
@@ -19,12 +17,11 @@ func TestNetworkInterface(t *testing.T) {
 	})
 
 	t.Run("not listen on all interfaces", func(t *testing.T) {
-		isConnected := utils.PortConnectionAllInterface(t, appRulesEngineServicePort)
-		require.False(t, isConnected)
+		utils.RequireListenAllInterfaces(t, false, appRulesEngineServicePort)
 	})
 
 	t.Run("listen localhost", func(t *testing.T) {
-		isConnected := utils.PortConnectionLocalhost(t, appRulesEngineServicePort)
-		require.True(t, isConnected)
+		utils.RequireListenLoopback(t, appRulesEngineServicePort)
+		utils.RequirePortOpen(t, appRulesEngineServicePort)
 	})
 }
