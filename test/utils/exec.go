@@ -62,7 +62,6 @@ func Exec(t *testing.T, command string) (stdout, stderr string) {
 
 	// start execution
 	if err := cmd.Start(); err != nil {
-		wg.Wait()
 		fatalf(t, err.Error())
 		return
 	}
