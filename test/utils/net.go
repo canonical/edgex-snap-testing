@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"net"
+	"strings"
 	"testing"
 	"time"
 )
@@ -77,8 +78,7 @@ func RequireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) 
 	}
 
 	for _, port := range ports {
-		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
-		isListening := (stdout != "")
+		isListening := isListenInterface(t, "*", port)
 
 		if mustListen && !isListening {
 			t.Errorf("Port %v not listening to all interfaces", port)
@@ -98,11 +98,8 @@ func RequireListenLoopback(t *testing.T, ports ...string) {
 	}
 
 	for _, port := range ports {
-		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
-		isListening := stdout != ""
-
-		if !isListening {
-			t.Errorf("Port %v not listening on loopback interface", port)
+		if !isListenInterface(t, "127.0.0.1", port) {
+			t.Errorf("Port %s is not restricted to listen on loopback interface", port)
 		}
 	}
 	if t.Failed() {
@@ -112,9 +109,34 @@ func RequireListenLoopback(t *testing.T, ports ...string) {
 
 // RequirePortAvailable checks if a port is available (not open) locally
 func RequirePortAvailable(t *testing.T, port string) {
-	stdout, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s || true", port))
+	stdout := lsof(t, port)
 	if stdout != "" {
 		t.Fatalf("Port %s is not available", port)
 	}
 	t.Logf("Port %s is available.", port)
+}
+
+func isListenInterface(t *testing.T, addr string, port string) bool {
+	list := filterOpenPorts(t, port)
+
+	// look for LISTEN explicitly to exclude ESTABLISHED connections
+	substr := fmt.Sprintf("%s:%s (LISTEN)", addr, port)
+	t.Logf("Looking for '%s'", substr)
+
+	return strings.Contains(list, substr)
+}
+
+func filterOpenPorts(t *testing.T, port string) string {
+	stdout := lsof(t, port)
+	if stdout == "" {
+		t.Fatalf("Port %s is not open", port)
+	}
+	return stdout
+}
+
+func lsof(t *testing.T, port string) string {
+	// The chained true command is to make sure execution succeeds even if
+	// 	the first command fails when list is empty
+	stdout, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s || true", port))
+	return stdout
 }
