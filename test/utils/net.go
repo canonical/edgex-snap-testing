@@ -12,6 +12,10 @@ const dialTimeout = 2 * time.Second
 // WaitServiceOnline waits for a service to come online by dialing its port(s)
 // up to a maximum number
 func WaitServiceOnline(t *testing.T, ports ...string) {
+	if len(ports) == 0 {
+		panic("No ports given as input")
+	}
+
 	const maxRetry = 60
 
 PORTS:
@@ -40,7 +44,10 @@ PORTS:
 }
 
 // RequirePortOpen checks if the local port(s) accepts connections
-func RequirePortOpen(t *testing.T, host string, ports ...string) {
+func RequirePortOpen(t *testing.T, ports ...string) {
+	if len(ports) == 0 {
+		panic("No ports given as input")
+	}
 
 	for _, port := range ports {
 		conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
@@ -65,6 +72,10 @@ func RequirePortOpen(t *testing.T, host string, ports ...string) {
 
 // checkListenAllInterfaces checks if the port(s) listen on all interfaces
 func RequireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) {
+	if len(ports) == 0 {
+		panic("No ports given as input")
+	}
+
 	for _, port := range ports {
 		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep \\* || true; }")
 		isListening := (stdout != "")
@@ -82,6 +93,10 @@ func RequireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) 
 
 // RequireListenLoopback checks if the port(s) listen on the loopback interface
 func RequireListenLoopback(t *testing.T, ports ...string) {
+	if len(ports) == 0 {
+		panic("No ports given as input")
+	}
+
 	for _, port := range ports {
 		stdout, _ := Exec(t, "sudo lsof -nPi :"+port+" | { grep 127.0.0.1  || true; }")
 		isListening := stdout != ""
