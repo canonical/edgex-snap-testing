@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bufio"
-	"io"
 	"log"
 	"os/exec"
 	"sync"
@@ -11,69 +10,71 @@ import (
 
 var testingFatal = false
 
-// Exec executes one or more commands
-func Exec(t *testing.T, commands ...string) (stdout, stderr string) {
+// Exec executes a command
+func Exec(t *testing.T, command string) (stdout, stderr string) {
+	logf(t, "[exec] %s", command)
 
-	for _, command := range commands {
-		logf(t, "[exec] %s", command)
+	cmd := exec.Command("/bin/sh", "-c", command)
 
-		cmd := exec.Command("/bin/sh", "-c", command)
+	var wg sync.WaitGroup
 
-		outStream, err := cmd.StdoutPipe()
-		if err != nil {
-			fatalf(t, err.Error())
-			return
-		}
-
-		errStream, err := cmd.StderrPipe()
-		if err != nil {
-			fatalf(t, err.Error())
-			return
-		}
-
-		var wg sync.WaitGroup
-		// wait for all standard output processing
-		defer wg.Wait()
-
-		// stdout reader
-		wg.Add(1)
-		go func(stream io.ReadCloser) {
-			scanner := bufio.NewScanner(stream)
-			for scanner.Scan() {
-				line := scanner.Text()
-				logf(t, "[stdout] %s", line)
-				stdout += line + "\n"
-			}
-			wg.Done()
-		}(outStream)
-
-		// stderr reader
-		wg.Add(1)
-		go func(stream io.ReadCloser) {
-			scanner := bufio.NewScanner(stream)
-			for scanner.Scan() {
-				line := scanner.Text()
-				logf(t, "[stderr] %s", line)
-				stderr += line + "\n"
-			}
-			wg.Done()
-		}(errStream)
-
-		// start execution
-		err = cmd.Start()
-		if err != nil {
-			fatalf(t, err.Error())
-			return
-		}
-
-		// wait until it exits
-		err = cmd.Wait()
-		if err != nil {
-			fatalf(t, err.Error())
-			return
-		}
-
+	// standard output
+	outStream, err := cmd.StdoutPipe()
+	if err != nil {
+		fatalf(t, err.Error())
+		return
 	}
+	outScanner := bufio.NewScanner(outStream)
+	// stdout reader
+	wg.Add(1)
+	go func() {
+		for outScanner.Scan() {
+			line := outScanner.Text()
+			logf(t, "[stdout] %s", line)
+			stdout += line + "\n"
+		}
+		if err := outScanner.Err(); err != nil {
+			fatalf(t, err.Error())
+		}
+		wg.Done()
+	}()
+
+	// standard error
+	errStream, err := cmd.StderrPipe()
+	if err != nil {
+		fatalf(t, err.Error())
+		return
+	}
+	errScanner := bufio.NewScanner(errStream)
+	// stderr reader
+	wg.Add(1)
+	go func() {
+		for errScanner.Scan() {
+			line := errScanner.Text()
+			logf(t, "[stderr] %s", line)
+			stderr += line + "\n"
+		}
+		if err := errScanner.Err(); err != nil {
+			fatalf(t, err.Error())
+		}
+		wg.Done()
+	}()
+
+	// start execution
+	if err := cmd.Start(); err != nil {
+		fatalf(t, err.Error())
+		return
+	}
+
+	// wait for all standard output processing before waiting to exit!
+	wg.Wait()
+
+	// wait until command exits
+	if err := cmd.Wait(); err != nil {
+		fatalf(t, err.Error())
+		return
+	}
+
 	return
 }
 

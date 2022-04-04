@@ -18,21 +18,13 @@ func TestExec(t *testing.T) {
 
 	t.Run("exit after slow command", func(t *testing.T) {
 		start := time.Now()
-		stdout, _ := Exec(t, `echo "hi" && sleep 1 && echo "hi2"`)
-		// must return after 1s±200ms
+		stdout, _ := Exec(t, `echo "hi" && sleep 0.1 && echo "hi2"`)
+		// must return after 100ms±50ms
 		require.WithinDuration(t,
-			start.Add(1*time.Second),
+			start.Add(100*time.Millisecond),
 			time.Now(),
-			200*time.Millisecond)
+			50*time.Millisecond)
 		require.Equal(t, "hi\nhi2\n", stdout)
-	})
-
-	t.Run("multiple commands", func(t *testing.T) {
-		stdout, _ := Exec(t,
-			`echo "hi"`,
-			`echo "hi2"`,
-		)
-		assert.Equal(t, "hi\nhi2\n", stdout)
 	})
 
 	t.Run("bad command", func(t *testing.T) {
@@ -58,31 +50,4 @@ func TestExec(t *testing.T) {
 		assert.Equal(t, "succeeding\n", stdout)
 	})
 
-	t.Run("bad then good", func(t *testing.T) {
-		testingFatal = true
-		t.Cleanup(func() {
-			testingFatal = false
-		})
-
-		stdout, stderr := Exec(t,
-			`bad_command`, // it must stop after this
-			`echo 'good'`,
-		)
-		assert.Contains(t, stderr, "not found")
-		assert.NotContains(t, stdout, "good")
-	})
-
-	t.Run("good then bad", func(t *testing.T) {
-		testingFatal = true
-		t.Cleanup(func() {
-			testingFatal = false
-		})
-
-		stdout, stderr := Exec(t,
-			`echo 'good'`,
-			`bad_command`,
-		)
-		assert.Contains(t, stdout, "good")
-		assert.Contains(t, stderr, "not found")
-	})
 }

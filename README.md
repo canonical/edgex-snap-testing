@@ -17,7 +17,7 @@ go test -p 1 ./test/suites/...
 
 Test the testing utils:
 ```bash
-go test ./test/utils/...
+go test ./test/utils -count=10
 ```
 
 ## Override behavior
