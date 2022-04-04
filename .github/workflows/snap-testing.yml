@@ -24,6 +24,8 @@ jobs:
 
           - name: device-gpio
           
+          - name: device-rest
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
