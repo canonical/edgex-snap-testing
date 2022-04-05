@@ -2,13 +2,10 @@ package utils
 
 import (
 	"bufio"
-	"log"
 	"os/exec"
 	"sync"
 	"testing"
 )
-
-var testingFatal = false
 
 // Exec executes a command
 func Exec(t *testing.T, command string) (stdout, stderr string) {
@@ -76,26 +73,4 @@ func Exec(t *testing.T, command string) (stdout, stderr string) {
 	}
 
 	return
-}
-
-func logf(t *testing.T, format string, args ...interface{}) {
-	if t != nil {
-		t.Logf(format, args...)
-	} else {
-		log.Printf(format, args...)
-	}
-}
-
-func fatalf(t *testing.T, format string, args ...interface{}) {
-	// reduce the severity to a log message to not exit when testing
-	if testingFatal {
-		logf(t, "fatal error: "+format, args...)
-		return
-	}
-
-	if t != nil {
-		t.Fatalf(format, args...)
-	} else {
-		log.Fatalf(format, args...)
-	}
 }
