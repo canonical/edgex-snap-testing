@@ -10,6 +10,17 @@ import (
 
 const dialTimeout = 2 * time.Second
 
+var PlatformPorts = []string{
+	"59880", // core-data
+	"59881", // core-metadata
+	"59882", // core-command
+	"8000",  // kong
+	"5432",  // kong-database
+	"8200",  // vault
+	"8500",  // consul
+	"6379",  // redis
+}
+
 // WaitServiceOnline waits for a service to come online by dialing its port(s)
 // up to a maximum number
 func WaitServiceOnline(t *testing.T, ports ...string) {
