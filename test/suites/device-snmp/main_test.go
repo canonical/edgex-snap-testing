@@ -10,6 +10,17 @@ import (
 const deviceSnmpSnap = "edgex-device-snmp"
 const deviceSnmpService = "edgex-device-snmp.device-snmp"
 
+var platformPorts = []string{
+	"59880", // core-data
+	"59881", // core-metadata
+	"59882", // core-command
+	"8000",  // kong
+	"5432",  // kong-database
+	"8200",  // vault
+	"8500",  // consul
+	"6379",  // redis
+}
+
 func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")
@@ -28,6 +39,9 @@ func TestMain(m *testing.M) {
 		utils.SnapInstallFromStore(nil, deviceSnmpSnap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
+
+	// make sure all services online before starting subtests
+	utils.WaitServiceOnline(nil, platformPorts...)
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually regardless
