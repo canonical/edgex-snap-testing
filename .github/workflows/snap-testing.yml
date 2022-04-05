@@ -26,6 +26,8 @@ jobs:
           
           - name: device-rest
           
+          - name: device-snmp
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
