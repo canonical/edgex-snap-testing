@@ -24,11 +24,11 @@ PORTS:
 		var returnErr error
 
 		for i := 1; i <= maxRetry; i++ {
-			t.Logf("Waiting for service port %s. Retry %d/%d", port, i, maxRetry)
+			logf(t, "Waiting for service port %s. Retry %d/%d", port, i, maxRetry)
 
 			conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
 			if conn != nil {
-				t.Logf("Service port %s is open.", port)
+				logf(t, "Service port %s is open.", port)
 				continue PORTS
 			}
 			returnErr = err
@@ -37,9 +37,9 @@ PORTS:
 		}
 
 		if returnErr != nil {
-			t.Fatalf("Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
+			fatalf(t, "Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
 		} else {
-			t.Fatalf("Time out: reached max %d retries.", maxRetry)
+			fatalf(t, "Time out: reached max %d retries.", maxRetry)
 		}
 	}
 }
