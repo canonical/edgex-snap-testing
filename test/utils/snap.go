@@ -133,3 +133,21 @@ func SnapRestart(t *testing.T, names ...string) {
 		))
 	}
 }
+
+func SnapSetUnset(t *testing.T, snapName, defaultServicePort string) {
+	const newPort = "56789"
+
+	// make sure the port is available before using it
+	RequirePortAvailable(t, newPort)
+
+	// check if snap set works, that service uses new configuration
+	SnapSet(t, snapName, "env.service.port", newPort)
+	SnapStart(t, snapName)
+	WaitServiceOnline(t, newPort)
+
+	// check if snap unset works, that service uses default configuration
+	SnapStop(t, snapName)
+	SnapUnset(t, snapName, "env.service.port")
+	SnapStart(t, snapName)
+	WaitServiceOnline(t, defaultServicePort)
+}
