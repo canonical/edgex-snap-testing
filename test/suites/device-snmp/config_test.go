@@ -7,15 +7,8 @@ import (
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	// start clean
-	utils.SnapStop(t, deviceSnmpService)
-
 	t.Run("change service port", func(t *testing.T) {
-		t.Cleanup(func() {
-			utils.SnapStop(t, deviceSnmpService)
-		})
-
-		utils.SnapSetUnset(t, deviceSnmpSnap, defaultServicePort)
+		utils.TestEnvChangeServicePort(t, deviceSnmpSnap, defaultServicePort)
 	})
 }
 
