@@ -37,6 +37,7 @@ func TestMain(m *testing.M) {
 	)
 
 	utils.SnapStart(nil, deviceRestSnap)
+	utils.WaitServiceOnline(nil, defaultServicePort)
 
 	exitCode := m.Run()
 

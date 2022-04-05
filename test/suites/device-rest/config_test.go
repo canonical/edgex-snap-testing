@@ -16,8 +16,6 @@ func TestEnvConfig(t *testing.T) {
 
 		const newPort = "56789"
 
-		utils.WaitServiceOnline(t, defaultServicePort)
-
 		// make sure the port is available before using it
 		utils.RequirePortAvailable(t, newPort)
 
