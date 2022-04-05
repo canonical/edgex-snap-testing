@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 		deviceRestSnap+":edgex-secretstore-token",
 	)
 
-	utils.SnapStart(nil, deviceRestSnap)
+	utils.SnapStart(nil, deviceRestService)
 	utils.WaitServiceOnline(nil, defaultServicePort)
 
 	exitCode := m.Run()
