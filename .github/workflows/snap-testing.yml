@@ -28,6 +28,8 @@ jobs:
           
           - name: device-snmp
           
+          - name: device-modbus
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
