@@ -44,7 +44,7 @@ runs:
         LOCAL_SNAP: ${{steps.path.outputs.local_snap}}
         SERVICE_CHANNEL: ${{inputs.channel}}
       run: |
-        go test -p 1 -v ./suites/${{inputs.name}}
+        go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
     # Print snap logs
     - if: always()
