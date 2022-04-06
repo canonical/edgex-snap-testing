@@ -30,6 +30,8 @@ jobs:
           
           - name: device-modbus
           
+          - name: edgexfoundry
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
