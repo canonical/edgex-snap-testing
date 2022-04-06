@@ -9,9 +9,8 @@ import (
 
 const platformSnap = "edgexfoundry"
 const deviceVirtualApp = "device-virtual"
+const snapAppName = platformSnap + "." + deviceVirtualApp
 const deviceVirtualDefaultServicePort = "59900"
-
-var snapAppName = platformSnap + "." + deviceVirtualApp
 
 func TestMain(m *testing.M) {
 
