@@ -10,17 +10,6 @@ import (
 const deviceModbusSnap = "edgex-device-modbus"
 const deviceModbusService = "edgex-device-modbus.device-modbus"
 
-var platformPorts = []string{
-	"59880", // core-data
-	"59881", // core-metadata
-	"59882", // core-command
-	"8000",  // kong
-	"5432",  // kong-database
-	"8200",  // vault
-	"8500",  // consul
-	"6379",  // redis
-}
-
 func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")
@@ -41,7 +30,7 @@ func TestMain(m *testing.M) {
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
 	// make sure all services are online before starting the tests
-	utils.WaitServiceOnline(nil, platformPorts...)
+	utils.WaitServiceOnline(nil, utils.PlatformPorts...)
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually regardless
