@@ -7,10 +7,13 @@ import (
 	"testing"
 )
 
-const platformSnap = "edgexfoundry"
-const deviceVirtualApp = "device-virtual"
-const snapAppName = platformSnap + "." + deviceVirtualApp
-const deviceVirtualDefaultServicePort = "59900"
+const (
+	platformSnap     = "edgexfoundry"
+	deviceVirtualApp = "device-virtual"
+	snapAppName      = platformSnap + "." + deviceVirtualApp
+
+	deviceVirtualDefaultServicePort = "59900"
+)
 
 func TestMain(m *testing.M) {
 
