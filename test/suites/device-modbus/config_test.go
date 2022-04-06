@@ -8,7 +8,7 @@ import (
 // Deprecated
 func TestEnvConfig(t *testing.T) {
 	t.Run("change service port", func(t *testing.T) {
-		utils.TestEnvChangeServicePort(t, deviceModbusSnap, defaultServicePort)
+		utils.TestEnvChangeServicePort(t, deviceModbusSnap, "", defaultServicePort)
 	})
 }
 

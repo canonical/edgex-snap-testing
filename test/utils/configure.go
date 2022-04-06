@@ -2,12 +2,22 @@ package utils
 
 import "testing"
 
-func TestEnvChangeServicePort(t *testing.T, snapName, defaultServicePort string) {
-	const envServicePort = "env.service.port"
+func TestEnvChangeServicePort(t *testing.T, snapName, appName, defaultServicePort string) {
 	const newPort = "56789"
 
+	var envServicePort = "env.service.port"
+
+	if appName != "" {
+		envServicePort = "env." + appName + ".service.port"
+	}
+
 	t.Cleanup(func() {
-		SnapStop(t, snapName)
+		if appName != "" {
+			SnapStop(t, snapName+"."+appName)
+		} else {
+			SnapStop(t, snapName)
+		}
+
 		SnapUnset(t, snapName, envServicePort)
 	})
 
@@ -15,14 +25,36 @@ func TestEnvChangeServicePort(t *testing.T, snapName, defaultServicePort string)
 	RequirePortAvailable(t, newPort)
 
 	// check if service port can be changed
-	SnapStop(t, snapName)
+	if appName != "" {
+		SnapStop(t, snapName+"."+appName)
+	} else {
+		SnapStop(t, snapName)
+	}
+
 	SnapSet(t, snapName, envServicePort, newPort)
-	SnapStart(t, snapName)
+
+	if appName != "" {
+		SnapStart(t, snapName+"."+appName)
+	} else {
+		SnapStart(t, snapName)
+	}
+
 	WaitServiceOnline(t, newPort)
 
 	// check if service port can be unset and revert to the default
-	SnapStop(t, snapName)
+	if appName != "" {
+		SnapStop(t, snapName+"."+appName)
+	} else {
+		SnapStop(t, snapName)
+	}
+
 	SnapUnset(t, snapName, envServicePort)
-	SnapStart(t, snapName)
+
+	if appName != "" {
+		SnapStart(t, snapName+"."+appName)
+	} else {
+		SnapStart(t, snapName)
+	}
+
 	WaitServiceOnline(t, defaultServicePort)
 }
