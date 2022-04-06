@@ -5,17 +5,16 @@ import (
 	"testing"
 )
 
-const newPort = "56789"
-
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	const envServicePort = "env.device-virtual.service.port"
 
 	t.Cleanup(func() {
 		utils.SnapStop(t, snapAppName)
-		utils.SnapUnset(t, platformSnap, envServicePort)
 	})
 	t.Run("change device-virtual service port", func(t *testing.T) {
+		const newPort = "56789"
+		const envServicePort = "env.device-virtual.service.port"
+
 		// make sure the port is available before using it
 		utils.RequirePortAvailable(t, newPort)
 
@@ -30,6 +29,9 @@ func TestEnvConfig(t *testing.T) {
 		utils.SnapUnset(t, platformSnap, envServicePort)
 		utils.SnapStart(t, snapAppName)
 		utils.WaitServiceOnline(t, deviceVirtualDefaultServicePort)
+
+		utils.SnapStop(t, snapAppName)
+		utils.SnapUnset(t, platformSnap, envServicePort)
 	})
 }
 
