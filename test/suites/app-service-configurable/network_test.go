@@ -13,7 +13,7 @@ func TestNetworkInterface(t *testing.T) {
 	utils.SnapStart(t, ascService)
 
 	t.Run("listen default port "+appRulesEngineServicePort, func(t *testing.T) {
-		utils.WaitServiceOnline(t, appRulesEngineServicePort)
+		utils.WaitServiceOnline(t, 60, appRulesEngineServicePort)
 	})
 
 	t.Run("not listen on all interfaces", func(t *testing.T) {

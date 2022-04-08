@@ -23,7 +23,7 @@ func TestEnvConfig(t *testing.T) {
 
 		utils.SnapSet(t, deviceMqttSnap, "env.service.port", newPort)
 		utils.SnapStart(t, deviceMqttSnap)
-		utils.WaitServiceOnline(t, newPort)
+		utils.WaitServiceOnline(t, 60, newPort)
 	})
 }
 

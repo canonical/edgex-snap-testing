@@ -40,7 +40,7 @@ func TestMain(m *testing.M) {
 	// Otherwise, settings that get passed using environment variables on first start get uploaded
 	// and become the default. This is possibility a device-rest service bug.
 	utils.SnapStart(nil, deviceRestService)
-	utils.WaitServiceOnline(nil, defaultServicePort)
+	utils.WaitServiceOnline(nil, 60, defaultServicePort)
 
 	exitCode := m.Run()
 

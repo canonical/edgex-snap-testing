@@ -14,7 +14,7 @@ func TestNetworkInterface(t *testing.T) {
 	utils.SnapStart(t, snapAppName)
 
 	t.Run("listen default port "+deviceVirtualDefaultServicePort, func(t *testing.T) {
-		utils.WaitServiceOnline(t, deviceVirtualDefaultServicePort)
+		utils.WaitServiceOnline(t, 60, deviceVirtualDefaultServicePort)
 	})
 
 	t.Run("not listen on all interfaces", func(t *testing.T) {

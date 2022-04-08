@@ -18,11 +18,11 @@ func TestEnvChangeServicePort(t *testing.T, snapName, defaultServicePort string)
 	SnapStop(t, snapName)
 	SnapSet(t, snapName, envServicePort, newPort)
 	SnapStart(t, snapName)
-	WaitServiceOnline(t, newPort)
+	WaitServiceOnline(t, 60, newPort)
 
 	// check if service port can be unset and revert to the default
 	SnapStop(t, snapName)
 	SnapUnset(t, snapName, envServicePort)
 	SnapStart(t, snapName)
-	WaitServiceOnline(t, defaultServicePort)
+	WaitServiceOnline(t, 60, defaultServicePort)
 }

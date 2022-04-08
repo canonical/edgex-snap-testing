@@ -22,13 +22,13 @@ func TestEnvConfig(t *testing.T) {
 		utils.SnapStop(t, snapAppName)
 		utils.SnapSet(t, platformSnap, envServicePort, newPort)
 		utils.SnapStart(t, snapAppName)
-		utils.WaitServiceOnline(t, newPort)
+		utils.WaitServiceOnline(t, 60, newPort)
 
 		// check if service port can be unset and revert to the default
 		utils.SnapStop(t, snapAppName)
 		utils.SnapUnset(t, platformSnap, envServicePort)
 		utils.SnapStart(t, snapAppName)
-		utils.WaitServiceOnline(t, deviceVirtualDefaultServicePort)
+		utils.WaitServiceOnline(t, 60, deviceVirtualDefaultServicePort)
 
 		utils.SnapStop(t, snapAppName)
 		utils.SnapUnset(t, platformSnap, envServicePort)
