@@ -42,6 +42,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// security off
+	utils.SnapStop(nil, "edgex-ekuiper")
 	utils.SnapSet(nil, "edgexfoundry", "security-secret-store", "off")
 	utils.SnapSet(nil, "edgex-ekuiper", "edgex-security", "off")
 	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
