@@ -11,12 +11,6 @@ const ekuiperSnap = "edgex-ekuiper"
 const ekuiperService = "edgex-ekuiper.kuiper"
 
 func TestMain(m *testing.M) {
-	// edgex-ekuiper's latest/edge channel is currently broken:
-	// https://forum.snapcraft.io/t/snapcraft-release-has-no-effects-for-channel-latest-edge/29069
-	if utils.ServiceChannel == "latest/edge" {
-		utils.ServiceChannel = "1/edge"
-	}
-
 	log.Println("[SETUP]")
 
 	// start clean
@@ -40,9 +34,6 @@ func TestMain(m *testing.M) {
 		"edgexfoundry:edgex-secretstore-token",
 		ekuiperSnap+":edgex-secretstore-token",
 	)
-	utils.SnapRestart(nil,
-		ekuiperService,
-	)
 
 	// security on (default)
 	exitCode := m.Run()
@@ -51,11 +42,16 @@ func TestMain(m *testing.M) {
 	}
 
 	// security off
-	utils.Exec(nil, "sudo snap set edgexfoundry security-secret-store=off")
+	utils.SnapStop(nil, "edgex-ekuiper")
+	utils.SnapSet(nil, "edgexfoundry", "security-secret-store", "off")
+	utils.SnapSet(nil, "edgex-ekuiper", "edgex-security", "off")
 	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
 	utils.SnapDisconnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
 		ekuiperSnap+":edgex-secretstore-token",
+	)
+	utils.SnapStart(nil,
+		ekuiperService,
 	)
 
 	exitCode = m.Run()
