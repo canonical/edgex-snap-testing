@@ -18,7 +18,6 @@ jobs:
           - name: device-mqtt
 
           - name: ekuiper
-            channel: 1/edge
 
           - name: app-service-configurable
 
