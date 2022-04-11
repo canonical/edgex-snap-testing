@@ -53,6 +53,12 @@ PORTS:
 	}
 }
 
+// WaitPlatformOnline waits for all platform ports to come online
+// by dialing its port(s) up to a maximum number
+func WaitPlatformOnline(t *testing.T) {
+	WaitServiceOnline(t, 180, PlatformPorts...)
+}
+
 // RequirePortOpen checks if the local port(s) accepts connections
 func RequirePortOpen(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
