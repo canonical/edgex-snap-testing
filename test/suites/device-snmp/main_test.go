@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
 	// make sure all services are online before starting the tests
-	utils.WaitServiceOnline(nil, utils.PlatformPorts...)
+	utils.WaitPlatformOnline(nil)
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually regardless

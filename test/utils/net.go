@@ -23,12 +23,10 @@ var PlatformPorts = []string{
 
 // WaitServiceOnline waits for a service to come online by dialing its port(s)
 // up to a maximum number
-func WaitServiceOnline(t *testing.T, ports ...string) {
+func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")
 	}
-
-	const maxRetry = 60
 
 PORTS:
 	for _, port := range ports {
@@ -53,6 +51,12 @@ PORTS:
 			fatalf(t, "Time out: reached max %d retries.", maxRetry)
 		}
 	}
+}
+
+// WaitPlatformOnline waits for all platform ports to come online
+// by dialing its port(s) up to a maximum number
+func WaitPlatformOnline(t *testing.T) {
+	WaitServiceOnline(t, 180, PlatformPorts...)
 }
 
 // RequirePortOpen checks if the local port(s) accepts connections

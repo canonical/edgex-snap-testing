@@ -23,7 +23,7 @@ func TestEnvConfig(t *testing.T) {
 
 		utils.SnapSet(t, deviceGpioSnap, "env.service.port", newPort)
 		utils.SnapStart(t, deviceGpioSnap)
-		utils.WaitServiceOnline(t, newPort)
+		utils.WaitServiceOnline(t, 60, newPort)
 	})
 }
 
