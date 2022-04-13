@@ -31,6 +31,8 @@ jobs:
           
           - name: edgexfoundry
           
+          - name: cli
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
