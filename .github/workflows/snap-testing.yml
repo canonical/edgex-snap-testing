@@ -38,6 +38,9 @@ jobs:
           
           - name: device-rfid-llrp
           
+          - name: app-rfid-llrp-inventory
+
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
