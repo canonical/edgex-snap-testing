@@ -46,8 +46,8 @@ runs:
       run: |
         go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
-    # Print snap logs
-    - if: always()
+    # Print snap logs if file exists
+    - if: ${{hashFiles('./suites/${{inputs.name}}/snap.log') != ''}}
       shell: bash
       working-directory: ${{github.action_path}}
       run: |
