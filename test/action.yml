@@ -19,7 +19,10 @@ inputs:
       This is useful only when 'snap' input is not set.
     required: false
   print_logs:
-    description: Print logs if log file exists
+    description: |
+      Print snap logs.
+      Logging is enabled by default.
+      Setting the value to 'false' disables the logging.
     required: false
 
 
