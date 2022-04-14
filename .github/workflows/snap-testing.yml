@@ -33,6 +33,8 @@ jobs:
           
           - name: cli
             print_logs: false
+
+          - name: ui
           
     # use local action to test
     steps:
