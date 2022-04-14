@@ -31,6 +31,9 @@ jobs:
           
           - name: edgexfoundry
           
+          - name: cli
+            print_logs: false
+
           - name: ui
           
     # use local action to test
@@ -46,3 +49,4 @@ jobs:
         with:
           name: ${{matrix.name}}
           channel: ${{matrix.channel}}
+          print_logs: ${{matrix.print_logs}}
