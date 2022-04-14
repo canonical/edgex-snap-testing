@@ -36,6 +36,8 @@ jobs:
 
           - name: ui
           
+          - name: device-rfid-llrp
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
