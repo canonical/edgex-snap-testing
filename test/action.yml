@@ -18,11 +18,9 @@ inputs:
       Channel for downloading the snap from store.
       This is useful only when 'snap' input is not set.
     required: false
-    default: latest/edge
   print_logs:
     description: Print logs if log file exists
     required: false
-    default: true
 
 
 runs:
