@@ -19,6 +19,11 @@ inputs:
       This is useful only when 'snap' input is not set.
     required: false
     default: latest/edge
+  print_logs:
+    description: Print logs if log file exists
+    required: false
+    default: true
+
 
 runs:
   using: composite
@@ -46,8 +51,8 @@ runs:
       run: |
         go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
-    # Print snap logs if file exists
-    - if: ${{hashFiles('./suites/${{inputs.name}}/snap.log') != ''}}
+    # Print snap logs
+    - if: always() && inputs.print_logs == 'true'
       shell: bash
       working-directory: ${{github.action_path}}
       run: |
