@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const deviceRestSnap = "edgex-device-rest"
 const deviceRestService = "edgex-device-rest.device-rest"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -49,7 +52,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, deviceRestSnap)
+	utils.SnapDumpLogs(nil, start, deviceRestSnap)
 
 	utils.SnapRemove(nil,
 		deviceRestSnap,

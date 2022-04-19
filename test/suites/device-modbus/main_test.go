@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const deviceModbusSnap = "edgex-device-modbus"
 const deviceModbusService = "edgex-device-modbus.device-modbus"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -43,7 +46,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, deviceModbusSnap)
+	utils.SnapDumpLogs(nil, start, deviceModbusSnap)
 
 	utils.SnapRemove(nil,
 		deviceModbusSnap,

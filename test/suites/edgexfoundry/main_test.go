@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const (
@@ -14,6 +15,8 @@ const (
 
 	deviceVirtualDefaultServicePort = "59900"
 )
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -37,7 +40,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, platformSnap)
+	utils.SnapDumpLogs(nil, start, platformSnap)
 
 	utils.SnapRemove(nil,
 		platformSnap,

@@ -5,11 +5,14 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const ascSnap = "edgex-app-service-configurable"
 const ascService = "edgex-app-service-configurable.app-service-configurable"
 const defaultProfile = "rules-engine"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -47,7 +50,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, ascSnap)
+	utils.SnapDumpLogs(nil, start, ascSnap)
 
 	utils.SnapRemove(nil,
 		ascSnap,

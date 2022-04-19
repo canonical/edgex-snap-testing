@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const deviceGpioSnap = "edgex-device-gpio"
 const deviceGpioService = "edgex-device-gpio.device-gpio"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -43,7 +46,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, deviceGpioSnap)
+	utils.SnapDumpLogs(nil, start, deviceGpioSnap)
 
 	utils.SnapRemove(nil,
 		deviceGpioSnap,

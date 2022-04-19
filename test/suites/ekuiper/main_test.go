@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const ekuiperSnap = "edgex-ekuiper"
 const ekuiperService = "edgex-ekuiper.kuiper"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 	log.Println("[SETUP]")
@@ -62,7 +65,7 @@ func TestMain(m *testing.M) {
 TEARDOWN:
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, ekuiperSnap)
+	utils.SnapDumpLogs(nil, start, ekuiperSnap)
 
 	utils.SnapRemove(nil,
 		ekuiperSnap,

@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const deviceRfidLlrpSnap = "edgex-device-rfid-llrp"
 const deviceRfidLlrpService = "edgex-device-rfid-llrp.device-rfid-llrp"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -49,7 +52,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, deviceRfidLlrpSnap)
+	utils.SnapDumpLogs(nil, start, deviceRfidLlrpSnap)
 
 	utils.SnapRemove(nil,
 		deviceRfidLlrpSnap,
