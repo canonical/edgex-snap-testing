@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const uiSnap = "edgex-ui"
 const uiService = "edgex-ui.edgex-ui"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -29,7 +32,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, uiSnap)
+	utils.SnapDumpLogs(nil, start, uiSnap)
 
 	utils.SnapRemove(nil,
 		uiSnap,

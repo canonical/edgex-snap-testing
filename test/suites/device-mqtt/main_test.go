@@ -5,10 +5,13 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const deviceMqttSnap = "edgex-device-mqtt"
 const deviceMqttService = "edgex-device-mqtt.device-mqtt"
+
+var start = time.Now()
 
 func TestMain(m *testing.M) {
 
@@ -43,7 +46,7 @@ func TestMain(m *testing.M) {
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, deviceMqttSnap)
+	utils.SnapDumpLogs(nil, start, deviceMqttSnap)
 
 	utils.SnapRemove(nil,
 		deviceMqttSnap,
