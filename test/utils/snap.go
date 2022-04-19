@@ -69,26 +69,25 @@ func SnapVersion(t *testing.T, name string) string {
 	return strings.TrimSpace(out)
 }
 
-// TODO: should the logs be fetched in each test?
-// for that, need to use journalctl instead with --since
+func snapJournalCommand(start time.Time, name string) string {
+	// The command should not return error even if nothing is grepped, hence the "|| true"
+	return fmt.Sprintf("sudo journalctl --since \"%s\" --no-pager | grep \"%s\"|| true",
+		start.Format("2006-01-02 15:04:05"),
+		name)
+}
+
 func SnapDumpLogs(t *testing.T, start time.Time, name string) {
 	const filename = "snap.log" // used in action.yml
-	Exec(t, fmt.Sprintf(
-		"(sudo journalctl --since \"%s\" --no-pager | grep \"%s\"|| true) > %s",
-		start.Format("2006-01-02 15:04:05"),
-		name,
+	Exec(t, fmt.Sprintf("(%s) > %s",
+		snapJournalCommand(start, name),
 		filename))
 
 	wd, _ := os.Getwd()
 	fmt.Printf("Wrote snap logs to %s/%s\n", wd, filename)
 }
 
-func SnapLogsJournal(t *testing.T, start time.Time, name string) string {
-	logs, _ := Exec(t, fmt.Sprintf(
-		"sudo journalctl --since \"%s\" --no-pager | grep \"%s\"|| true\n\n",
-		start.Format("2006-01-02 15:04:05"),
-		name))
-
+func SnapLogs(t *testing.T, start time.Time, name string) string {
+	logs, _ := Exec(t, snapJournalCommand(start, name))
 	return logs
 }
 
