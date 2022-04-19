@@ -61,7 +61,7 @@ func TestProfileConfig(t *testing.T) {
 
 		//check logs for the record of expected profile
 		time.Sleep(1 * time.Second)
-		logs := utils.SnapLogsJournal(t, start, ascSnap)
+		logs := utils.SnapLogs(t, start, ascSnap)
 		expectLog := "app=app-" + profile
 
 		require.True(t, strings.Contains(logs, expectLog))
