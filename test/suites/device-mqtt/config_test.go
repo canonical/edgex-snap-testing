@@ -22,15 +22,15 @@ func TestEnvConfig(t *testing.T) {
 		utils.RequirePortAvailable(t, newPort)
 
 		// set env. and validate the new port comes online
-		utils.SnapStart(t, deviceMqttSnap)
 		utils.SnapSet(t, deviceMqttSnap, "env.service.port", newPort)
-		utils.SnapRestart(t, deviceMqttService)
+		utils.SnapStart(t, deviceMqttSnap)
 
 		utils.WaitServiceOnline(t, 60, newPort)
 
 		// unset env. and validate the default port comes online
 		utils.SnapUnset(t, deviceMqttSnap, "env.service.port")
 		utils.SnapRestart(t, deviceMqttService)
+
 		utils.WaitServiceOnline(t, 60, defaultServicePort)
 	})
 }
@@ -54,9 +54,8 @@ func TestAppConfig(t *testing.T) {
 		utils.RequirePortAvailable(t, newPort)
 
 		// set apps. and validate the new port comes online
-		utils.SnapStart(t, deviceMqttSnap)
 		utils.SnapSet(t, deviceMqttSnap, "apps.device-mqtt.config.service.port", newPort)
-		utils.SnapRestart(t, deviceMqttService)
+		utils.SnapStart(t, deviceMqttSnap)
 
 		utils.WaitServiceOnline(t, 60, newPort)
 
@@ -87,9 +86,8 @@ func TestGlobalConfig(t *testing.T) {
 		utils.RequirePortAvailable(t, newPort)
 
 		// set config. and validate the new port comes online
-		utils.SnapStart(t, deviceMqttSnap)
 		utils.SnapSet(t, deviceMqttSnap, "config.service.port", newPort)
-		utils.SnapRestart(t, deviceMqttService)
+		utils.SnapStart(t, deviceMqttSnap)
 
 		utils.WaitServiceOnline(t, 60, newPort)
 
@@ -121,10 +119,9 @@ func TestMixedConfig(t *testing.T) {
 
 		// set apps. and config. with different values,
 		// and validate that app-specific option has been picked up because it has higher precedence
-		utils.SnapStart(t, deviceMqttSnap)
 		utils.SnapSet(t, deviceMqttSnap, "apps.device-mqtt.config.service.port", newAppPort)
 		utils.SnapSet(t, deviceMqttSnap, "config.service.port", newConfigPort)
-		utils.SnapRestart(t, deviceMqttService)
+		utils.SnapStart(t, deviceMqttSnap)
 
 		utils.WaitServiceOnline(t, 60, newAppPort)
 	})

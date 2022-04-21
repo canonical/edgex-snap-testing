@@ -22,9 +22,8 @@ func TestEnvConfig(t *testing.T) {
 		utils.RequirePortAvailable(t, newPort)
 
 		// set env. and validate the new port comes online
-		utils.SnapStart(t, deviceRestSnap)
 		utils.SnapSet(t, deviceRestSnap, "env.service.port", newPort)
-		utils.SnapRestart(t, deviceRestService)
+		utils.SnapStart(t, deviceRestSnap)
 
 		utils.WaitServiceOnline(t, 60, newPort)
 
@@ -54,9 +53,8 @@ func TestAppConfig(t *testing.T) {
 		utils.RequirePortAvailable(t, newPort)
 
 		// set apps. and validate the new port comes online
-		utils.SnapStart(t, deviceRestSnap)
 		utils.SnapSet(t, deviceRestSnap, "apps.device-rest.config.service.port", newPort)
-		utils.SnapRestart(t, deviceRestService)
+		utils.SnapStart(t, deviceRestSnap)
 
 		utils.WaitServiceOnline(t, 60, newPort)
 
@@ -87,9 +85,8 @@ func TestGlobalConfig(t *testing.T) {
 		utils.RequirePortAvailable(t, newPort)
 
 		// set config. and validate the new port comes online
-		utils.SnapStart(t, deviceRestSnap)
 		utils.SnapSet(t, deviceRestSnap, "config.service.port", newPort)
-		utils.SnapRestart(t, deviceRestService)
+		utils.SnapStart(t, deviceRestSnap)
 
 		utils.WaitServiceOnline(t, 60, newPort)
 
@@ -121,10 +118,9 @@ func TestMixedConfig(t *testing.T) {
 
 		// set apps. and config. with different values,
 		// and validate that app-specific option has been picked up because it has higher precedence
-		utils.SnapStart(t, deviceRestSnap)
 		utils.SnapSet(t, deviceRestSnap, "apps.device-rest.config.service.port", newAppPort)
 		utils.SnapSet(t, deviceRestSnap, "config.service.port", newConfigPort)
-		utils.SnapRestart(t, deviceRestService)
+		utils.SnapStart(t, deviceRestSnap)
 
 		utils.WaitServiceOnline(t, 60, newAppPort)
 	})
