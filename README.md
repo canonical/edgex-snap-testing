@@ -15,6 +15,12 @@ To test all:
 go test -p 1 ./test/suites/...
 ```
 
+Test one with variables, e.g.:
+```bash
+FULL_CONFIG_TEST=on go test -p 1 ./test/suites/device-mqtt
+LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -p 1 ./test/suites/device-mqtt
+```
+
 Test the testing utils:
 ```bash
 go test ./test/utils -count=10

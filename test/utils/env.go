@@ -8,6 +8,7 @@ const (
 	platformChannel = "PLATFORM_CHANNEL"
 	serviceChannel  = "SERVICE_CHANNEL"
 	localSnap       = "LOCAL_SNAP"
+	fullConfigTest  = "FULL_CONFIG_TEST"
 )
 
 var (
@@ -15,6 +16,7 @@ var (
 	PlatformChannel = "latest/edge"
 	ServiceChannel  = "latest/edge"
 	LocalSnap       = ""
+	FullConfigTest  = "off"
 )
 
 func init() {
@@ -28,5 +30,9 @@ func init() {
 
 	if v := os.Getenv(localSnap); v != "" {
 		LocalSnap = v
+	}
+
+	if v := os.Getenv(fullConfigTest); v != "" {
+		FullConfigTest = v
 	}
 }
