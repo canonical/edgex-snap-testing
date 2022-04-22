@@ -41,10 +41,8 @@ func SetAppConfig(t *testing.T, snap, service, appName, defaultServicePort strin
 
 	t.Run("set and unset apps.", func(t *testing.T) {
 		t.Cleanup(func() {
-			// temporary using unset apps and unset config together here to do unset apps' job
-			// until this issue been solved: https://github.com/canonical/edgex-snap-hooks/issues/43
-			SnapUnset(t, snap, "apps."+appName+".config.service.port")
-			SnapUnset(t, snap, "config.service.port")
+			SnapUnset(t, snap, "apps")
+			SnapUnset(t, snap, "config-enabled")
 			SnapStop(t, snap)
 		})
 
@@ -63,10 +61,7 @@ func SetAppConfig(t *testing.T, snap, service, appName, defaultServicePort strin
 		WaitServiceOnline(t, 60, newPort)
 
 		// unset apps. and validate the default port comes online
-		// temporary using unset apps and unset config together here to do unset apps' job
-		// until this issue been solved: https://github.com/canonical/edgex-snap-hooks/issues/43
 		SnapUnset(t, snap, "apps."+appName+".config.service.port")
-		SnapUnset(t, snap, "config.service.port")
 		SnapRestart(t, service)
 
 		WaitServiceOnline(t, 60, defaultServicePort)
@@ -79,7 +74,8 @@ func SetGlobalConfig(t *testing.T, snap, service, defaultServicePort string) {
 
 	t.Run("set and unset apps.", func(t *testing.T) {
 		t.Cleanup(func() {
-			SnapUnset(t, snap, "config.service.port")
+			SnapUnset(t, snap, "config")
+			SnapUnset(t, snap, "config-enabled")
 			SnapStop(t, snap)
 		})
 
@@ -116,8 +112,9 @@ func SetMixedConfig(t *testing.T, snap, service, appName, defaultServicePort str
 
 		t.Run("use apps. and config. for different values", func(t *testing.T) {
 			t.Cleanup(func() {
-				SnapUnset(t, snap, "apps."+appName+".config.service.port")
-				SnapUnset(t, snap, "config.service.port")
+				SnapUnset(t, snap, "apps")
+				SnapUnset(t, snap, "config")
+				SnapUnset(t, snap, "config-enabled")
 				SnapStop(t, service)
 			})
 
