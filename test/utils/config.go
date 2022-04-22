@@ -50,6 +50,9 @@ func SetAppConfig(t *testing.T, snap, service, appName, defaultServicePort strin
 
 		const newPort = "22222"
 
+		// enable new apps option to aviod mixed options issue with old env option
+		SnapSet(t, snap, "config-enabled", "true")
+
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
 
@@ -81,6 +84,9 @@ func SetGlobalConfig(t *testing.T, snap, service, defaultServicePort string) {
 		})
 
 		const newPort = "33333"
+
+		// enable new config option to aviod mixed options issue with old env option
+		SnapSet(t, snap, "config-enabled", "true")
 
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
@@ -117,6 +123,9 @@ func SetMixedConfig(t *testing.T, snap, service, appName, defaultServicePort str
 
 			const newAppPort = "44444"
 			const newConfigPort = "55555"
+
+			// enable new apps/config options to aviod mixed options issue with old env option
+			SnapSet(t, snap, "config-enabled", "true")
 
 			// make sure the ports are available before using it
 			RequirePortAvailable(t, newAppPort)
