@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"os"
+	"strconv"
+)
 
 const (
 	// environment variables
@@ -8,6 +11,7 @@ const (
 	platformChannel = "PLATFORM_CHANNEL"
 	serviceChannel  = "SERVICE_CHANNEL"
 	localSnap       = "LOCAL_SNAP"
+	fullConfigTest  = "FULL_CONFIG_TEST"
 )
 
 var (
@@ -15,6 +19,7 @@ var (
 	PlatformChannel = "latest/edge"
 	ServiceChannel  = "latest/edge"
 	LocalSnap       = ""
+	FullConfigTest  = false
 )
 
 func init() {
@@ -28,5 +33,9 @@ func init() {
 
 	if v := os.Getenv(localSnap); v != "" {
 		LocalSnap = v
+	}
+
+	if v := os.Getenv(fullConfigTest); v != "" {
+		FullConfigTest, _ = strconv.ParseBool(v)
 	}
 }

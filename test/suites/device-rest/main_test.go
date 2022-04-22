@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const deviceRestSnap = "edgex-device-rest"
-const deviceRestService = "edgex-device-rest.device-rest"
+const (
+	deviceRestSnap    = "edgex-device-rest"
+	appName           = "device-rest"
+	deviceRestService = deviceRestSnap + "." + appName
+)
 
 var start = time.Now()
 
