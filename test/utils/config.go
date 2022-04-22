@@ -3,11 +3,10 @@ package utils
 import "testing"
 
 func SetEnvConfig(t *testing.T, snap, service, defaultServicePort string) {
-	if FullConfigTest == "off" {
+	if !FullConfigTest {
 		// make this subtest optional to save testing time,
-		// similar full config tests have been operated in device-mqtt test suite
-		t.Skip()
-	} else if FullConfigTest == "on" {
+		t.Skip("Full config test is disabled by default, and similar full config tests have been operated in device-mqtt test suite.")
+	} else if FullConfigTest {
 		// start clean
 		SnapStop(t, snap)
 
@@ -101,11 +100,11 @@ func SetGlobalConfig(t *testing.T, snap, service, defaultServicePort string) {
 }
 
 func SetMixedConfig(t *testing.T, snap, service, appName, defaultServicePort string) {
-	if FullConfigTest == "off" {
+	if !FullConfigTest {
 		// make this subtest optional to save testing time,
 		// similar full config tests have been operated in device-mqtt test suite
-		t.Skip()
-	} else if FullConfigTest == "on" {
+		t.Skip("Full config test is disabled by default, and similar full config tests have been operated in device-mqtt test suite.")
+	} else if FullConfigTest {
 		// start clean
 		SnapStop(t, snap)
 

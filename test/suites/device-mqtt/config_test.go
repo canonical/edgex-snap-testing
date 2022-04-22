@@ -7,7 +7,7 @@ import (
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	utils.FullConfigTest = "on"
+	utils.FullConfigTest = true
 	utils.SetEnvConfig(t, deviceMqttSnap, deviceMqttService, defaultServicePort)
 }
 
@@ -21,6 +21,6 @@ func TestGlobalConfig(t *testing.T) {
 }
 
 func TestMixedConfig(t *testing.T) {
-	utils.FullConfigTest = "on"
+	utils.FullConfigTest = true
 	utils.SetMixedConfig(t, deviceMqttSnap, deviceMqttService, appName, defaultServicePort)
 }
