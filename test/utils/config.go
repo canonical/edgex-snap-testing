@@ -6,7 +6,7 @@ func SetEnvConfig(t *testing.T, snap, service, defaultServicePort string) {
 	if !FullConfigTest {
 		// make this subtest optional to save testing time,
 		t.Skip("Full config test is disabled by default, and similar full config tests have been operated in device-mqtt test suite.")
-	} else if FullConfigTest {
+	} else {
 		// start clean
 		SnapStop(t, snap)
 
@@ -104,7 +104,7 @@ func SetMixedConfig(t *testing.T, snap, service, appName, defaultServicePort str
 		// make this subtest optional to save testing time,
 		// similar full config tests have been operated in device-mqtt test suite
 		t.Skip("Full config test is disabled by default, and similar full config tests have been operated in device-mqtt test suite.")
-	} else if FullConfigTest {
+	} else {
 		// start clean
 		SnapStop(t, snap)
 
