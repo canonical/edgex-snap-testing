@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const deviceModbusSnap = "edgex-device-modbus"
-const deviceModbusService = "edgex-device-modbus.device-modbus"
+const (
+	deviceModbusSnap    = "edgex-device-modbus"
+	deviceModbusApp     = "device-modbus"
+	deviceModbusService = "edgex-device-modbus." + deviceModbusApp
+)
 
 var start = time.Now()
 
