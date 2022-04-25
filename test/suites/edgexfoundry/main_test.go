@@ -33,7 +33,7 @@ func TestMain(m *testing.M) {
 	utils.WaitPlatformOnline(nil)
 
 	// make sure device-virtual service starts and comes online before starting the tests
-	utils.SnapSet(nil, platformSnap, deviceVirtualApp, "on")
+	utils.SnapStart(nil, snapAppName)
 	utils.WaitServiceOnline(nil, 60, deviceVirtualDefaultServicePort)
 
 	exitCode := m.Run()
