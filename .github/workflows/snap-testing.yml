@@ -32,6 +32,7 @@ jobs:
           - name: device-snmp
           
           - name: device-modbus
+            channel: edge/pr-336
           
           - name: edgexfoundry
           
