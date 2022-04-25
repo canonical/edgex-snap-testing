@@ -42,6 +42,7 @@ jobs:
           - name: ui
           
           - name: device-rfid-llrp
+            channel: edge/pr-75
           
           - name: app-rfid-llrp-inventory
             channel: edge/pr-74
