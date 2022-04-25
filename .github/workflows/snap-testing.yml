@@ -43,6 +43,7 @@ jobs:
           - name: device-rfid-llrp
           
           - name: app-rfid-llrp-inventory
+            channel: edge/pr-74
 
           
     # use local action to test
