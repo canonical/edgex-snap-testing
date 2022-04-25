@@ -16,14 +16,18 @@ jobs:
       matrix:
         include:
           - name: device-mqtt
+            channel: edge/pr-365
 
           - name: ekuiper
 
           - name: app-service-configurable
+            channel: edge/pr-407
 
           - name: device-gpio
+            channel: edge/pr-25
           
           - name: device-rest
+            channel: edge/pr-177
           
           - name: device-snmp
           
