@@ -17,7 +17,7 @@ go test -p 1 ./test/suites/...
 
 Test one with variables, e.g.:
 ```bash
-FULL_CONFIG_TEST=on go test -p 1 ./test/suites/device-mqtt
+FULL_CONFIG_TEST=true go test -p 1 ./test/suites/device-mqtt
 ```
 ```bash
 LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -p 1 ./test/suites/device-mqtt
