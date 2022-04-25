@@ -1,6 +1,32 @@
 # EdgeX Snap Tests
 Test scripts, Github actions, and workflows for the [EdgeX Foundry](https://docs.edgexfoundry.org/) snaps.
 
+```mermaid
+graph LR
+
+    subgraph tests [Edgex Snap Testing Project]
+        
+        builda[[Build Action]] -- 1b --> snapcraft[Snap Build]
+        testa[[Test Action]] -- 2c --> gotests[Test Suites]
+        
+        gotests -- >>PR --> localtestj[Local Test Job]
+        localtestj -- 3 --> testa
+        
+    end
+
+    subgraph source [Source Project]
+        Source -- >>PR<br/>>>Push<br/>>>Manual Trigger --> buildj
+        
+        subgraph snap [Snap Testing Workflow]
+            buildj -- 2a --> testj
+            buildj[Build Job] -- 1a --> builda
+            snapcraft -- 1c --> artifacts[Artifact Snap]
+            artifacts -. 1d .-> buildj
+            testj[Test Job] -- 2b --> testa
+        end
+    end
+```
+
 ## Test locally
 Test one, e.g.:
 ```bash
@@ -59,31 +85,4 @@ jobs:
         with:
           name: device-mqtt
           snap: ${{needs.build.outputs.snap}}
-```
-
-### Workflow diagram
-```mermaid
-graph LR
-
-    subgraph tests [Edgex Snap Testing Project]
-        
-        builda[[Build Action]] --> snapcraft[Snap Build]
-        testa[[Test Action]] --> gotests[Test Suites]
-        
-        gotests -- PR --> localtestj[Local Test Job]
-        localtestj --> testa
-        
-    end
-
-    subgraph source [Source Project]
-        Source -- PR<br/>Push<br/>Manual Trigger --> buildj
-        
-        subgraph snap [Snap Testing Workflow]
-            buildj --> testj
-            buildj[Build Job] --> builda
-            snapcraft --> artifacts[Artifact Snap]
-            artifacts -.-> buildj
-            testj[Test Job] --> testa
-        end
-    end
 ```
