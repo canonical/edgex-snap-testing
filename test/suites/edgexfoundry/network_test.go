@@ -11,6 +11,7 @@ func TestNetworkInterface(t *testing.T) {
 	})
 
 	// check network interface status for device-virtual service
+	utils.SnapStart(t, platformSnap)
 	utils.SnapStart(t, snapAppName)
 
 	t.Run("listen default port "+deviceVirtualDefaultServicePort, func(t *testing.T) {
