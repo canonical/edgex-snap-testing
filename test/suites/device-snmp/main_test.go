@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const deviceSnmpSnap = "edgex-device-snmp"
-const deviceSnmpService = "edgex-device-snmp.device-snmp"
+const (
+	deviceSnmpSnap    = "edgex-device-snmp"
+	deviceSnmpApp     = "device-snmp"
+	deviceSnmpService = deviceSnmpSnap + "." + deviceSnmpApp
+)
 
 var start = time.Now()
 
