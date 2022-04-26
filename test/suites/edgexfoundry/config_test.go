@@ -11,11 +11,11 @@ func TestEnvConfig(t *testing.T) {
 	const envServicePort = "env." + deviceVirtualApp + ".service.port"
 
 	// start clean
-	utils.SnapStop(t, platformSnap)
+	utils.SnapStop(t, deviceVirtualService)
 
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, envServicePort)
-		utils.SnapStop(t, platformSnap)
+		utils.SnapStop(t, deviceVirtualService)
 	})
 	t.Run("change device-virtual service port", func(t *testing.T) {
 
@@ -24,13 +24,12 @@ func TestEnvConfig(t *testing.T) {
 
 		// set env. and validate the new port comes online
 		utils.SnapSet(t, platformSnap, envServicePort, newPort)
-		utils.SnapStart(t, platformSnap)
-
+		utils.SnapStart(t, deviceVirtualService)
 		utils.WaitServiceOnline(t, 60, newPort)
 
 		// unset env. and validate the default port comes online
 		utils.SnapUnset(t, platformSnap, envServicePort)
-		utils.SnapRestart(t, snapAppName)
+		utils.SnapRestart(t, deviceVirtualService)
 		utils.WaitServiceOnline(t, 60, deviceVirtualDefaultServicePort)
 
 	})
@@ -38,29 +37,29 @@ func TestEnvConfig(t *testing.T) {
 
 func TestAppConfig(t *testing.T) {
 	t.Cleanup(func() {
-		utils.SnapStop(t, platformSnap)
+		utils.SnapStop(t, deviceVirtualService)
 	})
 
-	utils.SnapStart(t, platformSnap)
-	utils.SetAppConfig(t, platformSnap, snapAppName, deviceVirtualApp, deviceVirtualDefaultServicePort)
+	utils.SnapStart(t, deviceVirtualService)
+	utils.SetAppConfig(t, platformSnap, deviceVirtualService, deviceVirtualApp, deviceVirtualDefaultServicePort)
 }
 
 func TestGlobalConfig(t *testing.T) {
 	t.Cleanup(func() {
-		utils.SnapStop(t, platformSnap)
+		utils.SnapStop(t, deviceVirtualService)
 	})
-	utils.SnapStart(t, platformSnap)
 
-	utils.SetGlobalConfig(t, platformSnap, snapAppName, deviceVirtualDefaultServicePort)
+	utils.SnapStart(t, deviceVirtualService)
+	utils.SetGlobalConfig(t, platformSnap, deviceVirtualService, deviceVirtualDefaultServicePort)
 }
 
 func TestMixedConfig(t *testing.T) {
 	utils.FullConfigTest = true
 
 	t.Cleanup(func() {
-		utils.SnapStop(t, platformSnap)
+		utils.SnapStop(t, deviceVirtualService)
 	})
-	utils.SnapStart(t, platformSnap)
 
-	utils.SetMixedConfig(t, platformSnap, snapAppName, deviceVirtualApp, deviceVirtualDefaultServicePort)
+	utils.SnapStart(t, deviceVirtualService)
+	utils.SetMixedConfig(t, platformSnap, deviceVirtualService, deviceVirtualApp, deviceVirtualDefaultServicePort)
 }

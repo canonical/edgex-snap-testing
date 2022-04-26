@@ -7,12 +7,11 @@ import (
 
 func TestNetworkInterface(t *testing.T) {
 	t.Cleanup(func() {
-		utils.SnapStop(t, snapAppName)
+		utils.SnapStop(t, deviceVirtualService)
 	})
 
 	// check network interface status for device-virtual service
-	utils.SnapStart(t, platformSnap)
-	utils.SnapStart(t, snapAppName)
+	utils.SnapStart(t, deviceVirtualService)
 
 	t.Run("listen default port "+deviceVirtualDefaultServicePort, func(t *testing.T) {
 		utils.WaitServiceOnline(t, 60, deviceVirtualDefaultServicePort)
