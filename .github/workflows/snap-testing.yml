@@ -35,7 +35,7 @@ jobs:
           - name: device-modbus
           
           - name: edgexfoundry
-            channel: edge/pr-3986
+            platform_channel: edge/pr-3986
           
           - name: cli
             print_logs: false
@@ -60,4 +60,5 @@ jobs:
         with:
           name: ${{matrix.name}}
           channel: ${{matrix.channel}}
+          platform_channel: ${{matrix.platform_channel}}
           print_logs: ${{matrix.print_logs}}
