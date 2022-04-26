@@ -37,15 +37,30 @@ func TestEnvConfig(t *testing.T) {
 }
 
 func TestAppConfig(t *testing.T) {
+	t.Cleanup(func() {
+		utils.SnapStop(t, platformSnap)
+	})
+
+	utils.SnapStart(t, platformSnap)
 	utils.SetAppConfig(t, platformSnap, snapAppName, deviceVirtualApp, deviceVirtualDefaultServicePort)
 }
 
 func TestGlobalConfig(t *testing.T) {
-	// start clean
+	t.Cleanup(func() {
+		utils.SnapStop(t, platformSnap)
+	})
+	utils.SnapStart(t, platformSnap)
+
 	utils.SetGlobalConfig(t, platformSnap, snapAppName, deviceVirtualDefaultServicePort)
 }
 
 func TestMixedConfig(t *testing.T) {
 	utils.FullConfigTest = true
+
+	t.Cleanup(func() {
+		utils.SnapStop(t, platformSnap)
+	})
+	utils.SnapStart(t, platformSnap)
+
 	utils.SetMixedConfig(t, platformSnap, snapAppName, deviceVirtualApp, deviceVirtualDefaultServicePort)
 }
