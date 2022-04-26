@@ -30,6 +30,7 @@ jobs:
             channel: edge/pr-177
           
           - name: device-snmp
+            channel: edge/pr-160
           
           - name: device-modbus
             channel: edge/pr-336
