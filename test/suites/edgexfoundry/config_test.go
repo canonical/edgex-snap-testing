@@ -30,7 +30,7 @@ func TestEnvConfig(t *testing.T) {
 
 		// unset env. and validate the default port comes online
 		utils.SnapUnset(t, platformSnap, envServicePort)
-		utils.SnapRestart(t, platformSnap)
+		utils.SnapRestart(t, snapAppName)
 		utils.WaitServiceOnline(t, 60, deviceVirtualDefaultServicePort)
 
 	})
