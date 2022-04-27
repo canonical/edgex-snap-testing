@@ -46,7 +46,7 @@ func TestMain(m *testing.M) {
 		platformSnap,
 	)
 
-	utils.FullConfigTest = false
+	FullConfigTest = false
 
 	os.Exit(exitCode)
 }

@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+var FullConfigTest = true
+
 // Deprecated
 func TestEnvConfig(t *testing.T) {
 	const newPort = "11111"
@@ -54,8 +56,6 @@ func TestGlobalConfig(t *testing.T) {
 }
 
 func TestMixedConfig(t *testing.T) {
-	utils.FullConfigTest = true
-
 	t.Cleanup(func() {
 		utils.SnapStop(t, deviceVirtualService)
 	})

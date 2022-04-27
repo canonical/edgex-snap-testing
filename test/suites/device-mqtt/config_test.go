@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+var FullConfigTest = true
+
 // Deprecated
 func TestEnvConfig(t *testing.T) {
 	utils.SetEnvConfig(t, deviceMqttSnap, deviceMqttApp, defaultServicePort)
