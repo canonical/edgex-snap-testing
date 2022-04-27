@@ -56,7 +56,5 @@ func TestMain(m *testing.M) {
 		"edgexfoundry",
 	)
 
-	FullConfigTest = false
-
 	os.Exit(exitCode)
 }

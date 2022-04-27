@@ -15,7 +15,6 @@ func TestAppConfig(t *testing.T) {
 }
 
 func TestGlobalConfig(t *testing.T) {
-	// start clean
 	utils.SetGlobalConfig(t, deviceSnmpSnap, deviceSnmpApp, defaultServicePort)
 }
 

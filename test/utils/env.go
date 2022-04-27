@@ -8,10 +8,10 @@ import (
 const (
 	// environment variables
 	// used to override defaults
-	platformChannel = "PLATFORM_CHANNEL"
-	serviceChannel  = "SERVICE_CHANNEL"
-	localSnap       = "LOCAL_SNAP"
-	fullConfigTest  = "FULL_CONFIG_TEST"
+	platformChannel = "PLATFORM_CHANNEL" // edgexfoundry channel when testing other snaps (has default)
+	serviceChannel  = "SERVICE_CHANNEL"  // channel of the snap to be tested (has default)
+	localSnap       = "LOCAL_SNAP"       // path to local snap to be tested instead of downloading from a channel
+	fullConfigTest  = "FULL_CONFIG_TEST" // toggle full config tests (has default)
 )
 
 var (
@@ -36,6 +36,10 @@ func init() {
 	}
 
 	if v := os.Getenv(fullConfigTest); v != "" {
-		FullConfigTest, _ = strconv.ParseBool(v)
+		var err error
+		FullConfigTest, err = strconv.ParseBool(v)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

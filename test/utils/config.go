@@ -2,6 +2,8 @@ package utils
 
 import "testing"
 
+const serviceWaitTimeout = 60 // seconds
+
 func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 	if !FullConfigTest {
@@ -25,12 +27,12 @@ func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "env.service.port", newPort)
 		SnapStart(t, service)
 
-		WaitServiceOnline(t, 60, newPort)
+		WaitServiceOnline(t, serviceWaitTimeout, newPort)
 
 		// unset env. and validate the default port comes online
 		SnapUnset(t, snap, "env.service.port")
 		SnapRestart(t, service)
-		WaitServiceOnline(t, 60, servicePort)
+		WaitServiceOnline(t, serviceWaitTimeout, servicePort)
 	})
 
 }
@@ -60,13 +62,13 @@ func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "apps."+app+".config.service-port", newPort)
 		SnapStart(t, service)
 
-		WaitServiceOnline(t, 60, newPort)
+		WaitServiceOnline(t, serviceWaitTimeout, newPort)
 
 		// unset apps. and validate the default port comes online
 		SnapUnset(t, snap, "apps."+app+".config.service-port")
 		SnapRestart(t, service)
 
-		WaitServiceOnline(t, 60, servicePort)
+		WaitServiceOnline(t, serviceWaitTimeout, servicePort)
 	})
 }
 
@@ -95,13 +97,13 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "config.service-port", newPort)
 		SnapStart(t, service)
 
-		WaitServiceOnline(t, 60, newPort)
+		WaitServiceOnline(t, serviceWaitTimeout, newPort)
 
 		// unset config. and validate the default port comes online
 		SnapUnset(t, snap, "config.service-port")
 		SnapRestart(t, service)
 
-		WaitServiceOnline(t, 60, servicePort)
+		WaitServiceOnline(t, serviceWaitTimeout, servicePort)
 	})
 }
 
@@ -138,7 +140,7 @@ func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "config.service-port", newConfigPort)
 		SnapStart(t, service)
 
-		WaitServiceOnline(t, 60, newAppPort)
+		WaitServiceOnline(t, serviceWaitTimeout, newAppPort)
 	})
 
 }
