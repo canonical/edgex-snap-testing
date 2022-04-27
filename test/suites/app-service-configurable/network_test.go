@@ -12,16 +12,16 @@ func TestNetworkInterface(t *testing.T) {
 
 	utils.SnapStart(t, ascService)
 
-	t.Run("listen default port "+appRulesEngineServicePort, func(t *testing.T) {
-		utils.WaitServiceOnline(t, 60, appRulesEngineServicePort)
+	t.Run("listen default port "+appServiceRulesServicePort, func(t *testing.T) {
+		utils.WaitServiceOnline(t, 60, appServiceRulesServicePort)
 	})
 
 	t.Run("not listen on all interfaces", func(t *testing.T) {
-		utils.RequireListenAllInterfaces(t, false, appRulesEngineServicePort)
+		utils.RequireListenAllInterfaces(t, false, appServiceRulesServicePort)
 	})
 
 	t.Run("listen localhost", func(t *testing.T) {
-		utils.RequireListenLoopback(t, appRulesEngineServicePort)
-		utils.RequirePortOpen(t, appRulesEngineServicePort)
+		utils.RequireListenLoopback(t, appServiceRulesServicePort)
+		utils.RequirePortOpen(t, appServiceRulesServicePort)
 	})
 }

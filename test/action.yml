@@ -18,6 +18,12 @@ inputs:
       Channel for downloading the snap from store.
       This is useful only when 'snap' input is not set.
     required: false
+  platform_channel:
+    description: |
+      Channel for downloading the edgexfoundry snap from store.
+      This is used when testing services against the edgexfoundry snap.
+      This is useful only when 'snap' input is not set.
+    required: false
   print_logs:
     description: |
       Print snap logs.
@@ -48,6 +54,7 @@ runs:
       working-directory: ${{github.action_path}}
       env:
         LOCAL_SNAP: ${{steps.path.outputs.local_snap}}
+        PLATFORM_CHANNEL: ${{inputs.platform_channel}}
         SERVICE_CHANNEL: ${{inputs.channel}}
       run: |
         go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}

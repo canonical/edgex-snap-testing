@@ -8,9 +8,13 @@ import (
 	"time"
 )
 
-const ascSnap = "edgex-app-service-configurable"
-const ascService = "edgex-app-service-configurable.app-service-configurable"
-const defaultProfile = "rules-engine"
+const (
+	ascSnap                    = "edgex-app-service-configurable"
+	ascApp                     = "app-service-configurable"
+	ascService                 = ascSnap + "." + ascApp
+	defaultProfile             = "rules-engine"
+	appServiceRulesServicePort = "59701"
+)
 
 var start = time.Now()
 
@@ -45,6 +49,12 @@ func TestMain(m *testing.M) {
 
 	// set profile to rules engine
 	utils.SnapSet(nil, ascSnap, "profile", defaultProfile)
+
+	// Start the service so that the default config gets uploaded to consul.
+	// Otherwise, settings that get passed using environment variables on first start get uploaded
+	// and become the default.
+	utils.SnapStart(nil, ascService)
+	utils.WaitServiceOnline(nil, 60, appServiceRulesServicePort)
 
 	exitCode := m.Run()
 

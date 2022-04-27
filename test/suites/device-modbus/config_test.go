@@ -7,11 +7,17 @@ import (
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	t.Run("change service port", func(t *testing.T) {
-		utils.TestEnvChangeServicePort(t, deviceModbusSnap, defaultServicePort)
-	})
+	utils.SetEnvConfig(t, deviceModbusSnap, deviceModbusApp, defaultServicePort)
 }
 
 func TestAppConfig(t *testing.T) {
-	t.Skip("TODO")
+	utils.SetAppConfig(t, deviceModbusSnap, deviceModbusApp, defaultServicePort)
+}
+
+func TestGlobalConfig(t *testing.T) {
+	utils.SetGlobalConfig(t, deviceModbusSnap, deviceModbusApp, defaultServicePort)
+}
+
+func TestMixedConfig(t *testing.T) {
+	utils.SetMixedConfig(t, deviceModbusSnap, deviceModbusApp, defaultServicePort)
 }

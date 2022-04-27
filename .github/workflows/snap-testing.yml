@@ -54,4 +54,5 @@ jobs:
         with:
           name: ${{matrix.name}}
           channel: ${{matrix.channel}}
+          platform_channel: ${{matrix.platform_channel}}
           print_logs: ${{matrix.print_logs}}

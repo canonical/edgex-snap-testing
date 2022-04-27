@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const deviceRfidLlrpSnap = "edgex-device-rfid-llrp"
-const deviceRfidLlrpService = "edgex-device-rfid-llrp.device-rfid-llrp"
+const (
+	deviceRfidLlrpSnap    = "edgex-device-rfid-llrp"
+	deviceRfidApp         = "device-rfid-llrp"
+	deviceRfidLlrpService = deviceRfidLlrpSnap + "." + deviceRfidApp
+)
 
 var start = time.Now()
 

@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const deviceGpioSnap = "edgex-device-gpio"
-const deviceGpioService = "edgex-device-gpio.device-gpio"
+const (
+	deviceGpioSnap    = "edgex-device-gpio"
+	deviceGpioApp     = "device-gpio"
+	deviceGpioService = deviceGpioSnap + "." + deviceGpioApp
+)
 
 var start = time.Now()
 

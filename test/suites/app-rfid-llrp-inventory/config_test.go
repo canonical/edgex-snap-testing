@@ -7,25 +7,17 @@ import (
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-
-	t.Run("change service port", func(t *testing.T) {
-		t.Cleanup(func() {
-			utils.SnapStop(t, appRfidLlrpService)
-			utils.SnapUnset(t, appRfidLlrpSnap, "env.service.port")
-		})
-
-		const newPort = "56789"
-
-		// make sure the port is available before using it
-		utils.RequirePortAvailable(t, newPort)
-
-		utils.SnapStop(t, appRfidLlrpSnap)
-		utils.SnapSet(t, appRfidLlrpSnap, "env.service.port", newPort)
-		utils.SnapStart(t, appRfidLlrpSnap)
-		utils.WaitServiceOnline(t, 60, newPort)
-	})
+	utils.SetEnvConfig(t, appRfidLlrpSnap, appRfidLlrpApp, defaultServicePort)
 }
 
 func TestAppConfig(t *testing.T) {
-	t.Skip("TODO")
+	utils.SetAppConfig(t, appRfidLlrpSnap, appRfidLlrpApp, defaultServicePort)
+}
+
+func TestGlobalConfig(t *testing.T) {
+	utils.SetGlobalConfig(t, appRfidLlrpSnap, appRfidLlrpApp, defaultServicePort)
+}
+
+func TestMixedConfig(t *testing.T) {
+	utils.SetMixedConfig(t, appRfidLlrpSnap, appRfidLlrpApp, defaultServicePort)
 }

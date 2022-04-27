@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const appRfidLlrpSnap = "edgex-app-rfid-llrp-inventory"
-const appRfidLlrpService = "edgex-app-rfid-llrp-inventory.app-rfid-llrp-inventory"
+const (
+	appRfidLlrpSnap    = "edgex-app-rfid-llrp-inventory"
+	appRfidLlrpApp     = "app-rfid-llrp-inventory"
+	appRfidLlrpService = appRfidLlrpSnap + "." + appRfidLlrpApp
+)
 
 var start = time.Now()
 

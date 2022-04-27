@@ -10,33 +10,23 @@ import (
 )
 
 const profile = "http-export"
-const appRulesEngineServicePort = "59720"
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	// start clean
-	utils.SnapStop(t, ascService)
-
-	t.Run("change service port", func(t *testing.T) {
-		t.Cleanup(func() {
-			utils.SnapStop(t, ascService)
-			utils.SnapUnset(t, ascSnap, "env.service.port")
-			utils.SnapSet(t, ascSnap, "env.service.port", appRulesEngineServicePort)
-		})
-
-		const newPort = "56789"
-
-		// make sure the port is available before using it
-		utils.RequirePortAvailable(t, newPort)
-
-		utils.SnapSet(t, ascSnap, "env.service.port", newPort)
-		utils.SnapStart(t, ascSnap)
-		utils.WaitServiceOnline(t, 60, newPort)
-	})
+	utils.SetEnvConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
 }
 
 func TestAppConfig(t *testing.T) {
-	t.Skip("TODO")
+	utils.SetAppConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
+}
+
+func TestGlobalConfig(t *testing.T) {
+	// start clean
+	utils.SetGlobalConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
+}
+
+func TestMixedConfig(t *testing.T) {
+	utils.SetMixedConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
 }
 
 func TestProfileConfig(t *testing.T) {

@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const ekuiperSnap = "edgex-ekuiper"
-const ekuiperService = "edgex-ekuiper.kuiper"
+const (
+	ekuiperSnap    = "edgex-ekuiper"
+	ekuiperApp     = "kuiper"
+	ekuiperService = ekuiperSnap + "." + ekuiperApp
+)
 
 var start = time.Now()
 
