@@ -16,27 +16,20 @@ jobs:
       matrix:
         include:
           - name: device-mqtt
-            channel: edge/pr-365
 
           - name: ekuiper
 
           - name: app-service-configurable
-            channel: edge/pr-407
 
           - name: device-gpio
-            channel: edge/pr-25
           
           - name: device-rest
-            channel: edge/pr-177
           
           - name: device-snmp
-            channel: edge/pr-160
           
           - name: device-modbus
-            channel: edge/pr-336
           
           - name: edgexfoundry
-            platform_channel: edge/pr-3986
           
           - name: cli
             print_logs: false
@@ -44,10 +37,9 @@ jobs:
           - name: ui
           
           - name: device-rfid-llrp
-            channel: edge/pr-75
           
           - name: app-rfid-llrp-inventory
-            channel: edge/pr-74
+        
 
           
     # use local action to test
