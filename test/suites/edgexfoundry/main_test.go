@@ -27,7 +27,11 @@ func TestMain(m *testing.M) {
 		platformSnap,
 	)
 
-	utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel)
+	if utils.LocalSnap != "" {
+		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+	} else {
+		utils.SnapInstallFromStore(nil, platformSnap, utils.ServiceChannel)
+	}
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
