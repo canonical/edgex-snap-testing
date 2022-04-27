@@ -7,18 +7,18 @@ import (
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	utils.SetEnvConfig(t, deviceRfidLlrpSnap, deviceRfidLlrpService, defaultServicePort)
+	utils.SetEnvConfig(t, deviceRfidLlrpSnap, deviceRfidApp, defaultServicePort)
 }
 
 func TestAppConfig(t *testing.T) {
-	utils.SetAppConfig(t, deviceRfidLlrpSnap, deviceRfidLlrpService, deviceRfidApp, defaultServicePort)
+	utils.SetAppConfig(t, deviceRfidLlrpSnap, deviceRfidApp, defaultServicePort)
 }
 
 func TestGlobalConfig(t *testing.T) {
 	// start clean
-	utils.SetGlobalConfig(t, deviceRfidLlrpSnap, deviceRfidLlrpService, defaultServicePort)
+	utils.SetGlobalConfig(t, deviceRfidLlrpSnap, deviceRfidApp, defaultServicePort)
 }
 
 func TestMixedConfig(t *testing.T) {
-	utils.SetMixedConfig(t, deviceRfidLlrpSnap, deviceRfidLlrpService, deviceRfidApp, defaultServicePort)
+	utils.SetMixedConfig(t, deviceRfidLlrpSnap, deviceRfidApp, defaultServicePort)
 }

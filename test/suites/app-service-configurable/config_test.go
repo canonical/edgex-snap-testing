@@ -13,20 +13,20 @@ const profile = "http-export"
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	utils.SetEnvConfig(t, ascSnap, ascService, appSrviceRulesServicePort)
+	utils.SetEnvConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
 }
 
 func TestAppConfig(t *testing.T) {
-	utils.SetAppConfig(t, ascSnap, ascService, appName, appSrviceRulesServicePort)
+	utils.SetAppConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
 }
 
 func TestGlobalConfig(t *testing.T) {
 	// start clean
-	utils.SetGlobalConfig(t, ascSnap, ascService, appSrviceRulesServicePort)
+	utils.SetGlobalConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
 }
 
 func TestMixedConfig(t *testing.T) {
-	utils.SetMixedConfig(t, ascSnap, ascService, appName, appSrviceRulesServicePort)
+	utils.SetMixedConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
 }
 
 func TestProfileConfig(t *testing.T) {

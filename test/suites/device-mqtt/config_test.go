@@ -7,20 +7,18 @@ import (
 
 // Deprecated
 func TestEnvConfig(t *testing.T) {
-	utils.FullConfigTest = true
-	utils.SetEnvConfig(t, deviceMqttSnap, deviceMqttService, defaultServicePort)
+	utils.SetEnvConfig(t, deviceMqttSnap, deviceMqttApp, defaultServicePort)
 }
 
 func TestAppConfig(t *testing.T) {
-	utils.SetAppConfig(t, deviceMqttSnap, deviceMqttService, appName, defaultServicePort)
+	utils.SetAppConfig(t, deviceMqttSnap, deviceMqttApp, defaultServicePort)
 }
 
 func TestGlobalConfig(t *testing.T) {
 	// start clean
-	utils.SetGlobalConfig(t, deviceMqttSnap, deviceMqttService, defaultServicePort)
+	utils.SetGlobalConfig(t, deviceMqttSnap, deviceMqttApp, defaultServicePort)
 }
 
 func TestMixedConfig(t *testing.T) {
-	utils.FullConfigTest = true
-	utils.SetMixedConfig(t, deviceMqttSnap, deviceMqttService, appName, defaultServicePort)
+	utils.SetMixedConfig(t, deviceMqttSnap, deviceMqttApp, defaultServicePort)
 }

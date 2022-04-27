@@ -2,7 +2,8 @@ package utils
 
 import "testing"
 
-func SetEnvConfig(t *testing.T, snap, service, defaultServicePort string) {
+func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
+	service := snap + "." + app
 	if !FullConfigTest {
 		// make this subtest optional to save testing time,
 		t.Skip("Full config test is disabled by default, and similar full config tests have been operated in device-mqtt test suite.")
@@ -34,8 +35,9 @@ func SetEnvConfig(t *testing.T, snap, service, defaultServicePort string) {
 		})
 	}
 }
+func SetAppConfig(t *testing.T, snap, app, servicePort string) {
+	service := snap + "." + app
 
-func SetAppConfig(t *testing.T, snap, service, appName, defaultServicePort string) {
 	// start clean
 	SnapStop(t, service)
 
@@ -55,20 +57,22 @@ func SetAppConfig(t *testing.T, snap, service, appName, defaultServicePort strin
 		RequirePortAvailable(t, newPort)
 
 		// set apps. and validate the new port comes online
-		SnapSet(t, snap, "apps."+appName+".config.service-port", newPort)
+		SnapSet(t, snap, "apps."+app+".config.service-port", newPort)
 		SnapStart(t, service)
 
 		WaitServiceOnline(t, 60, newPort)
 
 		// unset apps. and validate the default port comes online
-		SnapUnset(t, snap, "apps."+appName+".config.service-port")
+		SnapUnset(t, snap, "apps."+app+".config.service-port")
 		SnapRestart(t, service)
 
 		WaitServiceOnline(t, 60, defaultServicePort)
 	})
 }
 
-func SetGlobalConfig(t *testing.T, snap, service, defaultServicePort string) {
+func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
+	service := snap + "." + app
+
 	// start clean
 	SnapStop(t, service)
 
@@ -101,7 +105,9 @@ func SetGlobalConfig(t *testing.T, snap, service, defaultServicePort string) {
 	})
 }
 
-func SetMixedConfig(t *testing.T, snap, service, appName, defaultServicePort string) {
+func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
+	service := snap + "." + app
+
 	if !FullConfigTest {
 		// make this subtest optional to save testing time,
 		// similar full config tests have been operated in device-mqtt test suite
@@ -130,7 +136,7 @@ func SetMixedConfig(t *testing.T, snap, service, appName, defaultServicePort str
 
 			// set apps. and config. with different values,
 			// and validate that app-specific option has been picked up because it has higher precedence
-			SnapSet(t, snap, "apps."+appName+".config.service-port", newAppPort)
+		SnapSet(t, snap, "apps."+app+".config.service-port", newAppPort)
 			SnapSet(t, snap, "config.service-port", newConfigPort)
 			SnapStart(t, service)
 
