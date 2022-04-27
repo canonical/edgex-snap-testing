@@ -54,7 +54,7 @@ func TestMain(m *testing.M) {
 	// Otherwise, settings that get passed using environment variables on first start get uploaded
 	// and become the default.
 	utils.SnapStart(nil, ascService)
-	utils.WaitServiceOnline(nil, 60, appSrviceRulesServicePort)
+	utils.WaitServiceOnline(nil, 60, appServiceRulesServicePort)
 
 	exitCode := m.Run()
 

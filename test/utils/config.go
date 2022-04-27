@@ -66,7 +66,7 @@ func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 		SnapUnset(t, snap, "apps."+app+".config.service-port")
 		SnapRestart(t, service)
 
-		WaitServiceOnline(t, 60, defaultServicePort)
+		WaitServiceOnline(t, 60, servicePort)
 	})
 }
 
@@ -101,7 +101,7 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 		SnapUnset(t, snap, "config.service-port")
 		SnapRestart(t, service)
 
-		WaitServiceOnline(t, 60, defaultServicePort)
+		WaitServiceOnline(t, 60, servicePort)
 	})
 }
 
