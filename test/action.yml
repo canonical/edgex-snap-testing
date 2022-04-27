@@ -21,6 +21,7 @@ inputs:
   platform_channel:
     description: |
       Channel for downloading the edgexfoundry snap from store.
+      This is used when testing services against the edgexfoundry snap.
       This is useful only when 'snap' input is not set.
     required: false
   print_logs:
