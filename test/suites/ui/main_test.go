@@ -8,8 +8,11 @@ import (
 	"time"
 )
 
-const uiSnap = "edgex-ui"
-const uiService = "edgex-ui.edgex-ui"
+const (
+	uiSnap    = "edgex-ui"
+	uiApp     = "edgex-ui"
+	uiService = uiSnap + "." + uiApp
+)
 
 var start = time.Now()
 

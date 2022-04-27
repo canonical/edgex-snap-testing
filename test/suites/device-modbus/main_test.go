@@ -11,7 +11,7 @@ import (
 const (
 	deviceModbusSnap    = "edgex-device-modbus"
 	deviceModbusApp     = "device-modbus"
-	deviceModbusService = "edgex-device-modbus." + deviceModbusApp
+	deviceModbusService = deviceModbusSnap + "." + deviceModbusApp
 )
 
 var start = time.Now()

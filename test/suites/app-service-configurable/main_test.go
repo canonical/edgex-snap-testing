@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	ascSnap                   = "edgex-app-service-configurable"
-	appName                   = "app-service-configurable"
-	ascService                = ascSnap + "." + appName
-	defaultProfile            = "rules-engine"
-	appSrviceRulesServicePort = "59701"
+	ascSnap                    = "edgex-app-service-configurable"
+	ascApp                     = "app-service-configurable"
+	ascService                 = ascSnap + "." + ascApp
+	defaultProfile             = "rules-engine"
+	appServiceRulesServicePort = "59701"
 )
 
 var start = time.Now()

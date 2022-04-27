@@ -10,8 +10,8 @@ import (
 
 const (
 	deviceMqttSnap    = "edgex-device-mqtt"
-	appName           = "device-mqtt"
-	deviceMqttService = deviceMqttSnap + "." + appName
+	deviceMqttApp     = "device-mqtt"
+	deviceMqttService = deviceMqttSnap + "." + deviceMqttApp
 )
 
 var start = time.Now()
