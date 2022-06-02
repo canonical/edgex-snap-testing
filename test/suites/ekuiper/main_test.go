@@ -24,6 +24,7 @@ func TestMain(m *testing.M) {
 	utils.SnapRemove(nil,
 		ekuiperSnap,
 		"edgexfoundry",
+		deviceVirtualSnap,
 	)
 
 	// install the ekuiper snap before edgexfoundry
