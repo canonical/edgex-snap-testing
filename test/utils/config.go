@@ -46,14 +46,14 @@ func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 	t.Run("set and unset apps.", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
-			SnapUnset(t, snap, "config-enabled")
+			SnapUnset(t, snap, "app-options")
 			SnapStop(t, service)
 		})
 
 		const newPort = "22222"
 
 		// enable new apps option to aviod mixed options issue with old env option
-		SnapSet(t, snap, "config-enabled", "true")
+		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
@@ -81,14 +81,14 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 	t.Run("set and unset apps.", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "config")
-			SnapUnset(t, snap, "config-enabled")
+			SnapUnset(t, snap, "app-options")
 			SnapStop(t, service)
 		})
 
 		const newPort = "33333"
 
 		// enable new config option to aviod mixed options issue with old env option
-		SnapSet(t, snap, "config-enabled", "true")
+		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
@@ -120,7 +120,7 @@ func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "config")
-			SnapUnset(t, snap, "config-enabled")
+			SnapUnset(t, snap, "app-options")
 			SnapStop(t, service)
 		})
 
@@ -128,7 +128,7 @@ func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
 		const newConfigPort = "55555"
 
 		// enable new apps/config options to aviod mixed options issue with old env option
-		SnapSet(t, snap, "config-enabled", "true")
+		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the ports are available before using it
 		RequirePortAvailable(t, newAppPort)
