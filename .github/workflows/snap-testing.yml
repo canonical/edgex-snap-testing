@@ -40,6 +40,7 @@ jobs:
           
           - name: app-rfid-llrp-inventory
 
+          - name: device-virtual
           
     # use local action to test
     steps:
