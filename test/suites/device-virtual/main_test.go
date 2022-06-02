@@ -31,7 +31,6 @@ func TestMain(m *testing.M) {
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		// TODO: use ServiceChannel when snap published to latest channel
 		utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
