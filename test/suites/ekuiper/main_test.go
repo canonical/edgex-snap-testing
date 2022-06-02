@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	ekuiperSnap    = "edgex-ekuiper"
-	ekuiperApp     = "kuiper"
-	ekuiperService = ekuiperSnap + "." + ekuiperApp
+	ekuiperSnap       = "edgex-ekuiper"
+	ekuiperApp        = "kuiper"
+	ekuiperService    = ekuiperSnap + "." + ekuiperApp
+	deviceVirtualSnap = "edgex-device-virtual"
 )
 
 var start = time.Now()
@@ -33,6 +34,7 @@ func TestMain(m *testing.M) {
 		utils.SnapInstallFromStore(nil, ekuiperSnap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
+	utils.SnapInstallFromStore(nil, deviceVirtualSnap, "edge/pr287")
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
@@ -42,6 +44,10 @@ func TestMain(m *testing.M) {
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
 		ekuiperSnap+":edgex-secretstore-token",
+	)
+	utils.SnapConnect(nil,
+		"edgexfoundry:edgex-secretstore-token",
+		deviceVirtualSnap+":edgex-secretstore-token",
 	)
 
 	// security on (default)
@@ -54,13 +60,20 @@ func TestMain(m *testing.M) {
 	utils.SnapStop(nil, "edgex-ekuiper")
 	utils.SnapSet(nil, "edgexfoundry", "security-secret-store", "off")
 	utils.SnapSet(nil, "edgex-ekuiper", "edgex-security", "off")
+	utils.SnapSet(nil, "edgex-device-virtual", "app-options", "true")
+	utils.SnapSet(nil, "edgex-device-virtual", "config.edgex-security-secret-store", "false")
 	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
 	utils.SnapDisconnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
 		ekuiperSnap+":edgex-secretstore-token",
 	)
+	utils.SnapDisconnect(nil,
+		"edgexfoundry:edgex-secretstore-token",
+		deviceVirtualSnap+":edgex-secretstore-token",
+	)
 	utils.SnapStart(nil,
 		ekuiperService,
+		deviceVirtualSnap,
 	)
 
 	exitCode = m.Run()
@@ -73,6 +86,7 @@ TEARDOWN:
 	utils.SnapRemove(nil,
 		ekuiperSnap,
 		"edgexfoundry",
+		deviceVirtualSnap,
 	)
 
 	os.Exit(exitCode)

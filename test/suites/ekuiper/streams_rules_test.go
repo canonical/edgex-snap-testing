@@ -19,13 +19,13 @@ func TestStreamsAndRules(t *testing.T) {
 		utils.SnapStop(t,
 			ekuiperService,
 			"edgexfoundry.app-service-configurable",
-			"edgexfoundry.device-virtual")
+			deviceVirtualSnap)
 	})
 
 	utils.SnapStart(t,
 		ekuiperService,
 		"edgexfoundry.app-service-configurable",
-		"edgexfoundry.device-virtual")
+		deviceVirtualSnap)
 
 	t.Run("create stream", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
