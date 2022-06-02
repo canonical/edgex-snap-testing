@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	platformSnap         = "edgexfoundry"
-	deviceVirtualApp     = "device-virtual"
-	deviceVirtualService = platformSnap + "." + deviceVirtualApp
+	platformSnap        = "edgexfoundry"
+	coreMetadataApp     = "core-metadata"
+	coreMetadataService = platformSnap + "." + coreMetadataApp
 
-	deviceVirtualDefaultServicePort = "59900"
+	coreMetadataDefaultServicePort = "59881"
 )
 
 var start = time.Now()
@@ -36,9 +36,9 @@ func TestMain(m *testing.M) {
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
 
-	// make sure device-virtual service starts and comes online before starting the tests
-	utils.SnapStart(nil, deviceVirtualService)
-	utils.WaitServiceOnline(nil, 60, deviceVirtualDefaultServicePort)
+	// make sure core-metadata service starts and comes online before starting the tests
+	utils.SnapStart(nil, coreMetadataService)
+	utils.WaitServiceOnline(nil, 60, coreMetadataDefaultServicePort)
 
 	exitCode := m.Run()
 
