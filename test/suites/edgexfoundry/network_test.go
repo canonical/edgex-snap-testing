@@ -10,22 +10,6 @@ func TestNetworkInterface(t *testing.T) {
 		utils.SnapStop(t, coreMetadataService)
 	})
 
-	// check network interface status for core-metadata service
-	utils.SnapStart(t, coreMetadataService)
-
-	t.Run("listen default port "+coreMetadataDefaultServicePort, func(t *testing.T) {
-		utils.WaitServiceOnline(t, 60, coreMetadataDefaultServicePort)
-	})
-
-	t.Run("not listen on all interfaces", func(t *testing.T) {
-		utils.RequireListenAllInterfaces(t, false, coreMetadataDefaultServicePort)
-	})
-
-	t.Run("listen localhost", func(t *testing.T) {
-		utils.RequireListenLoopback(t, coreMetadataDefaultServicePort)
-		utils.RequirePortOpen(t, coreMetadataDefaultServicePort)
-	})
-
 	// check network interface status for all platform ports except for:
 	// Kong’s port: 8000
 	// Kong-db's port: 5432

@@ -18,6 +18,28 @@ const (
 
 var start = time.Now()
 
+func TestCommon(t *testing.T) {
+	params := &utils.TestParams{
+		Snap:               "edgexfoundry",
+		App:                "core-metadata",
+		DefaultServicePort: []string{"59881"},
+		TestConfigs: utils.TestConfigs{
+			TestEnvConfig:    true,
+			TestAppConfig:    true,
+			TestGlobalConfig: true,
+			TestMixedConfig:  true,
+		},
+		TestNetworking: utils.TestNetworking{
+			TestOpenPorts:        []string{"59881"},
+			TestBindAddrLoopback: true,
+		},
+		TestVersion: utils.TestVersion{
+			TestSemanticSnapVersion: true,
+		},
+	}
+	utils.TestCommon(t, params)
+}
+
 func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")

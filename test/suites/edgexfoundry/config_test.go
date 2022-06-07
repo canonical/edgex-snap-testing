@@ -36,30 +36,3 @@ func TestEnvConfig(t *testing.T) {
 
 	})
 }
-
-func TestAppConfig(t *testing.T) {
-	t.Cleanup(func() {
-		utils.SnapStop(t, coreMetadataService)
-	})
-
-	utils.SnapStart(t, coreMetadataService)
-	utils.SetAppConfig(t, platformSnap, coreMetadataApp, coreMetadataDefaultServicePort)
-}
-
-func TestGlobalConfig(t *testing.T) {
-	t.Cleanup(func() {
-		utils.SnapStop(t, coreMetadataService)
-	})
-
-	utils.SnapStart(t, coreMetadataService)
-	utils.SetGlobalConfig(t, platformSnap, coreMetadataApp, coreMetadataDefaultServicePort)
-}
-
-func TestMixedConfig(t *testing.T) {
-	t.Cleanup(func() {
-		utils.SnapStop(t, coreMetadataService)
-	})
-
-	utils.SnapStart(t, coreMetadataService)
-	utils.SetMixedConfig(t, platformSnap, coreMetadataApp, coreMetadataDefaultServicePort)
-}
