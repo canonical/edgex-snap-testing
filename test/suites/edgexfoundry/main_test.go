@@ -22,7 +22,7 @@ func TestCommon(t *testing.T) {
 	params := &utils.TestParams{
 		Snap:               "edgexfoundry",
 		App:                "core-metadata",
-		DefaultServicePort: []string{"59881"},
+		DefaultServicePort: "59881",
 		TestConfigs: utils.TestConfigs{
 			TestEnvConfig:    true,
 			TestAppConfig:    true,

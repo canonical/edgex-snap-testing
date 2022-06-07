@@ -10,6 +10,7 @@ func TestNetworkInterface(t *testing.T) {
 		utils.SnapStop(t, coreMetadataService)
 	})
 
+	utils.SnapStart(t, coreMetadataService)
 	// check network interface status for all platform ports except for:
 	// Kong’s port: 8000
 	// Kong-db's port: 5432
