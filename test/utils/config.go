@@ -6,7 +6,9 @@ const serviceWaitTimeout = 60 // seconds
 
 func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
-
+	if !FullConfigTest {
+		t.Skip("Full config test is disabled.")
+	}
 	// start clean
 	SnapStop(t, service)
 
@@ -108,6 +110,9 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 
+	if !FullConfigTest {
+		t.Skip("Full config test is disabled.")
+	}
 	// start clean
 	SnapStop(t, service)
 
