@@ -9,9 +9,8 @@ import (
 )
 
 const (
-	deviceMqttSnap = "edgex-device-mqtt"
-	deviceMqttApp  = "device-mqtt"
-	// deviceMqttService  = deviceMqttSnap + "." + deviceMqttApp
+	deviceMqttSnap     = "edgex-device-mqtt"
+	deviceMqttApp      = "device-mqtt"
 	defaultServicePort = "59982"
 )
 
@@ -65,21 +64,21 @@ func TestMain(m *testing.M) {
 func TestCommon(t *testing.T) {
 	utils.WaitServiceOnline(t, 60, defaultServicePort)
 
-	utils.TestCommon(t, utils.TestParams{
+	utils.TestCommon(t, utils.Params{
 		Snap: deviceMqttSnap,
 		App:  deviceMqttApp,
-		TestConfigs: utils.TestConfigs{
+		ConfigTests: utils.ConfigTests{
 			TestEnvConfig:      utils.FullConfigTest,
 			TestAppConfig:      true,
 			TestGlobalConfig:   true,
 			TestMixedConfig:    utils.FullConfigTest,
 			DefaultServicePort: defaultServicePort,
 		},
-		TestNetworking: utils.TestNetworking{
+		NetworkingTests: utils.NetworkingTests{
 			TestOpenPorts:        []string{defaultServicePort},
 			TestBindAddrLoopback: true,
 		},
-		TestVersion: utils.TestVersion{
+		PackagingTests: utils.PackagingTests{
 			TestSemanticSnapVersion: true,
 		},
 	})

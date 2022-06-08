@@ -65,21 +65,21 @@ func TestCommon(t *testing.T) {
 		}
 	}
 
-	utils.TestCommon(t, utils.TestParams{
+	utils.TestCommon(t, utils.Params{
 		Snap: platformSnap,
 		App:  supportSchedulerApp,
-		TestConfigs: utils.TestConfigs{
+		ConfigTests: utils.ConfigTests{
 			TestEnvConfig:      utils.FullConfigTest,
 			TestAppConfig:      true,
 			TestGlobalConfig:   true,
 			TestMixedConfig:    utils.FullConfigTest,
 			DefaultServicePort: supportSchedulerServicePort,
 		},
-		TestNetworking: utils.TestNetworking{
+		NetworkingTests: utils.NetworkingTests{
 			TestOpenPorts:        platformPorts,
 			TestBindAddrLoopback: true,
 		},
-		TestVersion: utils.TestVersion{
+		PackagingTests: utils.PackagingTests{
 			TestSemanticSnapVersion: true,
 		},
 	})

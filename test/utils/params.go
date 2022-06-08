@@ -1,26 +1,27 @@
 package utils
 
-type TestParams struct {
+type Params struct {
 	Snap string
 	App  string
-	TestConfigs
-	TestNetworking
-	TestVersion
+	ConfigTests
+	NetworkingTests
+	PackagingTests
 }
 
-type TestConfigs struct {
+type ConfigTests struct {
+	// TODO: pass port to tests and refactor to allow testing other config options
+	DefaultServicePort string // used by config tests
 	TestEnvConfig      bool
 	TestAppConfig      bool
 	TestGlobalConfig   bool
 	TestMixedConfig    bool
-	DefaultServicePort string
 }
 
-type TestNetworking struct {
+type NetworkingTests struct {
 	TestOpenPorts        []string
 	TestBindAddrLoopback bool
 }
 
-type TestVersion struct {
+type PackagingTests struct {
 	TestSemanticSnapVersion bool
 }

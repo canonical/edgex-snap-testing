@@ -4,21 +4,22 @@ import (
 	"testing"
 )
 
-func TestCommon(t *testing.T, params TestParams) {
-
-	if params.TestEnvConfig == true {
+func TestCommon(t *testing.T, params Params) {
+	// config tests
+	if params.TestEnvConfig {
 		SetEnvConfig(t, params.Snap, params.App, params.DefaultServicePort)
 	}
-	if params.TestAppConfig == true {
+	if params.TestAppConfig {
 		SetAppConfig(t, params.Snap, params.App, params.DefaultServicePort)
 	}
-	if params.TestGlobalConfig == true {
+	if params.TestGlobalConfig {
 		SetGlobalConfig(t, params.Snap, params.App, params.DefaultServicePort)
 	}
-	if params.TestMixedConfig == true {
+	if params.TestMixedConfig {
 		SetMixedConfig(t, params.Snap, params.App, params.DefaultServicePort)
 	}
 
+	// networking tests
 	if len(params.TestOpenPorts) > 0 {
 		for _, port := range params.TestOpenPorts {
 			WaitServiceOnline(t, 60, port)
@@ -37,6 +38,7 @@ func TestCommon(t *testing.T, params TestParams) {
 		}
 	}
 
+	// packaging tests
 	if params.TestSemanticSnapVersion == true {
 		RequireSnapSemver(t, params.Snap)
 	}
