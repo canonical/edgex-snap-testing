@@ -1,19 +1,19 @@
 package utils
 
 type TestParams struct {
-	Snap               string
-	App                string
-	DefaultServicePort []string
+	Snap string
+	App  string
 	TestConfigs
 	TestNetworking
 	TestVersion
 }
 
 type TestConfigs struct {
-	TestEnvConfig    bool
-	TestAppConfig    bool
-	TestGlobalConfig bool
-	TestMixedConfig  bool
+	TestEnvConfig      bool
+	TestAppConfig      bool
+	TestGlobalConfig   bool
+	TestMixedConfig    bool
+	DefaultServicePort []string
 }
 
 type TestNetworking struct {
