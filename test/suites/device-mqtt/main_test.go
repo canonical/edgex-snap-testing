@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	deviceMqttSnap    = "edgex-device-mqtt"
-	deviceMqttApp     = "device-mqtt"
-	deviceMqttService = deviceMqttSnap + "." + deviceMqttApp
+	deviceMqttSnap = "edgex-device-mqtt"
+	deviceMqttApp  = "device-mqtt"
+	// deviceMqttService  = deviceMqttSnap + "." + deviceMqttApp
+	defaultServicePort = "59982"
 )
 
 var start = time.Now()
@@ -45,6 +46,8 @@ func TestMain(m *testing.M) {
 		deviceMqttSnap+":edgex-secretstore-token",
 	)
 
+	utils.SnapStart(nil, deviceMqttSnap)
+
 	exitCode := m.Run()
 
 	log.Println("[TEARDOWN]")
@@ -57,4 +60,26 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	params := &utils.TestParams{
+		Snap: deviceMqttSnap,
+		App:  deviceMqttApp,
+		TestConfigs: utils.TestConfigs{
+			TestEnvConfig:      utils.FullConfigTest,
+			TestAppConfig:      true,
+			TestGlobalConfig:   true,
+			TestMixedConfig:    utils.FullConfigTest,
+			DefaultServicePort: []string{defaultServicePort},
+		},
+		TestNetworking: utils.TestNetworking{
+			TestOpenPorts:        utils.PlatformPorts,
+			TestBindAddrLoopback: true,
+		},
+		TestVersion: utils.TestVersion{
+			TestSemanticSnapVersion: true,
+		},
+	}
+	utils.TestCommon(t, params)
 }

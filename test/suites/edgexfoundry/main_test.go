@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	platformSnap        = "edgexfoundry"
-	coreMetadataApp     = "core-metadata"
-	coreMetadataService = platformSnap + "." + coreMetadataApp
+	platformSnap            = "edgexfoundry"
+	supportSchedulerApp     = "support-scheduler"
+	supportSchedulerService = platformSnap + "." + supportSchedulerApp
 
-	coreMetadataDefaultServicePort = "59881"
+	supportSchedulerServicePort = "59861"
 )
 
 var start = time.Now()
@@ -36,9 +36,7 @@ func TestMain(m *testing.M) {
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
 
-	// make sure core-metadata service starts and comes online before starting the tests
-	utils.SnapStart(nil, coreMetadataService)
-	utils.WaitServiceOnline(nil, 60, coreMetadataDefaultServicePort)
+	utils.SnapStart(nil, supportSchedulerService)
 
 	exitCode := m.Run()
 
@@ -50,7 +48,27 @@ func TestMain(m *testing.M) {
 		platformSnap,
 	)
 
-	FullConfigTest = false
-
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	params := &utils.TestParams{
+		Snap: platformSnap,
+		App:  supportSchedulerApp,
+		TestConfigs: utils.TestConfigs{
+			TestEnvConfig:      utils.FullConfigTest,
+			TestAppConfig:      true,
+			TestGlobalConfig:   true,
+			TestMixedConfig:    utils.FullConfigTest,
+			DefaultServicePort: []string{supportSchedulerServicePort},
+		},
+		TestNetworking: utils.TestNetworking{
+			TestOpenPorts:        utils.PlatformPorts,
+			TestBindAddrLoopback: true,
+		},
+		TestVersion: utils.TestVersion{
+			TestSemanticSnapVersion: true,
+		},
+	}
+	utils.TestCommon(t, params)
 }
