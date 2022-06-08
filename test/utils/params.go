@@ -3,7 +3,7 @@ package utils
 type TestParams struct {
 	Snap               string
 	App                string
-	DefaultServicePort string
+	DefaultServicePort []string
 	TestConfigs
 	TestNetworking
 	TestVersion
