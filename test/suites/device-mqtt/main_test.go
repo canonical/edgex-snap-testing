@@ -76,7 +76,7 @@ func TestCommon(t *testing.T) {
 			DefaultServicePort: defaultServicePort,
 		},
 		TestNetworking: utils.TestNetworking{
-			TestOpenPorts:        utils.PlatformPorts,
+			TestOpenPorts:        []string{defaultServicePort},
 			TestBindAddrLoopback: true,
 		},
 		TestVersion: utils.TestVersion{
