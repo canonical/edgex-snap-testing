@@ -63,7 +63,9 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	params := &utils.TestParams{
+	utils.WaitServiceOnline(t, 60, defaultServicePort)
+
+	utils.TestCommon(t, utils.TestParams{
 		Snap: deviceMqttSnap,
 		App:  deviceMqttApp,
 		TestConfigs: utils.TestConfigs{
@@ -71,7 +73,7 @@ func TestCommon(t *testing.T) {
 			TestAppConfig:      true,
 			TestGlobalConfig:   true,
 			TestMixedConfig:    utils.FullConfigTest,
-			DefaultServicePort: []string{defaultServicePort},
+			DefaultServicePort: defaultServicePort,
 		},
 		TestNetworking: utils.TestNetworking{
 			TestOpenPorts:        utils.PlatformPorts,
@@ -80,6 +82,5 @@ func TestCommon(t *testing.T) {
 		TestVersion: utils.TestVersion{
 			TestSemanticSnapVersion: true,
 		},
-	}
-	utils.TestCommon(t, params)
+	})
 }

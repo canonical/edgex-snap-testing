@@ -13,7 +13,7 @@ type TestConfigs struct {
 	TestAppConfig      bool
 	TestGlobalConfig   bool
 	TestMixedConfig    bool
-	DefaultServicePort []string
+	DefaultServicePort string
 }
 
 type TestNetworking struct {
