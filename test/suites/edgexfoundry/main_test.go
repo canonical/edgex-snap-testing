@@ -52,34 +52,35 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.WaitServiceOnline(t, 60, supportSchedulerServicePort)
-
 	// check network interface status for all platform ports except for:
 	// Kong’s port: 8000
 	// Kong-db's port: 5432
 	// Redis's port: 6379
-	var platformPorts []string
+	var localPlatformPorts []string
 	for _, port := range utils.PlatformPorts {
 		if port != "8000" && port != "5432" && port != "6379" {
-			platformPorts = append(platformPorts, port)
+			localPlatformPorts = append(localPlatformPorts, port)
 		}
 	}
 
 	utils.TestCommon(t, utils.Params{
 		Snap: platformSnap,
-		App:  supportSchedulerApp,
-		ConfigTests: utils.ConfigTests{
-			TestEnvConfig:      utils.FullConfigTest,
-			TestAppConfig:      true,
-			TestGlobalConfig:   true,
-			TestMixedConfig:    utils.FullConfigTest,
-			DefaultServicePort: supportSchedulerServicePort,
+		Config: utils.Config{
+			TestChangePort: utils.ConfigChangePort{
+				App:                      supportSchedulerApp,
+				DefaultPort:              supportSchedulerServicePort,
+				TestLegacyEnvConfig:      false, // schemes differ, run specific test instead
+				TestAppConfig:            true,
+				TestGlobalConfig:         true,
+				TestMixedGlobalAppConfig: utils.FullConfigTest,
+			},
 		},
-		NetworkingTests: utils.NetworkingTests{
-			TestOpenPorts:        platformPorts,
-			TestBindAddrLoopback: true,
+		Net: utils.Net{
+			StartSnap:        false, // the service are started by default
+			TestOpenPorts:    utils.PlatformPorts,
+			TestBindLoopback: localPlatformPorts,
 		},
-		PackagingTests: utils.PackagingTests{
+		Packaging: utils.Packaging{
 			TestSemanticSnapVersion: true,
 		},
 	})

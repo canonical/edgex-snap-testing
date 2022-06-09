@@ -107,6 +107,7 @@ func RequireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) 
 }
 
 // RequireListenLoopback checks if the port(s) listen on the loopback interface
+// It don't not check whether port(s) listen on interfaces other than the loopback
 func RequireListenLoopback(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")

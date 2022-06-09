@@ -12,7 +12,7 @@ func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 	// start clean
 	SnapStop(t, service)
 
-	t.Run("change service port", func(t *testing.T) {
+	t.Run("legacy env config", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "env")
 			SnapStop(t, service)
@@ -43,7 +43,7 @@ func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 	// start clean
 	SnapStop(t, service)
 
-	t.Run("set and unset apps.", func(t *testing.T) {
+	t.Run("app config", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "app-options")
@@ -78,7 +78,7 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 	// start clean
 	SnapStop(t, service)
 
-	t.Run("set and unset apps.", func(t *testing.T) {
+	t.Run("global config", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "config")
 			SnapUnset(t, snap, "app-options")
@@ -116,7 +116,7 @@ func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
 	// start clean
 	SnapStop(t, service)
 
-	t.Run("use apps. and config. for different values", func(t *testing.T) {
+	t.Run("app and global config for different values", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "config")

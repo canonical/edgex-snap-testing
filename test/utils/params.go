@@ -1,27 +1,31 @@
 package utils
 
 type Params struct {
-	Snap string
-	App  string
-	ConfigTests
-	NetworkingTests
-	PackagingTests
+	Snap      string
+	Config    Config
+	Net       Net
+	Packaging Packaging
 }
 
-type ConfigTests struct {
-	// TODO: pass port to tests and refactor to allow testing other config options
-	DefaultServicePort string // used by config tests
-	TestEnvConfig      bool
-	TestAppConfig      bool
-	TestGlobalConfig   bool
-	TestMixedConfig    bool
+type Config struct {
+	TestChangePort ConfigChangePort
 }
 
-type NetworkingTests struct {
-	TestOpenPorts        []string
-	TestBindAddrLoopback bool
+type ConfigChangePort struct {
+	App                      string
+	DefaultPort              string
+	TestLegacyEnvConfig      bool
+	TestAppConfig            bool
+	TestGlobalConfig         bool
+	TestMixedGlobalAppConfig bool
 }
 
-type PackagingTests struct {
+type Net struct {
+	StartSnap        bool // should be set to true if services aren't started by default
+	TestOpenPorts    []string
+	TestBindLoopback []string
+}
+
+type Packaging struct {
 	TestSemanticSnapVersion bool
 }
