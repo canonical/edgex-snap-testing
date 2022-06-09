@@ -21,6 +21,44 @@ var PlatformPorts = []string{
 	"6379",  // redis
 }
 
+func TestNet(t *testing.T, snapName string, conf Net) {
+	t.Run("net", func(t *testing.T) {
+		if conf.StartSnap {
+			t.Cleanup(func() {
+				SnapStop(t, snapName)
+			})
+			SnapStart(t, snapName)
+		}
+
+		if len(conf.TestOpenPorts) > 0 {
+			TestOpenPorts(t, snapName, conf.TestOpenPorts)
+		}
+		if len(conf.TestBindLoopback) > 0 {
+			TestBindLoopback(t, snapName, conf.TestBindLoopback)
+		}
+
+	})
+}
+
+func TestOpenPorts(t *testing.T, snapName string, ports []string) {
+	t.Run("ports open", func(t *testing.T) {
+		WaitServiceOnline(t, 60, ports...)
+	})
+}
+
+func TestBindLoopback(t *testing.T, snapName string, ports []string) {
+	WaitServiceOnline(t, 60, ports...)
+
+	t.Run("ports not listening on all interfaces", func(t *testing.T) {
+		RequireListenAllInterfaces(t, false, ports...)
+	})
+
+	t.Run("ports listening on localhost", func(t *testing.T) {
+		RequireListenLoopback(t, ports...)
+		// RequirePortOpen(t, params.TestBindAddrLoopback...)
+	})
+}
+
 // WaitServiceOnline waits for a service to come online by dialing its port(s)
 // up to a maximum number
 func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) {

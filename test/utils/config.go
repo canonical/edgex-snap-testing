@@ -4,6 +4,37 @@ import "testing"
 
 const serviceWaitTimeout = 60 // seconds
 
+func TestConfig(t *testing.T, snapName string, conf Config) {
+	t.Run("config", func(t *testing.T) {
+		TestChangePort(t, snapName, conf.TestChangePort)
+	})
+}
+
+func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
+	t.Run("change service port", func(t *testing.T) {
+
+		// start once so that default configs get uploaded to the registry
+		service := snapName + "." + conf.App
+		SnapStart(nil, service)
+		WaitServiceOnline(nil, 60, conf.DefaultPort)
+		SnapStop(nil, service)
+
+		if conf.TestLegacyEnvConfig {
+			SetEnvConfig(t, snapName, conf.App, conf.DefaultPort)
+		}
+		if conf.TestAppConfig {
+			SetAppConfig(t, snapName, conf.App, conf.DefaultPort)
+		}
+		if conf.TestGlobalConfig {
+			SetGlobalConfig(t, snapName, conf.App, conf.DefaultPort)
+		}
+		if conf.TestMixedGlobalAppConfig {
+			SetMixedConfig(t, snapName, conf.App, conf.DefaultPort)
+		}
+	})
+}
+
+// TODO change to TestChangePortLegacyEnv
 func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 	if !FullConfigTest {
@@ -37,6 +68,7 @@ func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 
 }
 
+// TODO change to TestChangePortApp
 func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 
@@ -72,6 +104,7 @@ func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
+// TODO change to TestChangePortGlobal
 func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 
@@ -107,6 +140,7 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
+// TODO change to TestChangePortMixedGlobalApp
 func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 
