@@ -1,3 +1,4 @@
+// TODO: rename to packaging.go
 package utils
 
 import (
@@ -5,6 +6,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 )
+
+type Packaging struct {
+	TestSemanticSnapVersion bool
+}
 
 func TestPackaging(t *testing.T, snapName string, conf Packaging) {
 	t.Run("packaging", func(t *testing.T) {

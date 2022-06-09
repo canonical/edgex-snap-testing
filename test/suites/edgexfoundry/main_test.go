@@ -63,25 +63,24 @@ func TestCommon(t *testing.T) {
 		}
 	}
 
-	utils.TestCommon(t, utils.Params{
-		Snap: platformSnap,
-		Config: utils.Config{
-			TestChangePort: utils.ConfigChangePort{
-				App:                      supportSchedulerApp,
-				DefaultPort:              supportSchedulerServicePort,
-				TestLegacyEnvConfig:      false, // schemes differ, run specific test instead
-				TestAppConfig:            true,
-				TestGlobalConfig:         true,
-				TestMixedGlobalAppConfig: utils.FullConfigTest,
-			},
+	utils.TestConfig(t, platformSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      supportSchedulerApp,
+			DefaultPort:              supportSchedulerServicePort,
+			TestLegacyEnvConfig:      false, // schemes differ, run specific test instead
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
 		},
-		Net: utils.Net{
-			StartSnap:        false, // the service are started by default
-			TestOpenPorts:    utils.PlatformPorts,
-			TestBindLoopback: localPlatformPorts,
-		},
-		Packaging: utils.Packaging{
-			TestSemanticSnapVersion: true,
-		},
+	})
+
+	utils.TestNet(t, platformSnap, utils.Net{
+		StartSnap:        false, // the service are started by default
+		TestOpenPorts:    utils.PlatformPorts,
+		TestBindLoopback: localPlatformPorts,
+	})
+
+	utils.TestPackaging(t, platformSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
 	})
 }

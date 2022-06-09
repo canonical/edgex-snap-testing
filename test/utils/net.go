@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+type Net struct {
+	StartSnap        bool // should be set to true if services aren't started by default
+	TestOpenPorts    []string
+	TestBindLoopback []string
+}
+
 const dialTimeout = 2 * time.Second
 
 var PlatformPorts = []string{

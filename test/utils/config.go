@@ -2,6 +2,19 @@ package utils
 
 import "testing"
 
+type Config struct {
+	TestChangePort ConfigChangePort
+}
+
+type ConfigChangePort struct {
+	App                      string
+	DefaultPort              string
+	TestLegacyEnvConfig      bool
+	TestAppConfig            bool
+	TestGlobalConfig         bool
+	TestMixedGlobalAppConfig bool
+}
+
 const serviceWaitTimeout = 60 // seconds
 
 func TestConfig(t *testing.T, snapName string, conf Config) {
