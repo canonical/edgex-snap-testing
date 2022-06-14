@@ -3,7 +3,7 @@ name: Snap Testing
 
 on:
   pull_request:
-    branches: [ main, configurable-tests ]
+    branches: [ main ]
   # allow manual trigger
   workflow_dispatch:
 
