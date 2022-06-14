@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+type Net struct {
+	StartSnap        bool // should be set to true if services aren't started by default
+	TestOpenPorts    []string
+	TestBindLoopback []string
+}
+
 const dialTimeout = 2 * time.Second
 
 var PlatformPorts = []string{
@@ -19,6 +25,44 @@ var PlatformPorts = []string{
 	"8200",  // vault
 	"8500",  // consul
 	"6379",  // redis
+}
+
+func TestNet(t *testing.T, snapName string, conf Net) {
+	t.Run("net", func(t *testing.T) {
+		if conf.StartSnap {
+			t.Cleanup(func() {
+				SnapStop(t, snapName)
+			})
+			SnapStart(t, snapName)
+		}
+
+		if len(conf.TestOpenPorts) > 0 {
+			TestOpenPorts(t, snapName, conf.TestOpenPorts)
+		}
+		if len(conf.TestBindLoopback) > 0 {
+			TestBindLoopback(t, snapName, conf.TestBindLoopback)
+		}
+
+	})
+}
+
+func TestOpenPorts(t *testing.T, snapName string, ports []string) {
+	t.Run("ports open", func(t *testing.T) {
+		WaitServiceOnline(t, 60, ports...)
+	})
+}
+
+func TestBindLoopback(t *testing.T, snapName string, ports []string) {
+	WaitServiceOnline(t, 60, ports...)
+
+	t.Run("ports not listening on all interfaces", func(t *testing.T) {
+		RequireListenAllInterfaces(t, false, ports...)
+	})
+
+	t.Run("ports listening on localhost", func(t *testing.T) {
+		RequireListenLoopback(t, ports...)
+		// RequirePortOpen(t, params.TestBindAddrLoopback...)
+	})
 }
 
 // WaitServiceOnline waits for a service to come online by dialing its port(s)
@@ -107,6 +151,7 @@ func RequireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) 
 }
 
 // RequireListenLoopback checks if the port(s) listen on the loopback interface
+// It does not check whether port(s) listen on interfaces other than the loopback
 func RequireListenLoopback(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")

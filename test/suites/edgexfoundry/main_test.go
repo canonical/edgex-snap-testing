@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	platformSnap        = "edgexfoundry"
-	coreMetadataApp     = "core-metadata"
-	coreMetadataService = platformSnap + "." + coreMetadataApp
+	platformSnap            = "edgexfoundry"
+	supportSchedulerApp     = "support-scheduler"
+	supportSchedulerService = platformSnap + "." + supportSchedulerApp
 
-	coreMetadataDefaultServicePort = "59881"
+	supportSchedulerServicePort = "59861"
 )
 
 var start = time.Now()
@@ -36,9 +36,7 @@ func TestMain(m *testing.M) {
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
 
-	// make sure core-metadata service starts and comes online before starting the tests
-	utils.SnapStart(nil, coreMetadataService)
-	utils.WaitServiceOnline(nil, 60, coreMetadataDefaultServicePort)
+	utils.SnapStart(nil, supportSchedulerService)
 
 	exitCode := m.Run()
 
@@ -50,7 +48,39 @@ func TestMain(m *testing.M) {
 		platformSnap,
 	)
 
-	FullConfigTest = false
-
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	// check network interface status for all platform ports except for:
+	// Kong’s port: 8000
+	// Kong-db's port: 5432
+	// Redis's port: 6379
+	var localPlatformPorts []string
+	for _, port := range utils.PlatformPorts {
+		if port != "8000" && port != "5432" && port != "6379" {
+			localPlatformPorts = append(localPlatformPorts, port)
+		}
+	}
+
+	utils.TestConfig(t, platformSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      supportSchedulerApp,
+			DefaultPort:              supportSchedulerServicePort,
+			TestLegacyEnvConfig:      false, // schemes differ, run specific test instead
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
+		},
+	})
+
+	utils.TestNet(t, platformSnap, utils.Net{
+		StartSnap:        false, // the service are started by default
+		TestOpenPorts:    utils.PlatformPorts,
+		TestBindLoopback: localPlatformPorts,
+	})
+
+	utils.TestPackaging(t, platformSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }

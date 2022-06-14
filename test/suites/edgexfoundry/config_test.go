@@ -5,61 +5,32 @@ import (
 	"testing"
 )
 
-var FullConfigTest = true
+func TestEnvConfigChangePort(t *testing.T) {
+	if !utils.FullConfigTest {
+		t.Skip("Full config test is disabled.")
+	}
 
-// Deprecated
-func TestEnvConfig(t *testing.T) {
 	const newPort = "11111"
-	const envServicePort = "env." + coreMetadataApp + ".service.port"
+	const envServicePort = "env." + supportSchedulerApp + ".service.port"
 
 	// start clean
-	utils.SnapStop(t, coreMetadataService)
+	utils.SnapStop(t, supportSchedulerService)
 
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, envServicePort)
-		utils.SnapStop(t, coreMetadataService)
-	})
-	t.Run("change core-metadata service port", func(t *testing.T) {
-
-		// make sure the port is available before using it
-		utils.RequirePortAvailable(t, newPort)
-
-		// set env. and validate the new port comes online
-		utils.SnapSet(t, platformSnap, envServicePort, newPort)
-		utils.SnapStart(t, coreMetadataService)
-		utils.WaitServiceOnline(t, 60, newPort)
-
-		// unset env. and validate the default port comes online
-		utils.SnapUnset(t, platformSnap, envServicePort)
-		utils.SnapRestart(t, coreMetadataService)
-		utils.WaitServiceOnline(t, 60, coreMetadataDefaultServicePort)
-
-	})
-}
-
-func TestAppConfig(t *testing.T) {
-	t.Cleanup(func() {
-		utils.SnapStop(t, coreMetadataService)
+		utils.SnapStop(t, supportSchedulerService)
 	})
 
-	utils.SnapStart(t, coreMetadataService)
-	utils.SetAppConfig(t, platformSnap, coreMetadataApp, coreMetadataDefaultServicePort)
-}
+	// make sure the port is available before using it
+	utils.RequirePortAvailable(t, newPort)
 
-func TestGlobalConfig(t *testing.T) {
-	t.Cleanup(func() {
-		utils.SnapStop(t, coreMetadataService)
-	})
+	// set env. and validate the new port comes online
+	utils.SnapSet(t, platformSnap, envServicePort, newPort)
+	utils.SnapStart(t, supportSchedulerService)
+	utils.WaitServiceOnline(t, 60, newPort)
 
-	utils.SnapStart(t, coreMetadataService)
-	utils.SetGlobalConfig(t, platformSnap, coreMetadataApp, coreMetadataDefaultServicePort)
-}
-
-func TestMixedConfig(t *testing.T) {
-	t.Cleanup(func() {
-		utils.SnapStop(t, coreMetadataService)
-	})
-
-	utils.SnapStart(t, coreMetadataService)
-	utils.SetMixedConfig(t, platformSnap, coreMetadataApp, coreMetadataDefaultServicePort)
+	// unset env. and validate the default port comes online
+	utils.SnapUnset(t, platformSnap, envServicePort)
+	utils.SnapRestart(t, supportSchedulerService)
+	utils.WaitServiceOnline(t, 60, supportSchedulerServicePort)
 }
