@@ -47,14 +47,11 @@ func TestProxy(t *testing.T) {
 	t.Run("set custom TLS cert", func(t *testing.T) {
 		certGenerator(CA_KEY_FILE, CA_CERT_FILE, SERVER_KEY_FILE, SERVER_CSR_FILE, SERVER_CERT_FILE)
 
-		TEST_CERT, _ := utils.Exec(t, `cat `+SERVER_CERT_FILE)
-		TEST_KEY, _ := utils.Exec(t, `cat `+SERVER_KEY_FILE)
-
 		// Setting security-proxy certificate
-		utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-certificate", TEST_CERT)
+		utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-certificate", SERVER_CERT_FILE)
 
 		// Setting security-proxy certificate private key
-		utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-private-key", TEST_KEY)
+		utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-private-key", SERVER_KEY_FILE)
 
 		utils.Exec(t, `cp `+EDGEXFOUNDRY_SNAP_DATA+`/ca.crt `+EDGEXFOUNDRY_SNAP_DATA)
 
