@@ -61,26 +61,19 @@ func TestTLSCert(t *testing.T) {
 	kongAminJwt, _ := utils.Exec(t, "sudo cat "+kongAminJwtFile)
 	require.NotEmpty(t, kongAminJwt)
 
-	caKeyFile, caCertFile, serverKeyFile, serverCertFile := certGenerator()
-	serverCert, _ := utils.Exec(t, `sudo cat `+serverCertFile)
-	serverKey, _ := utils.Exec(t, `sudo cat `+serverKeyFile)
-
-	// Setting security-proxy certificate
-	utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-certificate", `"`+serverCert+`"`)
-	// Setting security-proxy certificate private key
-	utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-private-key", `"`+serverKey+`"`)
 	// Add the certificate, using Kong Admin JWT to authenticate
-	utils.Exec(t, `sudo edgexfoundry.secrets-config proxy tls --incert `+serverCertFile+` --inkey `+serverKeyFile+` --admin_api_jwt `+kongAminJwtFile)
+	serverKeyFile, serverCertFile := certGenerator()
+	utils.Exec(t, `sudo edgexfoundry.secrets-config proxy tls --incert `+serverCertFile+` --inkey `+serverKeyFile+` --admin_api_jwt `+kongAminJwt)
 
 	code, _ := utils.Exec(t, `curl --show-error --silent --include \
 		--output /dev/null --write-out "%{http_code}" \
-		--cacert `+caCertFile+` \
+		--cacert `+serverCertFile+` \
 		-X GET 'https://localhost:8443/core-data/api/v2/ping?' \
 		-H "Authorization: Bearer $TOKEN"`)
 	require.Equal(t, "200\n", code)
 }
 
-func certGenerator() (string, string, string, string) {
+func certGenerator() (string, string) {
 	const (
 		caKeyFile  = snapData + "/ca.key"
 		caCertFile = snapData + "/ca.crt"
@@ -102,5 +95,5 @@ func certGenerator() (string, string, string, string) {
 	// Generate the Server Certificate
 	utils.Exec(nil, `sudo openssl x509 -req -in `+serverCsrFile+` -CA `+caCertFile+` -CAkey `+caKeyFile+` -CAcreateserial -out `+serverCertFile+` -days 1000 -sha256`)
 
-	return caKeyFile, caCertFile, serverKeyFile, serverCertFile
+	return serverKeyFile, serverCertFile
 }
