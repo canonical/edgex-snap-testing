@@ -16,23 +16,23 @@ const (
 	SERVER_KEY_FILE        = EDGEXFOUNDRY_SNAP_DATA + "/server.key"
 	SERVER_CSR_FILE        = EDGEXFOUNDRY_SNAP_DATA + "/server.csr"
 	SERVER_CERT_FILE       = EDGEXFOUNDRY_SNAP_DATA + "/server.crt"
-	KONG_ADMIN_JWT_FILE    = EDGEXFOUNDRY_SNAP_DATA + "/secrets/security-proxy-setup/kong-admin-jwt"
+	KONG_ADMIN_JWT_FILE    = "/var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt"
 )
 
 func TestAddProxyUser(t *testing.T) {
 
 	// start clean
-	utils.Exec(t, `rm -rf `+CA_KEY_FILE+` `+CA_CERT_FILE+` `+SERVER_KEY_FILE+` `+SERVER_CSR_FILE+` `+SERVER_CERT_FILE+` `+EDGEXFOUNDRY_SNAP_DATA)
+	utils.Exec(t, `rm -rf `+EDGEXFOUNDRY_SNAP_DATA)
 
 	t.Cleanup(func() {
-		utils.Exec(t, `rm -rf `+CA_KEY_FILE+` `+CA_CERT_FILE+` `+SERVER_KEY_FILE+` `+SERVER_CSR_FILE+` `+SERVER_CERT_FILE+` `+EDGEXFOUNDRY_SNAP_DATA)
+		utils.Exec(t, `rm -rf `+EDGEXFOUNDRY_SNAP_DATA)
 	})
 
 	// Due to confinement issues when running this test, we write the files to SNAP_DATA
 	utils.Exec(t, `sudo mkdir -p `+EDGEXFOUNDRY_SNAP_DATA)
 
 	// Read the API Gateway token
-	KONG_ADMIN_JWT, _ := utils.Exec(t, "sudo cat /var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt")
+	KONG_ADMIN_JWT, _ := utils.Exec(t, "sudo cat "+KONG_ADMIN_JWT_FILE)
 	require.NotEmpty(t, KONG_ADMIN_JWT)
 
 	// Create private and public keys
@@ -52,17 +52,17 @@ func TestAddProxyUser(t *testing.T) {
 func TestTLSCert(t *testing.T) {
 
 	// start clean
-	utils.Exec(t, `rm -rf `+CA_KEY_FILE+` `+CA_CERT_FILE+` `+SERVER_KEY_FILE+` `+SERVER_CSR_FILE+` `+SERVER_CERT_FILE+` `+EDGEXFOUNDRY_SNAP_DATA)
+	utils.Exec(t, `rm -rf `+EDGEXFOUNDRY_SNAP_DATA)
 
 	t.Cleanup(func() {
-		utils.Exec(t, `rm -rf `+CA_KEY_FILE+` `+CA_CERT_FILE+` `+SERVER_KEY_FILE+` `+SERVER_CSR_FILE+` `+SERVER_CERT_FILE+` `+EDGEXFOUNDRY_SNAP_DATA)
+		utils.Exec(t, `rm -rf `+EDGEXFOUNDRY_SNAP_DATA)
 	})
 
 	// Due to confinement issues when running this test, we write the files to SNAP_DATA
 	utils.Exec(t, `sudo mkdir -p `+EDGEXFOUNDRY_SNAP_DATA)
 
 	// Read the API Gateway token
-	KONG_ADMIN_JWT, _ := utils.Exec(t, "sudo cat /var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt")
+	KONG_ADMIN_JWT, _ := utils.Exec(t, "sudo cat "+KONG_ADMIN_JWT_FILE)
 	require.NotEmpty(t, KONG_ADMIN_JWT)
 
 	certGenerator(CA_KEY_FILE, CA_CERT_FILE, SERVER_KEY_FILE, SERVER_CSR_FILE, SERVER_CERT_FILE)
