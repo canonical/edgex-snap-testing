@@ -62,13 +62,13 @@ func TestTLSCert(t *testing.T) {
 	require.NotEmpty(t, kongAminJwt)
 
 	caKeyFile, caCertFile, serverKeyFile, serverCertFile := certGenerator()
-	SERVER_CERT, _ := utils.Exec(t, `sudo cat `+serverCertFile)
-	SERVER_KEY, _ := utils.Exec(t, `sudo cat `+serverKeyFile)
+	serverCert, _ := utils.Exec(t, `sudo cat `+serverCertFile)
+	serverKey, _ := utils.Exec(t, `sudo cat `+serverKeyFile)
 
 	// Setting security-proxy certificate
-	utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-certificate", `"`+SERVER_CERT+`"`)
+	utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-certificate", `"`+serverCert+`"`)
 	// Setting security-proxy certificate private key
-	utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-private-key", `"`+SERVER_KEY+`"`)
+	utils.SnapSet(t, "edgexfoundry", "env.security-proxy.tls-private-key", `"`+serverKey+`"`)
 	// Add the certificate, using Kong Admin JWT to authenticate
 	utils.Exec(t, `sudo edgexfoundry.secrets-config proxy tls --incert `+serverCertFile+` --inkey `+serverKeyFile+` --admin_api_jwt `+kongAminJwtFile)
 
