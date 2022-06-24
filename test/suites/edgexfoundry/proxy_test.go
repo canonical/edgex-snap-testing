@@ -47,14 +47,6 @@ func TestAddProxyUser(t *testing.T) {
 }
 
 func TestTLSCert(t *testing.T) {
-	const (
-		caKeyFile      = snapData + "/ca.key"
-		caCertFile     = snapData + "/ca.crt"
-		serverKeyFile  = snapData + "/server.key"
-		serverCsrFile  = snapData + "/server.csr"
-		serverCertFile = snapData + "/server.crt"
-	)
-
 	// start clean
 	utils.Exec(t, `sudo rm -rf `+snapData)
 
@@ -66,10 +58,10 @@ func TestTLSCert(t *testing.T) {
 	utils.Exec(t, `sudo mkdir -p `+snapData)
 
 	// Read the API Gateway token
-	KONG_ADMIN_JWT, _ := utils.Exec(t, "sudo cat "+kongAminJwtFile)
-	require.NotEmpty(t, KONG_ADMIN_JWT)
+	kongAminJwt, _ := utils.Exec(t, "sudo cat "+kongAminJwtFile)
+	require.NotEmpty(t, kongAminJwt)
 
-	certGenerator(caKeyFile, caCertFile, serverKeyFile, serverCsrFile, serverCertFile)
+	caKeyFile, caCertFile, serverKeyFile, serverCertFile := certGenerator()
 	SERVER_CERT, _ := utils.Exec(t, `sudo cat `+serverCertFile)
 	SERVER_KEY, _ := utils.Exec(t, `sudo cat `+serverKeyFile)
 
@@ -88,15 +80,27 @@ func TestTLSCert(t *testing.T) {
 	require.Equal(t, "200\n", code)
 }
 
-func certGenerator(caKeyFile, caCertFile, serverKeyFile, serverCsrFile, serverCertFile string) {
+func certGenerator() (string, string, string, string) {
+	const (
+		caKeyFile  = snapData + "/ca.key"
+		caCertFile = snapData + "/ca.crt"
+
+		serverCsrFile  = snapData + "/server.csr"
+		serverKeyFile  = snapData + "/server.key"
+		serverCertFile = snapData + "/server.crt"
+	)
+
 	// Generate the Certificate Authority (CA) Private Key
 	utils.Exec(nil, `sudo openssl ecparam -name prime256v1 -genkey -noout -out `+caKeyFile)
 	// Generate the Certificate Authority Certificate
 	utils.Exec(nil, `sudo openssl req -new -x509 -sha256 -key `+caKeyFile+` -out `+caCertFile+` -subj "/CN=localhost"`)
+
 	// Generate the Server Certificate Private Key
 	utils.Exec(nil, `sudo openssl ecparam -name prime256v1 -genkey -noout -out `+serverKeyFile)
 	// Generate the Server Certificate Signing Request
 	utils.Exec(nil, `sudo openssl req -new -sha256 -key `+serverKeyFile+` -out `+serverCsrFile+` -subj "/CN=localhost"`)
 	// Generate the Server Certificate
 	utils.Exec(nil, `sudo openssl x509 -req -in `+serverCsrFile+` -CA `+caCertFile+` -CAkey `+caKeyFile+` -CAcreateserial -out `+serverCertFile+` -days 1000 -sha256`)
+
+	return caKeyFile, caCertFile, serverKeyFile, serverCertFile
 }
