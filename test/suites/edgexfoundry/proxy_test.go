@@ -88,12 +88,11 @@ func certGenerator(CA_KEY_FILE, CA_CERT_FILE, SERVER_KEY_FILE, SERVER_CSR_FILE, 
 	// Generate the Certificate Authority (CA) Private Key
 	utils.Exec(nil, `sudo openssl ecparam -name prime256v1 -genkey -noout -out `+CA_KEY_FILE)
 	// Generate the Certificate Authority Certificate
-	utils.Exec(nil, `sudo openssl req -new -x509 -sha256 -key `+CA_KEY_FILE+` -out `+CA_CERT_FILE+` -subj "/CN=test-ca"`)
+	utils.Exec(nil, `sudo openssl req -new -x509 -sha256 -key `+CA_KEY_FILE+` -out `+CA_CERT_FILE+` -subj "/CN=localhost"`)
 	// Generate the Server Certificate Private Key
 	utils.Exec(nil, `sudo openssl ecparam -name prime256v1 -genkey -noout -out `+SERVER_KEY_FILE)
 	// Generate the Server Certificate Signing Request
 	utils.Exec(nil, `sudo openssl req -new -sha256 -key `+SERVER_KEY_FILE+` -out `+SERVER_CSR_FILE+` -subj "/CN=localhost"`)
 	// Generate the Server Certificate
 	utils.Exec(nil, `sudo openssl x509 -req -in `+SERVER_CSR_FILE+` -CA `+CA_CERT_FILE+` -CAkey `+CA_KEY_FILE+` -CAcreateserial -out `+SERVER_CERT_FILE+` -days 1000 -sha256`)
-
 }
