@@ -7,15 +7,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestProxy(t *testing.T) {
-	var EDGEXFOUNDRY_SNAP_DATA = "/var/snap/edgexfoundry/current/temp"
-	var PUBLIC_KEY = EDGEXFOUNDRY_SNAP_DATA + "/public.pem"
-	var PRIVATE_KEY = EDGEXFOUNDRY_SNAP_DATA + "/private.pem"
-	var CA_KEY_FILE = EDGEXFOUNDRY_SNAP_DATA + "/ca.key"
-	var CA_CERT_FILE = EDGEXFOUNDRY_SNAP_DATA + "/ca.crt"
-	var SERVER_KEY_FILE = EDGEXFOUNDRY_SNAP_DATA + "/server.key"
-	var SERVER_CSR_FILE = EDGEXFOUNDRY_SNAP_DATA + "/server.csr"
-	var SERVER_CERT_FILE = EDGEXFOUNDRY_SNAP_DATA + "/server.crt"
+const (
+	EDGEXFOUNDRY_SNAP_DATA = "/var/snap/edgexfoundry/current/temp"
+	PUBLIC_KEY             = EDGEXFOUNDRY_SNAP_DATA + "/public.pem"
+	PRIVATE_KEY            = EDGEXFOUNDRY_SNAP_DATA + "/private.pem"
+	CA_KEY_FILE            = EDGEXFOUNDRY_SNAP_DATA + "/ca.key"
+	CA_CERT_FILE           = EDGEXFOUNDRY_SNAP_DATA + "/ca.crt"
+	SERVER_KEY_FILE        = EDGEXFOUNDRY_SNAP_DATA + "/server.key"
+	SERVER_CSR_FILE        = EDGEXFOUNDRY_SNAP_DATA + "/server.csr"
+	SERVER_CERT_FILE       = EDGEXFOUNDRY_SNAP_DATA + "/server.crt"
+	KONG_ADMIN_JWT_FILE    = EDGEXFOUNDRY_SNAP_DATA + "/secrets/security-proxy-setup/kong-admin-jwt"
+)
+
 
 	// start clean
 	utils.Exec(t, `rm -rf `+CA_KEY_FILE+` `+CA_CERT_FILE+` `+SERVER_KEY_FILE+` `+SERVER_CSR_FILE+` `+SERVER_CERT_FILE+` `+EDGEXFOUNDRY_SNAP_DATA)
