@@ -69,8 +69,8 @@ func TestTLSCert(t *testing.T) {
 		--output /dev/null --write-out "%{http_code}" \
 		--cacert `+caCertFile+` \
 		-X GET 'https://localhost:8443/core-data/api/v2/ping?' \
-		-H "Authorization: Bearer $TOKEN"`)
-	require.Equal(t, "401\n", code)
+		-H "Authorization: Bearer "`+kongAminJwt)
+	require.Equal(t, "200\n", code)
 
 }
 
