@@ -57,7 +57,7 @@ runs:
         PLATFORM_CHANNEL: ${{inputs.platform_channel}}
         SERVICE_CHANNEL: ${{inputs.channel}}
       run: |
-        go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
+        sudo go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
     # Print snap logs
     - if: always() && inputs.print_logs != 'false'
