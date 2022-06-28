@@ -12,33 +12,29 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var kongAdminJwtFile = "/var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt"
-
 func TestAddProxyUser(t *testing.T) {
-	var (
+	const (
 		tmpDir     = "keys"
 		publicKey  = tmpDir + "/public.pem"
 		privateKey = tmpDir + "/private.pem"
 	)
 
 	// start clean
-	err := os.RemoveAll(tmpDir)
-	require.NoError(t, err)
+	require.NoError(t, os.RemoveAll(tmpDir))
 
 	t.Cleanup(func() {
-		err = os.RemoveAll(tmpDir)
-		require.NoError(t, err)
+		require.NoError(t, os.RemoveAll(tmpDir))
 	})
 
+	// Create temp dir for private and public keys
+	require.NoError(t, os.Mkdir(tmpDir, 0755))
+
 	// Get Kong admin JWT token
-	out, err := os.ReadFile(kongAdminJwtFile)
+	utils.Exec(t, fmt.Sprintf("sudo install -m 604 /var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt ./%s", tmpDir))
+	kongAdminJWTFile := tmpDir + "/kong-admin-jwt"
+	out, err := os.ReadFile(kongAdminJWTFile)
 	require.NoError(t, err)
 	kongAdminJWT := string(out)
-	require.NotEmpty(t, kongAdminJWT)
-
-	// Create temp dir for private and public keys
-	err = os.Mkdir(tmpDir, 0755)
-	require.NoError(t, err)
 
 	// Generate private and public keys
 	utils.Exec(t, fmt.Sprintf("openssl ecparam -genkey -name prime256v1 -noout -out %s", privateKey))
@@ -70,33 +66,33 @@ func TestAddProxyUser(t *testing.T) {
 	resp, err := client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
+
+	require.Equal(t, 200, resp.StatusCode)
 }
 
 func TestTLSCert(t *testing.T) {
 
-	var tmpDir = "certs"
+	const tmpDir = "certs"
 
 	// start clean
-	err := os.RemoveAll(tmpDir)
-	require.NoError(t, err)
+	require.NoError(t, os.RemoveAll(tmpDir))
 
 	t.Cleanup(func() {
-		err = os.RemoveAll(tmpDir)
-		require.NoError(t, err)
+		require.NoError(t, os.RemoveAll(tmpDir))
 	})
 
+	// Create temp dir for certificates and keys
+	require.NoError(t, os.Mkdir(tmpDir, 0755))
+
 	// Get Kong admin JWT token
-	out, err := os.ReadFile(kongAdminJwtFile)
+	utils.Exec(t, fmt.Sprintf("sudo install -m 604 /var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt ./%s", tmpDir))
+	kongAdminJWTFile := tmpDir + "/kong-admin-jwt"
+	out, err := os.ReadFile(kongAdminJWTFile)
 	require.NoError(t, err)
 	kongAdminJWT := string(out)
-	require.NotEmpty(t, kongAdminJWT)
-
-	// Create temp dir for certificates and keys
-	err = os.Mkdir(tmpDir, 0755)
-	require.NoError(t, err)
 
 	// Add the certificate, using Kong Admin JWT to authenticate
-	caCertFile, caKeyFile := certGenerator(tmpDir)
+	caCertFile, caKeyFile := generateCerts(tmpDir)
 	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s", caCertFile, caKeyFile, kongAdminJWT))
 
 	// Check if TLS is setup correctly returning status code 401
@@ -104,7 +100,7 @@ func TestTLSCert(t *testing.T) {
 	require.Equal(t, "401\n", code)
 }
 
-func certGenerator(tmpDir string) (string, string) {
+func generateCerts(tmpDir string) (string, string) {
 	var (
 		caKeyFile      = tmpDir + "/ca.key"
 		caCertFile     = tmpDir + "/ca.crt"
