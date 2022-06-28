@@ -99,7 +99,8 @@ func TestTLSCert(t *testing.T) {
 	caCertFile, caKeyFile := certGenerator(tmpDir)
 	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s", caCertFile, caKeyFile, kongAdminJWT))
 
-	code, _ := utils.Exec(t, fmt.Sprintf(`curl --show-error --silent --include --output /dev/null --write-out "%%{http_code}" --cacert %s -X GET 'https://localhost:8443/core-data/api/v2/ping?' -H "Authorization: Bearer %s"`, caCertFile, "BadToken"))
+	// Check if TLS is setup correctly returning status code 401
+	code, _ := utils.Exec(t, fmt.Sprintf(`curl --show-error --silent --include --output /dev/null --write-out "%%{http_code}" --cacert %s -X GET 'https://localhost:8443/core-data/api/v2/ping' -H "Authorization: Bearer %s"`, caCertFile, "testToken"))
 	require.Equal(t, "401\n", code)
 }
 
