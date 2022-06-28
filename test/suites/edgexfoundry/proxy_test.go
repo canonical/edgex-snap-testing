@@ -15,8 +15,11 @@ import (
 var kongAdminJwtFile = "/var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt"
 
 func TestAddProxyUser(t *testing.T) {
-
-	var tmpDir = "keys"
+	var (
+		tmpDir     = "keys"
+		publicKey  = tmpDir + "/public.pem"
+		privateKey = tmpDir + "/private.pem"
+	)
 
 	// start clean
 	err := os.RemoveAll(tmpDir)
@@ -36,9 +39,6 @@ func TestAddProxyUser(t *testing.T) {
 	// Create temp dir for private and public keys
 	err = os.Mkdir(tmpDir, 0755)
 	require.NoError(t, err)
-
-	publicKey := tmpDir + "/public.pem"
-	privateKey := tmpDir + "/private.pem"
 
 	// Generate private and public keys
 	utils.Exec(t, fmt.Sprintf("openssl ecparam -genkey -name prime256v1 -noout -out %s", privateKey))
