@@ -93,7 +93,7 @@ func TestTLSCert(t *testing.T) {
 
 	// Add the certificate, using Kong Admin JWT to authenticate
 	caCertFile, caKeyFile := generateCerts(tmpDir)
-	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s", caCertFile, caKeyFile, string(kongAdminJWT)))
+	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s", caCertFile, caKeyFile, kongAdminJWT))
 
 	// Wait the certificate to be fully installed
 	caKey, err := os.ReadFile(caKeyFile)
