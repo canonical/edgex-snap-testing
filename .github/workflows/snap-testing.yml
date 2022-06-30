@@ -42,6 +42,8 @@ jobs:
 
           - name: device-virtual
           
+          - name: device-usb-camera
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
