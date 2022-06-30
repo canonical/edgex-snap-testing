@@ -3,11 +3,14 @@ package test
 import (
 	"crypto/tls"
 	"edgex-snap-testing/test/utils"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -95,11 +98,19 @@ func TestTLSCert(t *testing.T) {
 	caCertFile, caKeyFile := generateCerts(tmpDir)
 	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s", caCertFile, caKeyFile, kongAdminJWT))
 
+	// Wait the certificate to be fully installed
+	out, err = os.ReadFile(caKeyFile)
+	require.NoError(t, err)
+	caKey := string(out)
+	waitCertInstall(t, caKey, 10)
+
 	// Check if TLS is setup correctly returning status code 401
 	code, _ := utils.Exec(t, fmt.Sprintf(`curl --show-error --silent --include --output /dev/null --write-out "%%{http_code}" --cacert %s -X GET 'https://localhost:8443/core-data/api/v2/ping' -H "Authorization: Bearer %s"`, caCertFile, "testToken"))
 	require.Equal(t, "401\n", code)
 }
 
+// generateCerts generates CA private key, CA cert,
+// server private key, server signing request, server cert
 func generateCerts(tmpDir string) (string, string) {
 	var (
 		caKeyFile      = tmpDir + "/ca.key"
@@ -122,4 +133,43 @@ func generateCerts(tmpDir string) (string, string) {
 	utils.Exec(nil, fmt.Sprintf(`openssl x509 -req -in %s -CA %s -CAkey %s -CAcreateserial -out %s -days 1000 -sha256`, serverCsrFile, caCertFile, caKeyFile, serverCertFile))
 
 	return caCertFile, caKeyFile
+}
+
+// waitCertInstall checks if certificate is fully installed
+// up to a maximum retry number
+func waitCertInstall(t *testing.T, caKey string, maxRetry int) {
+
+	type ResponseBody struct {
+		Data []struct {
+			Key string
+		}
+	}
+
+	res := &ResponseBody{}
+
+	for i := 1; ; i++ {
+		t.Logf("Checking certificate installation. Retry %d/%d", i, maxRetry)
+
+		client := &http.Client{}
+		req, err := http.NewRequest("GET", "http://localhost:8001/certificates", nil)
+		require.NoError(t, err)
+		resp, err := client.Do(req)
+		require.NoError(t, err)
+		defer resp.Body.Close()
+
+		data, err := io.ReadAll(resp.Body)
+		err = json.Unmarshal(data, res)
+		require.NoError(t, err)
+
+		certLength := len(res.Data)
+		if i == maxRetry && certLength == 0 {
+			t.Fatalf("Time out: reached max %d retries.", maxRetry)
+		} else if certLength == 0 {
+			time.Sleep(1 * time.Second)
+		} else {
+			break
+		}
+	}
+
+	require.Equal(t, res.Data[0].Key, caKey)
 }
