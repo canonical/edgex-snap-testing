@@ -156,7 +156,7 @@ func waitCertInstall(t *testing.T, caKey string, maxRetry int) {
 		totalCerts := len(res.Data)
 		if i == maxRetry && totalCerts == 0 {
 			t.Fatalf("Time out: reached max %d retries.", maxRetry)
-		} else if certsNumber == 0 {
+		} else if totalCerts == 0 {
 			time.Sleep(1 * time.Second)
 		} else {
 			break
