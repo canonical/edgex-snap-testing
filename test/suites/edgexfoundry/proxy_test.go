@@ -45,7 +45,7 @@ func TestAddProxyUser(t *testing.T) {
 	stdout, _ := utils.Exec(t,
 		fmt.Sprintf("edgexfoundry.secrets-config proxy adduser --token-type jwt --user example --algorithm ES256 --public_key %s --id 1000 -jwt %s",
 			publicKey,
-			string(kongAdminJWT)))
+			kongAdminJWT))
 	// On success, the above command prints the user id
 	require.Equal(t, "1000\n", stdout)
 
