@@ -153,8 +153,8 @@ func waitCertInstall(t *testing.T, caKey string, maxRetry int) {
 		err = json.NewDecoder(resp.Body).Decode(&res)
 		require.NoError(t, err)
 
-		certsNumber := len(res.Data)
-		if i == maxRetry && certsNumber == 0 {
+		totalCerts := len(res.Data)
+		if i == maxRetry && totalCerts == 0 {
 			t.Fatalf("Time out: reached max %d retries.", maxRetry)
 		} else if certsNumber == 0 {
 			time.Sleep(1 * time.Second)
