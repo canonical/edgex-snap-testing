@@ -5,7 +5,6 @@ import (
 	"edgex-snap-testing/test/utils"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -35,9 +34,8 @@ func TestAddProxyUser(t *testing.T) {
 	// Get Kong admin JWT token
 	utils.Exec(t, fmt.Sprintf("sudo install -m 604 /var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt ./%s", tmpDir))
 	kongAdminJWTFile := tmpDir + "/kong-admin-jwt"
-	out, err := os.ReadFile(kongAdminJWTFile)
+	kongAdminJWT, err := os.ReadFile(kongAdminJWTFile)
 	require.NoError(t, err)
-	kongAdminJWT := string(out)
 
 	// Generate private and public keys
 	utils.Exec(t, fmt.Sprintf("openssl ecparam -genkey -name prime256v1 -noout -out %s", privateKey))
@@ -47,7 +45,7 @@ func TestAddProxyUser(t *testing.T) {
 	stdout, _ := utils.Exec(t,
 		fmt.Sprintf("edgexfoundry.secrets-config proxy adduser --token-type jwt --user example --algorithm ES256 --public_key %s --id 1000 -jwt %s",
 			publicKey,
-			kongAdminJWT))
+			string(kongAdminJWT)))
 	// On success, the above command prints the user id
 	require.Equal(t, "1000\n", stdout)
 
@@ -90,19 +88,17 @@ func TestTLSCert(t *testing.T) {
 	// Get Kong admin JWT token
 	utils.Exec(t, fmt.Sprintf("sudo install -m 604 /var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt ./%s", tmpDir))
 	kongAdminJWTFile := tmpDir + "/kong-admin-jwt"
-	out, err := os.ReadFile(kongAdminJWTFile)
+	kongAdminJWT, err := os.ReadFile(kongAdminJWTFile)
 	require.NoError(t, err)
-	kongAdminJWT := string(out)
 
 	// Add the certificate, using Kong Admin JWT to authenticate
 	caCertFile, caKeyFile := generateCerts(tmpDir)
-	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s", caCertFile, caKeyFile, kongAdminJWT))
+	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s", caCertFile, caKeyFile, string(kongAdminJWT)))
 
 	// Wait the certificate to be fully installed
-	out, err = os.ReadFile(caKeyFile)
+	caKey, err := os.ReadFile(caKeyFile)
 	require.NoError(t, err)
-	caKey := string(out)
-	waitCertInstall(t, caKey, 10)
+	waitCertInstall(t, string(caKey), 10)
 
 	// Check if TLS is setup correctly returning status code 401
 	code, _ := utils.Exec(t, fmt.Sprintf(`curl --show-error --silent --include --output /dev/null --write-out "%%{http_code}" --cacert %s -X GET 'https://localhost:8443/core-data/api/v2/ping' -H "Authorization: Bearer %s"`, caCertFile, "testToken"))
@@ -145,26 +141,22 @@ func waitCertInstall(t *testing.T, caKey string, maxRetry int) {
 		}
 	}
 
-	res := &ResponseBody{}
+	var res ResponseBody
 
 	for i := 1; ; i++ {
 		t.Logf("Checking certificate installation. Retry %d/%d", i, maxRetry)
 
-		client := &http.Client{}
-		req, err := http.NewRequest("GET", "http://localhost:8001/certificates", nil)
-		require.NoError(t, err)
-		resp, err := client.Do(req)
+		resp, err := http.Get("http://localhost:8001/certificates")
 		require.NoError(t, err)
 		defer resp.Body.Close()
 
-		data, err := io.ReadAll(resp.Body)
-		err = json.Unmarshal(data, res)
+		err = json.NewDecoder(resp.Body).Decode(&res)
 		require.NoError(t, err)
 
-		certLength := len(res.Data)
-		if i == maxRetry && certLength == 0 {
+		certsNumber := len(res.Data)
+		if i == maxRetry && certsNumber == 0 {
 			t.Fatalf("Time out: reached max %d retries.", maxRetry)
-		} else if certLength == 0 {
+		} else if certsNumber == 0 {
 			time.Sleep(1 * time.Second)
 		} else {
 			break
