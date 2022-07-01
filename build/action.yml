@@ -27,8 +27,6 @@ runs:
     # Build the snap
     - uses: snapcore/action-build@v1
       id: build
-      with:
-        snapcraft-args: --verbose
     
     # Upload the snap as build artifact
     - uses: actions/upload-artifact@v2
