@@ -2,9 +2,11 @@ package test
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"edgex-snap-testing/test/utils"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -101,15 +103,29 @@ func TestTLSCert(t *testing.T) {
 	require.Len(t, res.Data, 1)
 	require.Equal(t, res.Data[0].Cert, string(serverCert))
 
-	// Note: Certificate installation doesn't imply that the server immediately starts using it for serving requests
-	time.Sleep(10 * time.Second)
-
 	t.Logf("Query a service via the proxy to verify the use of new certificate")
-	// A success response should return status 401 because the endpoint is protected.
-	// Note: %%	is a literal percent sign
-	code, _ := utils.Exec(t, fmt.Sprintf("curl --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --cacert %s 'https://localhost:8443/core-data/api/v2/ping'",
-		caCertFile))
-	require.Equal(t, "401", strings.TrimSpace(code))
+	caCert, err := ioutil.ReadFile(caCertFile)
+	require.NoError(t, err)
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(caCert)
+
+	client := http.Client{Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{
+			RootCAs: caCertPool,
+		},
+	}}
+
+	const maxRetry = 30
+	for i := 1; i <= maxRetry; i++ {
+		resp, err = client.Get("https://localhost:8443/core-data/api/v2/ping")
+		if err != nil {
+			t.Logf("Retry %d/%d: %s", i, maxRetry, err)
+			time.Sleep(time.Second)
+			continue
+		}
+		// A success response should return status 401 because the endpoint is protected.
+		require.Equal(t, 401, resp.StatusCode)
+	}
 }
 
 // generateCerts generates CA private key, CA cert,
@@ -137,14 +153,14 @@ func generateCerts(t *testing.T) (caKeyFile, caCertFile, serverCsrFile, serverKe
 	utils.Exec(nil, fmt.Sprintf("openssl ecparam -name prime256v1 -genkey -noout -out %s",
 		caKeyFile))
 	// Generate the Certificate Authority Certificate
-	utils.Exec(nil, fmt.Sprintf("openssl req -new -x509 -sha256 -key %s -out %s -subj '/CN=snap-testing-ca'",
+	utils.Exec(nil, fmt.Sprintf("openssl req -new -x509 -sha256 -key %s -out %s -subj '/CN=snap-testing-ca' -addext 'subjectAltName = DNS:localhost'",
 		caKeyFile, caCertFile))
 
 	// Generate the Server Certificate Private Keys
 	utils.Exec(nil, fmt.Sprintf("openssl ecparam -name prime256v1 -genkey -noout -out %s",
 		serverKeyFile))
 	// Generate the Server Certificate Signing Request
-	utils.Exec(nil, fmt.Sprintf("openssl req -new -sha256 -key %s -out %s -subj '/CN=localhost'",
+	utils.Exec(nil, fmt.Sprintf("openssl req -new -sha256 -key %s -out %s -subj '/CN=snap-tests' -addext 'subjectAltName = DNS:localhost'",
 		serverKeyFile, serverCsrFile))
 	// Generate the Server Certificate
 	utils.Exec(nil, fmt.Sprintf("openssl x509 -req -in %s -CA %s -CAkey %s -CAcreateserial -out %s -days 1 -sha256",
