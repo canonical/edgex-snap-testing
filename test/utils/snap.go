@@ -93,7 +93,7 @@ func SnapLogs(t *testing.T, start time.Time, name string) string {
 
 func SnapSet(t *testing.T, name, key, value string) {
 	Exec(t, fmt.Sprintf(
-		"sudo snap set %s %s=%s",
+		"sudo snap set %s %s='%s'",
 		name,
 		key,
 		value,
