@@ -84,21 +84,37 @@ func TestTLSCert(t *testing.T) {
 	// Create temp dir for certificates and keys
 	require.NoError(t, os.Mkdir(tmpDir, 0755))
 
-	// Get Kong admin JWT token
+	t.Logf("Get Kong admin JWT token")
 	utils.Exec(t, fmt.Sprintf("sudo install -m 604 /var/snap/edgexfoundry/current/secrets/security-proxy-setup/kong-admin-jwt ./%s", tmpDir))
 	kongAdminJWTFile := tmpDir + "/kong-admin-jwt"
 	kongAdminJWT, err := os.ReadFile(kongAdminJWTFile)
 	require.NoError(t, err)
 
-	// Add the certificate, using Kong Admin JWT to authenticate
-	caCertFile, caKeyFile := generateCerts(tmpDir)
+	t.Logf("Generate a self-signed certificate")
+	caKeyFile, caCertFile, _, _, _ := generateCerts(tmpDir)
+
+	t.Logf("Add the self-signed certificate")
 	utils.Exec(t, fmt.Sprintf("edgexfoundry.secrets-config proxy tls --incert %s --inkey %s --admin_api_jwt %s",
 		caCertFile, caKeyFile, kongAdminJWT))
 
-	// Wait for the certificate to be fully installed
-	waitCertInstall(t, caKeyFile, 10)
+	t.Logf("Verify certificate installation by querying Kong's Admin API")
+	// Query installed certificates from Kong
+	resp, err := http.Get("http://localhost:8001/certificates")
+	require.NoError(t, err)
+	defer resp.Body.Close()
+	var res struct{ Data []struct{ Key string } }
+	err = json.NewDecoder(resp.Body).Decode(&res)
+	require.NoError(t, err)
+	require.Len(t, res.Data, 1)
 
-	// Check if TLS is setup correctly
+	caKey, err := os.ReadFile(caKeyFile)
+	require.NoError(t, err)
+	require.Equal(t, res.Data[0].Key, string(caKey))
+
+	// Note: Certificate installation doesn't imply that the server immediately starts using it for serving requests
+	time.Sleep(3 * time.Second)
+
+	t.Logf("Query a service via the proxy to verify the use of new certificate")
 	// A success response should return status 401 because the endpoint is protected.
 	// Note: %%	is a literal percent sign
 	code, _ := utils.Exec(t, fmt.Sprintf("curl --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --cacert %s -X GET 'https://localhost:8443/core-data/api/v2/ping'",
@@ -108,14 +124,12 @@ func TestTLSCert(t *testing.T) {
 
 // generateCerts generates CA private key, CA cert,
 // server private key, server signing request, server cert
-func generateCerts(dir string) (string, string) {
-	var (
-		caKeyFile      = dir + "/ca.key"
-		caCertFile     = dir + "/ca.crt"
-		serverCsrFile  = dir + "/server.csr"
-		serverKeyFile  = dir + "/server.key"
-		serverCertFile = dir + "/server.crt"
-	)
+func generateCerts(dir string) (caKeyFile, caCertFile, serverCsrFile, serverKeyFile, serverCertFile string) {
+	caKeyFile = dir + "/ca.key"
+	caCertFile = dir + "/ca.crt"
+	serverCsrFile = dir + "/server.csr"
+	serverKeyFile = dir + "/server.key"
+	serverCertFile = dir + "/server.crt"
 
 	// Generate the Certificate Authority (CA) Private Key
 	utils.Exec(nil, fmt.Sprintf("openssl ecparam -name prime256v1 -genkey -noout -out %s",
@@ -134,42 +148,5 @@ func generateCerts(dir string) (string, string) {
 	utils.Exec(nil, fmt.Sprintf("openssl x509 -req -in %s -CA %s -CAkey %s -CAcreateserial -out %s -days 1000 -sha256",
 		serverCsrFile, caCertFile, caKeyFile, serverCertFile))
 
-	return caCertFile, caKeyFile
-}
-
-// waitCertInstall checks if certificate is fully installed
-// up to a maximum retry number
-func waitCertInstall(t *testing.T, caKeyFile string, maxRetry int) {
-	caKey, err := os.ReadFile(caKeyFile)
-	require.NoError(t, err)
-
-	type ResponseBody struct {
-		Data []struct {
-			Key string
-		}
-	}
-
-	var res ResponseBody
-
-	for i := 1; ; i++ {
-		t.Logf("Checking certificate installation. Retry %d/%d", i, maxRetry)
-
-		resp, err := http.Get("http://localhost:8001/certificates")
-		require.NoError(t, err)
-		defer resp.Body.Close()
-
-		err = json.NewDecoder(resp.Body).Decode(&res)
-		require.NoError(t, err)
-
-		totalCerts := len(res.Data)
-		if i == maxRetry && totalCerts == 0 {
-			t.Fatalf("Time out: reached max %d retries.", maxRetry)
-		} else if totalCerts == 0 {
-			time.Sleep(1 * time.Second)
-		} else {
-			break
-		}
-	}
-
-	require.Equal(t, res.Data[0].Key, string(caKey))
+	return
 }
