@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,7 +18,7 @@ import (
 // https://docs.edgexfoundry.org/2.2/getting-started/Ch-GettingStartedSnapUsers/#adding-api-gateway-users
 func TestAddProxyUser(t *testing.T) {
 	const (
-		tmpDir         = "keys"
+		tmpDir         = "./tmp"
 		publicKeyFile  = tmpDir + "/public.pem"
 		privateKeyFile = tmpDir + "/private.pem"
 	)
@@ -110,7 +109,7 @@ func TestTLSCert(t *testing.T) {
 	// Note: %%	is a literal percent sign
 	code, _ := utils.Exec(t, fmt.Sprintf("curl --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --cacert %s 'https://localhost:8443/core-data/api/v2/ping'",
 		caCertFile))
-	assert.Equal(t, "401", strings.TrimSpace(code))
+	require.Equal(t, "401", strings.TrimSpace(code))
 }
 
 // generateCerts generates CA private key, CA cert,
