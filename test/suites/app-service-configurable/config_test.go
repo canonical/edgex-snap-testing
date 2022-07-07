@@ -9,26 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const profile = "http-export"
-
-// Deprecated
-func TestEnvConfig(t *testing.T) {
-	utils.SetEnvConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
-}
-
-func TestAppConfig(t *testing.T) {
-	utils.SetAppConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
-}
-
-func TestGlobalConfig(t *testing.T) {
-	// start clean
-	utils.SetGlobalConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
-}
-
-func TestMixedConfig(t *testing.T) {
-	utils.SetMixedConfig(t, ascSnap, ascApp, appServiceRulesServicePort)
-}
-
 func TestProfileConfig(t *testing.T) {
 	// start clean
 	utils.SnapStop(t, ascService)
@@ -38,10 +18,11 @@ func TestProfileConfig(t *testing.T) {
 			utils.SnapStop(t, ascService)
 			utils.SnapUnset(t, ascSnap, "profile")
 			// set profile back to default for upcoming tests
-			utils.SnapSet(t, ascSnap, "profile", defaultProfile)
+			utils.SnapSet(t, ascSnap, "profile", defaultTestProfile)
 		})
 
-		var start = time.Now()
+		start := time.Now()
+		const profile = "http-export"
 
 		// set profile
 		utils.SnapSet(t, ascSnap, "profile", profile)

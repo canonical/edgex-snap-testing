@@ -9,16 +9,15 @@ import (
 )
 
 const (
-	ascSnap                    = "edgex-app-service-configurable"
-	ascApp                     = "app-service-configurable"
-	ascService                 = ascSnap + "." + ascApp
-	defaultProfile             = "rules-engine"
-	appServiceRulesServicePort = "59701"
+	ascSnap                       = "edgex-app-service-configurable"
+	ascApp                        = "app-service-configurable"
+	ascService                    = ascSnap + "." + ascApp
+	defaultTestProfile            = "rules-engine"
+	defaultTestProfileServicePort = "59701"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
@@ -48,13 +47,13 @@ func TestMain(m *testing.M) {
 	)
 
 	// set profile to rules engine
-	utils.SnapSet(nil, ascSnap, "profile", defaultProfile)
+	utils.SnapSet(nil, ascSnap, "profile", defaultTestProfile)
 
 	// Start the service so that the default config gets uploaded to consul.
 	// Otherwise, settings that get passed using environment variables on first start get uploaded
 	// and become the default.
 	utils.SnapStart(nil, ascService)
-	utils.WaitServiceOnline(nil, 60, appServiceRulesServicePort)
+	utils.WaitServiceOnline(nil, 60, defaultTestProfileServicePort)
 
 	exitCode := m.Run()
 
@@ -68,4 +67,27 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestConfig(t, ascSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      ascApp,
+			DefaultPort:              defaultTestProfileServicePort,
+			TestLegacyEnvConfig:      utils.FullConfigTest,
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
+		},
+	})
+
+	utils.TestNet(t, ascSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{defaultTestProfileServicePort},
+		TestBindLoopback: []string{defaultTestProfileServicePort},
+	})
+
+	utils.TestPackaging(t, ascSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }
