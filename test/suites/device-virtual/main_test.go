@@ -15,9 +15,8 @@ const (
 	deviceVirtualServicePort = "59900"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
