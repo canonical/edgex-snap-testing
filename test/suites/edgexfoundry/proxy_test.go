@@ -22,7 +22,7 @@ func TestTLSCert(t *testing.T) {
 		utils.SnapUnset(t, platformSnap, "app-options")
 	})
 
-	t.Logf("Generate CA and self-signed certificates")
+	t.Logf("Generate CA and server certificates")
 	_, caCertFile, _, serverKeyFile, serverCertFile := generateCerts(t)
 
 	serverKey, err := os.ReadFile(serverKeyFile)
