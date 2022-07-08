@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	deviceModbusSnap    = "edgex-device-modbus"
-	deviceModbusApp     = "device-modbus"
-	deviceModbusService = deviceModbusSnap + "." + deviceModbusApp
+	deviceModbusSnap        = "edgex-device-modbus"
+	deviceModbusApp         = "device-modbus"
+	deviceModbusService     = deviceModbusSnap + "." + deviceModbusApp
+	deviceModbusServicePort = "59901"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
@@ -57,4 +57,27 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestConfig(t, deviceModbusSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      deviceModbusApp,
+			DefaultPort:              deviceModbusServicePort,
+			TestLegacyEnvConfig:      utils.FullConfigTest,
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
+		},
+	})
+
+	utils.TestNet(t, deviceModbusSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{deviceModbusServicePort},
+		TestBindLoopback: []string{deviceModbusServicePort},
+	})
+
+	utils.TestPackaging(t, deviceModbusSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }

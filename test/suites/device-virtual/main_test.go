@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	deviceVirtualSnap = "edgex-device-virtual"
-	deviceVirtualApp  = "device-virtual"
-	deviceRestService = deviceVirtualSnap + "." + deviceVirtualApp
+	deviceVirtualSnap        = "edgex-device-virtual"
+	deviceVirtualApp         = "device-virtual"
+	deviceVirtualService     = deviceVirtualSnap + "." + deviceVirtualApp
+	deviceVirtualServicePort = "59900"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
@@ -47,9 +47,9 @@ func TestMain(m *testing.M) {
 
 	// Start the service so that the default config gets uploaded to consul.
 	// Otherwise, settings that get passed using environment variables on first start get uploaded
-	// and become the default. 
-	utils.SnapStart(nil, deviceRestService)
-	utils.WaitServiceOnline(nil, 60, defaultServicePort)
+	// and become the default.
+	utils.SnapStart(nil, deviceVirtualService)
+	utils.WaitServiceOnline(nil, 60, deviceVirtualServicePort)
 
 	exitCode := m.Run()
 
@@ -63,4 +63,26 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestConfig(t, deviceVirtualSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      deviceVirtualApp,
+			DefaultPort:              deviceVirtualServicePort,
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
+		},
+	})
+
+	utils.TestNet(t, deviceVirtualSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{deviceVirtualServicePort},
+		TestBindLoopback: []string{deviceVirtualServicePort},
+	})
+
+	utils.TestPackaging(t, deviceVirtualSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }

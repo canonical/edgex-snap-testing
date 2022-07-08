@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	deviceSnmpSnap    = "edgex-device-snmp"
-	deviceSnmpApp     = "device-snmp"
-	deviceSnmpService = deviceSnmpSnap + "." + deviceSnmpApp
+	deviceSnmpSnap        = "edgex-device-snmp"
+	deviceSnmpApp         = "device-snmp"
+	deviceSnmpService     = deviceSnmpSnap + "." + deviceSnmpApp
+	deviceSnmpServicePort = "59993"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
@@ -57,4 +57,27 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestConfig(t, deviceSnmpSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      deviceSnmpApp,
+			DefaultPort:              deviceSnmpServicePort,
+			TestLegacyEnvConfig:      utils.FullConfigTest,
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
+		},
+	})
+
+	utils.TestNet(t, deviceSnmpSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{deviceSnmpServicePort},
+		TestBindLoopback: []string{deviceSnmpServicePort},
+	})
+
+	utils.TestPackaging(t, deviceSnmpSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }

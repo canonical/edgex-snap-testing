@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	deviceRfidLlrpSnap    = "edgex-device-rfid-llrp"
-	deviceRfidApp         = "device-rfid-llrp"
-	deviceRfidLlrpService = deviceRfidLlrpSnap + "." + deviceRfidApp
+	deviceRfidLlrpSnap        = "edgex-device-rfid-llrp"
+	deviceRfidApp             = "device-rfid-llrp"
+	deviceRfidLlrpService     = deviceRfidLlrpSnap + "." + deviceRfidApp
+	deviceRfidLlrpServicePort = "59989"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
@@ -47,9 +47,9 @@ func TestMain(m *testing.M) {
 
 	// Start the service so that the default config gets uploaded to consul.
 	// Otherwise, settings that get passed using environment variables on first start get uploaded
-	// and become the default. This is expected behavior.
+	// and become the default.
 	utils.SnapStart(nil, deviceRfidLlrpService)
-	utils.WaitServiceOnline(nil, 60, defaultServicePort)
+	utils.WaitServiceOnline(nil, 60, deviceRfidLlrpServicePort)
 
 	exitCode := m.Run()
 
@@ -63,4 +63,27 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestConfig(t, deviceRfidLlrpSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      deviceRfidApp,
+			DefaultPort:              deviceRfidLlrpServicePort,
+			TestLegacyEnvConfig:      utils.FullConfigTest,
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
+		},
+	})
+
+	utils.TestNet(t, deviceRfidLlrpSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{deviceRfidLlrpServicePort},
+		TestBindLoopback: []string{deviceRfidLlrpServicePort},
+	})
+
+	utils.TestPackaging(t, deviceRfidLlrpSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }

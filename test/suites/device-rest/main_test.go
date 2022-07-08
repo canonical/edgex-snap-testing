@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	deviceRestSnap    = "edgex-device-rest"
-	deviceRestApp     = "device-rest"
-	deviceRestService = deviceRestSnap + "." + deviceRestApp
+	deviceRestSnap        = "edgex-device-rest"
+	deviceRestApp         = "device-rest"
+	deviceRestService     = deviceRestSnap + "." + deviceRestApp
+	deviceRestServicePort = "59986"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
@@ -47,9 +47,9 @@ func TestMain(m *testing.M) {
 
 	// Start the service so that the default config gets uploaded to consul.
 	// Otherwise, settings that get passed using environment variables on first start get uploaded
-	// and become the default. This is possibility a device-rest service bug.
+	// and become the default.
 	utils.SnapStart(nil, deviceRestService)
-	utils.WaitServiceOnline(nil, 60, defaultServicePort)
+	utils.WaitServiceOnline(nil, 60, deviceRestServicePort)
 
 	exitCode := m.Run()
 
@@ -63,4 +63,27 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestConfig(t, deviceRestSnap, utils.Config{
+		TestChangePort: utils.ConfigChangePort{
+			App:                      deviceRestApp,
+			DefaultPort:              deviceRestServicePort,
+			TestLegacyEnvConfig:      utils.FullConfigTest,
+			TestAppConfig:            true,
+			TestGlobalConfig:         true,
+			TestMixedGlobalAppConfig: utils.FullConfigTest,
+		},
+	})
+
+	utils.TestNet(t, deviceRestSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{deviceRestServicePort},
+		TestBindLoopback: []string{deviceRestServicePort},
+	})
+
+	utils.TestPackaging(t, deviceRestSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }
