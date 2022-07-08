@@ -53,7 +53,7 @@ func TestMain(m *testing.M) {
 		fmt.Print(err)
 		return
 	}
-	err = os.WriteFile("/var/snap/edgex-device-onvif-camera/current/device-onvif-camera/onvif-credentials.json", testData, 0644)
+	err = os.WriteFile("/var/snap/edgex-device-onvif-camera/current/device-onvif-camera/onvif-credentials.json", testData, 0666)
 	if err != nil {
 		fmt.Print(err)
 		return
