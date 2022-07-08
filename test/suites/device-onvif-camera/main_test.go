@@ -48,29 +48,12 @@ func TestMain(m *testing.M) {
 	)
 
 	// seed test onvif credentials
-	testData := []byte(`{
-		"secrets": [
-			{
-				"path": "credentials001",
-				"imported": false,
-				"secretData": [
-					{
-						"key": "username",
-						"value": "admin"
-					},
-									{
-						"key": "password",
-						"value": "admin"
-					},
-					{
-						"key": "mode",
-						"value": "usernametoken"
-					}
-				]
-			}
-		]
-	}`)
-	err := os.WriteFile("/var/snap/edgex-device-onvif-camera/x1/device-onvif-camera/onvif-credentials.json", testData, 0644)
+	testData, err := os.ReadFile("onvif-credentials.json")
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	err = os.WriteFile("/var/snap/edgex-device-onvif-camera/current/device-onvif-camera/onvif-credentials.json", testData, 0644)
 	if err != nil {
 		fmt.Print(err)
 		return
