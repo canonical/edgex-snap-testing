@@ -14,15 +14,13 @@ const (
 	deviceOnvifCameraApp         = "device-onvif-camera"
 	deviceOnvifcameraService     = deviceOnvifcameraSnap + "." + deviceOnvifCameraApp
 	deviceOnvifcameraServicePort = "59984"
-	testOnvifCredFile            = "test-onvif-credentials.json"
+	testOnvifCredFile            = "/var/snap/edgex-device-onvif-camera/current/device-onvif-camera/onvif-credentials.json"
 )
-
-var start = time.Now()
 
 func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")
-
+	start := time.Now()
 	// start clean
 	utils.SnapRemove(nil,
 		deviceOnvifcameraSnap,
@@ -55,11 +53,12 @@ func TestMain(m *testing.M) {
 		fmt.Println(err)
 		return
 	}
-	err = os.WriteFile(testOnvifCredFile, testData, 0666)
+	err = os.WriteFile(testOnvifCredFile, testData, 0644)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	utils.SnapSet(nil, deviceOnvifcameraSnap, "config.secretstore-secretsfile", testOnvifCredFile)
 
 	exitCode := m.Run()
 
