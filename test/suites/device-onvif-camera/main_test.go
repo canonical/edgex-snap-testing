@@ -14,6 +14,7 @@ const (
 	deviceOnvifCameraApp         = "device-onvif-camera"
 	deviceOnvifcameraService     = deviceOnvifcameraSnap + "." + deviceOnvifCameraApp
 	deviceOnvifcameraServicePort = "59984"
+	testOnvifCredFile            = "test-onvif-credentials.json"
 )
 
 var start = time.Now()
@@ -47,15 +48,16 @@ func TestMain(m *testing.M) {
 		deviceOnvifcameraSnap+":edgex-secretstore-token",
 	)
 
+	log.Printf("Copying test credentials to %s", testOnvifCredFile)
 	// seed test onvif credentials
-	testData, err := os.ReadFile("onvif-credentials.json")
+	testData, err := os.ReadFile("test-onvif-credentials.json")
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		return
 	}
-	err = os.WriteFile("/var/snap/edgex-device-onvif-camera/current/device-onvif-camera/onvif-credentials.json", testData, 0666)
+	err = os.WriteFile(testOnvifCredFile, testData, 0666)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		return
 	}
 
