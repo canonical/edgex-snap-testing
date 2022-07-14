@@ -2,7 +2,6 @@ package test
 
 import (
 	"edgex-snap-testing/test/utils"
-	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -47,18 +46,8 @@ func TestMain(m *testing.M) {
 	)
 
 	log.Printf("Copying test credentials to %s", testOnvifCredFile)
-	// seed test onvif credentials
-	testData, err := os.ReadFile("test-onvif-credentials.json")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = os.WriteFile(testOnvifCredFile, testData, 0644)
-	err = os.WriteFile(testOnvifCredFile, testData, 0666)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	utils.Exec(nil, "sudo cp test-onvif-credentials.json "+testOnvifCredFile)
+
 	utils.SnapSet(nil, deviceOnvifcameraSnap, "config.secretstore-secretsfile", testOnvifCredFile)
 
 	exitCode := m.Run()
