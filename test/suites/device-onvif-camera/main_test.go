@@ -9,10 +9,9 @@ import (
 )
 
 const (
-	deviceOnvifcameraSnap        = "edgex-device-onvif-camera"
+	deviceOnvifCameraSnap        = "edgex-device-onvif-camera"
 	deviceOnvifCameraApp         = "device-onvif-camera"
-	deviceOnvifcameraService     = deviceOnvifcameraSnap + "." + deviceOnvifCameraApp
-	deviceOnvifcameraServicePort = "59984"
+	deviceOnvifCameraServicePort = "59984"
 )
 
 func TestMain(m *testing.M) {
@@ -21,7 +20,7 @@ func TestMain(m *testing.M) {
 	start := time.Now()
 	// start clean
 	utils.SnapRemove(nil,
-		deviceOnvifcameraSnap,
+		deviceOnvifCameraSnap,
 		"edgexfoundry",
 	)
 
@@ -30,7 +29,7 @@ func TestMain(m *testing.M) {
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, deviceOnvifcameraSnap, utils.ServiceChannel)
+		utils.SnapInstallFromStore(nil, deviceOnvifCameraSnap, utils.ServiceChannel)
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
@@ -41,17 +40,17 @@ func TestMain(m *testing.M) {
 	// connect manually regardless
 	utils.SnapConnect(nil,
 		"edgexfoundry:edgex-secretstore-token",
-		deviceOnvifcameraSnap+":edgex-secretstore-token",
+		deviceOnvifCameraSnap+":edgex-secretstore-token",
 	)
 
 	exitCode := m.Run()
 
 	log.Println("[TEARDOWN]")
 
-	utils.SnapDumpLogs(nil, start, deviceOnvifcameraSnap)
+	utils.SnapDumpLogs(nil, start, deviceOnvifCameraSnap)
 
 	utils.SnapRemove(nil,
-		deviceOnvifcameraSnap,
+		deviceOnvifCameraSnap,
 		"edgexfoundry",
 	)
 
@@ -59,10 +58,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestConfig(t, deviceOnvifcameraSnap, utils.Config{
+	utils.TestConfig(t, deviceOnvifCameraSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceOnvifCameraApp,
-			DefaultPort:              deviceOnvifcameraServicePort,
+			DefaultPort:              deviceOnvifCameraServicePort,
 			TestLegacyEnvConfig:      utils.FullConfigTest,
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
@@ -70,13 +69,13 @@ func TestCommon(t *testing.T) {
 		},
 	})
 
-	utils.TestNet(t, deviceOnvifcameraSnap, utils.Net{
+	utils.TestNet(t, deviceOnvifCameraSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceOnvifcameraServicePort},
-		TestBindLoopback: []string{deviceOnvifcameraServicePort},
+		TestOpenPorts:    []string{deviceOnvifCameraServicePort},
+		TestBindLoopback: []string{deviceOnvifCameraServicePort},
 	})
 
-	utils.TestPackaging(t, deviceOnvifcameraSnap, utils.Packaging{
+	utils.TestPackaging(t, deviceOnvifCameraSnap, utils.Packaging{
 		TestSemanticSnapVersion: true,
 	})
 }
