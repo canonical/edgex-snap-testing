@@ -11,10 +11,7 @@ import (
 	"time"
 )
 
-const deviceVirtualPort = "59900"
-
 func TestStreamsAndRules(t *testing.T) {
-
 	t.Cleanup(func() {
 		utils.SnapStop(t,
 			ekuiperService,

@@ -9,15 +9,19 @@ import (
 )
 
 const (
-	ekuiperSnap       = "edgex-ekuiper"
-	ekuiperApp        = "kuiper"
-	ekuiperService    = ekuiperSnap + "." + ekuiperApp
+	ekuiperSnap           = "edgex-ekuiper"
+	ekuiperApp            = "kuiper"
+	ekuiperService        = ekuiperSnap + "." + ekuiperApp
+	ekuiperServerPort     = "20498"
+	ekuiperRestfulApiPort = "59720"
+
 	deviceVirtualSnap = "edgex-device-virtual"
+	deviceVirtualPort = "59900"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
+
 	log.Println("[SETUP]")
 
 	// start clean
@@ -83,4 +87,16 @@ TEARDOWN:
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestNet(t, ekuiperSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{ekuiperServerPort, ekuiperRestfulApiPort},
+		TestBindLoopback: []string{ekuiperServerPort, ekuiperRestfulApiPort},
+	})
+
+	utils.TestPackaging(t, ekuiperSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }
