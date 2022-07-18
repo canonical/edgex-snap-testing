@@ -54,14 +54,6 @@ func TestMain(m *testing.M) {
 		"edgexfoundry:edgex-secretstore-token",
 		ekuiperSnap+":edgex-secretstore-token",
 	)
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceVirtualSnap+":edgex-secretstore-token",
-	)
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		ascSnap+":edgex-secretstore-token",
-	)
 
 	// set profile to ekuiper
 	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
