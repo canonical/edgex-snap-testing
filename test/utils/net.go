@@ -37,31 +37,31 @@ func TestNet(t *testing.T, snapName string, conf Net) {
 		}
 
 		if len(conf.TestOpenPorts) > 0 {
-			TestOpenPorts(t, snapName, conf.TestOpenPorts)
+			testOpenPorts(t, snapName, conf.TestOpenPorts)
 		}
 		if len(conf.TestBindLoopback) > 0 {
-			TestBindLoopback(t, snapName, conf.TestBindLoopback)
+			testBindLoopback(t, snapName, conf.TestBindLoopback)
 		}
 
 	})
 }
 
-func TestOpenPorts(t *testing.T, snapName string, ports []string) {
+func testOpenPorts(t *testing.T, snapName string, ports []string) {
 	t.Run("ports open", func(t *testing.T) {
 		WaitServiceOnline(t, 60, ports...)
 	})
 }
 
-func TestBindLoopback(t *testing.T, snapName string, ports []string) {
+func testBindLoopback(t *testing.T, snapName string, ports []string) {
 	WaitServiceOnline(t, 60, ports...)
 
 	t.Run("ports not listening on all interfaces", func(t *testing.T) {
-		RequireListenAllInterfaces(t, false, ports...)
+		requireListenAllInterfaces(t, false, ports...)
 	})
 
 	t.Run("ports listening on localhost", func(t *testing.T) {
-		RequireListenLoopback(t, ports...)
-		// RequirePortOpen(t, params.TestBindAddrLoopback...)
+		requireListenLoopback(t, ports...)
+		// requirePortOpen(t, ports...)
 	})
 }
 
@@ -103,8 +103,8 @@ func WaitPlatformOnline(t *testing.T) {
 	WaitServiceOnline(t, 180, PlatformPorts...)
 }
 
-// RequirePortOpen checks if the local port(s) accepts connections
-func RequirePortOpen(t *testing.T, ports ...string) {
+// requirePortOpen checks if the local port(s) accepts connections
+func requirePortOpen(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")
 	}
@@ -130,8 +130,7 @@ func RequirePortOpen(t *testing.T, ports ...string) {
 	}
 }
 
-// checkListenAllInterfaces checks if the port(s) listen on all interfaces
-func RequireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) {
+func requireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")
 	}
@@ -150,9 +149,9 @@ func RequireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) 
 	}
 }
 
-// RequireListenLoopback checks if the port(s) listen on the loopback interface
+// requireListenLoopback checks if the port(s) listen on the loopback interface
 // It does not check whether port(s) listen on interfaces other than the loopback
-func RequireListenLoopback(t *testing.T, ports ...string) {
+func requireListenLoopback(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")
 	}

@@ -33,30 +33,29 @@ func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
 		SnapStop(nil, service)
 
 		if conf.TestLegacyEnvConfig {
-			SetEnvConfig(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_legacyEnv(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestAppConfig {
-			SetAppConfig(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_app(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestGlobalConfig {
-			SetGlobalConfig(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_global(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestMixedGlobalAppConfig {
-			SetMixedConfig(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_mixedGlobalApp(t, snapName, conf.App, conf.DefaultPort)
 		}
 	})
 }
 
-// TODO change to TestChangePortLegacyEnv
-func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
-	if !FullConfigTest {
-		t.Skip("Full config test is disabled.")
-	}
-	// start clean
-	SnapStop(t, service)
-
+func testChangePort_legacyEnv(t *testing.T, snap, app, servicePort string) {
 	t.Run("legacy env config", func(t *testing.T) {
+		service := snap + "." + app
+		if !FullConfigTest {
+			t.Skip("Full config test is disabled.")
+		}
+		// start clean
+		SnapStop(t, service)
+
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "env")
 			SnapStop(t, service)
@@ -81,14 +80,13 @@ func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 
 }
 
-// TODO change to TestChangePortApp
-func SetAppConfig(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
-
-	// start clean
-	SnapStop(t, service)
-
+func testChangePort_app(t *testing.T, snap, app, servicePort string) {
 	t.Run("app config", func(t *testing.T) {
+		service := snap + "." + app
+
+		// start clean
+		SnapStop(t, service)
+
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "app-options")
@@ -117,14 +115,13 @@ func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
-// TODO change to TestChangePortGlobal
-func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
-
-	// start clean
-	SnapStop(t, service)
-
+func testChangePort_global(t *testing.T, snap, app, servicePort string) {
 	t.Run("global config", func(t *testing.T) {
+		service := snap + "." + app
+
+		// start clean
+		SnapStop(t, service)
+
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "config")
 			SnapUnset(t, snap, "app-options")
@@ -153,17 +150,16 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
-// TODO change to TestChangePortMixedGlobalApp
-func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
+func testChangePort_mixedGlobalApp(t *testing.T, snap, app, servicePort string) {
+	t.Run("app+global config for different values", func(t *testing.T) {
+		service := snap + "." + app
 
-	if !FullConfigTest {
-		t.Skip("Full config test is disabled.")
-	}
-	// start clean
-	SnapStop(t, service)
+		if !FullConfigTest {
+			t.Skip("Full config test is disabled.")
+		}
+		// start clean
+		SnapStop(t, service)
 
-	t.Run("app and global config for different values", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "config")

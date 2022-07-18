@@ -14,14 +14,12 @@ type Packaging struct {
 func TestPackaging(t *testing.T, snapName string, conf Packaging) {
 	t.Run("packaging", func(t *testing.T) {
 		if conf.TestSemanticSnapVersion {
-			RequireSnapSemver(t, snapName)
+			testSemanticSnapVersion(t, snapName)
 		}
 	})
 }
 
-// TODO: rename to TestSemanticSnapVersion
-// RequireSnapSemver checks that a snap has semantic versioning
-func RequireSnapSemver(t *testing.T, snapName string) {
+func testSemanticSnapVersion(t *testing.T, snapName string) {
 	t.Run("semantic snap version", func(t *testing.T) {
 		require.Regexp(t,
 			"^([0-9]+).([0-9]+).([0-9]+).*$",
