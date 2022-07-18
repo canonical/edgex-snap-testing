@@ -34,3 +34,10 @@ func TestMain(m *testing.M) {
 
 	os.Exit(exitCode)
 }
+
+func TestCommon(t *testing.T) {
+
+	utils.TestPackaging(t, cliSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
+}

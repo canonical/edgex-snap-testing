@@ -9,14 +9,12 @@ import (
 )
 
 const (
-	uiSnap    = "edgex-ui"
-	uiApp     = "edgex-ui"
-	uiService = uiSnap + "." + uiApp
+	uiSnap        = "edgex-ui"
+	uiServicePort = "4000"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
+	start := time.Now()
 
 	log.Println("[SETUP]")
 
@@ -42,4 +40,16 @@ func TestMain(m *testing.M) {
 	)
 
 	os.Exit(exitCode)
+}
+
+func TestCommon(t *testing.T) {
+	utils.TestNet(t, uiSnap, utils.Net{
+		StartSnap:        true,
+		TestOpenPorts:    []string{uiServicePort},
+		TestBindLoopback: []string{},
+	})
+
+	utils.TestPackaging(t, uiSnap, utils.Packaging{
+		TestSemanticSnapVersion: true,
+	})
 }
