@@ -44,14 +44,7 @@ func TestMain(m *testing.M) {
 	utils.WaitPlatformOnline(nil)
 
 	exitCode := m.Run()
-	defer tearDown(exitCode)
 
-	if exitCode != 0 {
-		return
-	}
-}
-
-func tearDown(exitCode int) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, deviceMqttSnap)
