@@ -33,29 +33,29 @@ func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
 		SnapStop(nil, service)
 
 		if conf.TestLegacyEnvConfig {
-			TestChangePortLegacyEnv(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_legacyEnv(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestAppConfig {
-			TestChangePortApp(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_app(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestGlobalConfig {
-			TestChangePortGlobal(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_global(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestMixedGlobalAppConfig {
-			TestChangePortMixedGlobalApp(t, snapName, conf.App, conf.DefaultPort)
+			testChangePort_mixedGlobalApp(t, snapName, conf.App, conf.DefaultPort)
 		}
 	})
 }
 
-func TestChangePortLegacyEnv(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
-	if !FullConfigTest {
-		t.Skip("Full config test is disabled.")
-	}
-	// start clean
-	SnapStop(t, service)
-
+func testChangePort_legacyEnv(t *testing.T, snap, app, servicePort string) {
 	t.Run("legacy env config", func(t *testing.T) {
+		service := snap + "." + app
+		if !FullConfigTest {
+			t.Skip("Full config test is disabled.")
+		}
+		// start clean
+		SnapStop(t, service)
+
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "env")
 			SnapStop(t, service)
@@ -64,7 +64,7 @@ func TestChangePortLegacyEnv(t *testing.T, snap, app, servicePort string) {
 		const newPort = "11111"
 
 		// make sure the port is available before using it
-		RequirePortAvailable(t, newPort)
+		requirePortAvailable(t, newPort)
 
 		// set env. and validate the new port comes online
 		SnapSet(t, snap, "env.service.port", newPort)
@@ -80,13 +80,13 @@ func TestChangePortLegacyEnv(t *testing.T, snap, app, servicePort string) {
 
 }
 
-func TestChangePortApp(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
-
-	// start clean
-	SnapStop(t, service)
-
+func testChangePort_app(t *testing.T, snap, app, servicePort string) {
 	t.Run("app config", func(t *testing.T) {
+		service := snap + "." + app
+
+		// start clean
+		SnapStop(t, service)
+
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "app-options")
@@ -99,7 +99,7 @@ func TestChangePortApp(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
-		RequirePortAvailable(t, newPort)
+		requirePortAvailable(t, newPort)
 
 		// set apps. and validate the new port comes online
 		SnapSet(t, snap, "apps."+app+".config.service-port", newPort)
@@ -115,13 +115,13 @@ func TestChangePortApp(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
-func TestChangePortGlobal(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
-
-	// start clean
-	SnapStop(t, service)
-
+func testChangePort_global(t *testing.T, snap, app, servicePort string) {
 	t.Run("global config", func(t *testing.T) {
+		service := snap + "." + app
+
+		// start clean
+		SnapStop(t, service)
+
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "config")
 			SnapUnset(t, snap, "app-options")
@@ -134,7 +134,7 @@ func TestChangePortGlobal(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
-		RequirePortAvailable(t, newPort)
+		requirePortAvailable(t, newPort)
 
 		// set config. and validate the new port comes online
 		SnapSet(t, snap, "config.service-port", newPort)
@@ -150,16 +150,16 @@ func TestChangePortGlobal(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
-func TestChangePortMixedGlobalApp(t *testing.T, snap, app, servicePort string) {
-	service := snap + "." + app
+func testChangePort_mixedGlobalApp(t *testing.T, snap, app, servicePort string) {
+	t.Run("app+global config for different values", func(t *testing.T) {
+		service := snap + "." + app
 
-	if !FullConfigTest {
-		t.Skip("Full config test is disabled.")
-	}
-	// start clean
-	SnapStop(t, service)
+		if !FullConfigTest {
+			t.Skip("Full config test is disabled.")
+		}
+		// start clean
+		SnapStop(t, service)
 
-	t.Run("app and global config for different values", func(t *testing.T) {
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "config")
@@ -174,8 +174,8 @@ func TestChangePortMixedGlobalApp(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the ports are available before using it
-		RequirePortAvailable(t, newAppPort)
-		RequirePortAvailable(t, newConfigPort)
+		requirePortAvailable(t, newAppPort)
+		requirePortAvailable(t, newConfigPort)
 
 		// set apps. and config. with different values,
 		// and validate that app-specific option has been picked up because it has higher precedence
