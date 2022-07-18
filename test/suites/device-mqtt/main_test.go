@@ -16,6 +16,7 @@ const (
 )
 
 var start = time.Now()
+var needManualConnection = false
 
 func TestMain(m *testing.M) {
 
@@ -31,6 +32,9 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		needManualConnection = true
 	} else {
 		utils.SnapInstallFromStore(nil, deviceMqttSnap, utils.ServiceChannel)
 	}
@@ -39,15 +43,15 @@ func TestMain(m *testing.M) {
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
 
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceMqttSnap+":edgex-secretstore-token",
-	)
-
 	exitCode := m.Run()
+	defer tearDown(exitCode)
 
+	if exitCode != 0 {
+		return
+	}
+}
+
+func tearDown(exitCode int) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, deviceMqttSnap)
@@ -61,6 +65,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestSecret(t, deviceMqttApp, utils.Secret{
+		TestManualConnection: needManualConnection,
+	})
+
 	utils.TestConfig(t, deviceMqttSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceMqttApp,
