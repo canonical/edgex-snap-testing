@@ -17,6 +17,8 @@ const (
 
 	deviceVirtualSnap = "edgex-device-virtual"
 	deviceVirtualPort = "59900"
+
+	ascSnap = "edgex-app-service-configurable"
 )
 
 func TestMain(m *testing.M) {
@@ -29,6 +31,7 @@ func TestMain(m *testing.M) {
 		ekuiperSnap,
 		"edgexfoundry",
 		deviceVirtualSnap,
+		ascSnap,
 	)
 
 	// install the ekuiper snap before edgexfoundry
@@ -40,6 +43,7 @@ func TestMain(m *testing.M) {
 	}
 	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 	utils.SnapInstallFromStore(nil, deviceVirtualSnap, "latest/edge")
+	utils.SnapInstallFromStore(nil, ascSnap, "latest/edge")
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
@@ -54,6 +58,13 @@ func TestMain(m *testing.M) {
 		"edgexfoundry:edgex-secretstore-token",
 		deviceVirtualSnap+":edgex-secretstore-token",
 	)
+	utils.SnapConnect(nil,
+		"edgexfoundry:edgex-secretstore-token",
+		ascSnap+":edgex-secretstore-token",
+	)
+
+	// set profile to ekuiper
+	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
 
 	// security on (default)
 	exitCode := m.Run()
@@ -71,6 +82,7 @@ func TestMain(m *testing.M) {
 	utils.SnapStart(nil,
 		ekuiperService,
 		deviceVirtualSnap,
+		ascSnap,
 	)
 
 	exitCode = m.Run()
@@ -84,6 +96,7 @@ TEARDOWN:
 		ekuiperSnap,
 		"edgexfoundry",
 		deviceVirtualSnap,
+		ascSnap,
 	)
 
 	os.Exit(exitCode)
