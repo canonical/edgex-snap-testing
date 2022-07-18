@@ -33,22 +33,21 @@ func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
 		SnapStop(nil, service)
 
 		if conf.TestLegacyEnvConfig {
-			SetEnvConfig(t, snapName, conf.App, conf.DefaultPort)
+			TestChangePortLegacyEnv(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestAppConfig {
-			SetAppConfig(t, snapName, conf.App, conf.DefaultPort)
+			TestChangePortApp(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestGlobalConfig {
-			SetGlobalConfig(t, snapName, conf.App, conf.DefaultPort)
+			TestChangePortGlobal(t, snapName, conf.App, conf.DefaultPort)
 		}
 		if conf.TestMixedGlobalAppConfig {
-			SetMixedConfig(t, snapName, conf.App, conf.DefaultPort)
+			TestChangePortMixedGlobalApp(t, snapName, conf.App, conf.DefaultPort)
 		}
 	})
 }
 
-// TODO change to TestChangePortLegacyEnv
-func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
+func TestChangePortLegacyEnv(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 	if !FullConfigTest {
 		t.Skip("Full config test is disabled.")
@@ -81,8 +80,7 @@ func SetEnvConfig(t *testing.T, snap, app, servicePort string) {
 
 }
 
-// TODO change to TestChangePortApp
-func SetAppConfig(t *testing.T, snap, app, servicePort string) {
+func TestChangePortApp(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 
 	// start clean
@@ -117,8 +115,7 @@ func SetAppConfig(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
-// TODO change to TestChangePortGlobal
-func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
+func TestChangePortGlobal(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 
 	// start clean
@@ -153,8 +150,7 @@ func SetGlobalConfig(t *testing.T, snap, app, servicePort string) {
 	})
 }
 
-// TODO change to TestChangePortMixedGlobalApp
-func SetMixedConfig(t *testing.T, snap, app, servicePort string) {
+func TestChangePortMixedGlobalApp(t *testing.T, snap, app, servicePort string) {
 	service := snap + "." + app
 
 	if !FullConfigTest {
