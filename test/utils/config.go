@@ -64,7 +64,7 @@ func testChangePort_legacyEnv(t *testing.T, snap, app, servicePort string) {
 		const newPort = "11111"
 
 		// make sure the port is available before using it
-		requirePortAvailable(t, newPort)
+		RequirePortAvailable(t, newPort)
 
 		// set env. and validate the new port comes online
 		SnapSet(t, snap, "env.service.port", newPort)
@@ -99,7 +99,7 @@ func testChangePort_app(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
-		requirePortAvailable(t, newPort)
+		RequirePortAvailable(t, newPort)
 
 		// set apps. and validate the new port comes online
 		SnapSet(t, snap, "apps."+app+".config.service-port", newPort)
@@ -134,7 +134,7 @@ func testChangePort_global(t *testing.T, snap, app, servicePort string) {
 		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
-		requirePortAvailable(t, newPort)
+		RequirePortAvailable(t, newPort)
 
 		// set config. and validate the new port comes online
 		SnapSet(t, snap, "config.service-port", newPort)
@@ -174,8 +174,8 @@ func testChangePort_mixedGlobalApp(t *testing.T, snap, app, servicePort string) 
 		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the ports are available before using it
-		requirePortAvailable(t, newAppPort)
-		requirePortAvailable(t, newConfigPort)
+		RequirePortAvailable(t, newAppPort)
+		RequirePortAvailable(t, newConfigPort)
 
 		// set apps. and config. with different values,
 		// and validate that app-specific option has been picked up because it has higher precedence

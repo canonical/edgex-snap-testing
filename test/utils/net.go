@@ -61,7 +61,7 @@ func testBindLoopback(t *testing.T, snapName string, ports []string) {
 
 	t.Run("ports listening on localhost", func(t *testing.T) {
 		requireListenLoopback(t, ports...)
-		// requirePortOpen(t, params.TestBindAddrLoopback...)
+		// requirePortOpen(t, ports...)
 	})
 }
 
@@ -104,7 +104,7 @@ func WaitPlatformOnline(t *testing.T) {
 }
 
 // RequirePortOpen checks if the local port(s) accepts connections
-func RequirePortOpen(t *testing.T, ports ...string) {
+func requirePortOpen(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")
 	}
@@ -168,7 +168,7 @@ func requireListenLoopback(t *testing.T, ports ...string) {
 }
 
 // RequirePortAvailable checks if a port is available (not open) locally
-func requirePortAvailable(t *testing.T, port string) {
+func RequirePortAvailable(t *testing.T, port string) {
 	stdout := lsof(t, port)
 	if stdout != "" {
 		t.Fatalf("Port %s is not available", port)
