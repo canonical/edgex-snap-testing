@@ -103,7 +103,7 @@ func WaitPlatformOnline(t *testing.T) {
 	WaitServiceOnline(t, 180, PlatformPorts...)
 }
 
-// RequirePortOpen checks if the local port(s) accepts connections
+// requirePortOpen checks if the local port(s) accepts connections
 func requirePortOpen(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")
@@ -130,7 +130,6 @@ func requirePortOpen(t *testing.T, ports ...string) {
 	}
 }
 
-// checkListenAllInterfaces checks if the port(s) listen on all interfaces
 func requireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) {
 	if len(ports) == 0 {
 		panic("No ports given as input")
@@ -150,7 +149,7 @@ func requireListenAllInterfaces(t *testing.T, mustListen bool, ports ...string) 
 	}
 }
 
-// RequireListenLoopback checks if the port(s) listen on the loopback interface
+// requireListenLoopback checks if the port(s) listen on the loopback interface
 // It does not check whether port(s) listen on interfaces other than the loopback
 func requireListenLoopback(t *testing.T, ports ...string) {
 	if len(ports) == 0 {
