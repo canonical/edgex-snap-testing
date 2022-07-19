@@ -11,7 +11,6 @@ import (
 const (
 	deviceVirtualSnap        = "edgex-device-virtual"
 	deviceVirtualApp         = "device-virtual"
-	deviceVirtualService     = deviceVirtualSnap + "." + deviceVirtualApp
 	deviceVirtualServicePort = "59900"
 )
 
@@ -60,8 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, deviceVirtualApp, deviceVirtualSnap, deviceVirtualApp, utils.Secret{
-		TestSecretsInterface: true,
+	utils.TestSecret(t, utils.Secret{
+		TestSecretToken: true,
+		Snap:            deviceVirtualSnap,
+		App:             deviceVirtualApp,
 	})
 
 	utils.TestConfig(t, deviceVirtualSnap, utils.Config{

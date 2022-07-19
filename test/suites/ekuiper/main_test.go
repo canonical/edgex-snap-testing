@@ -96,8 +96,10 @@ TEARDOWN:
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, ekuiperSnap, ekuiperSnap, ekuiperSnap, utils.Secret{
-		TestSecretsInterface: testSecretsInterface,
+	utils.TestSecret(t, utils.Secret{
+		TestSecretToken: testSecretsInterface,
+		Snap:            ekuiperSnap,
+		App:             ekuiperSnap,
 	})
 
 	utils.TestNet(t, ekuiperSnap, utils.Net{

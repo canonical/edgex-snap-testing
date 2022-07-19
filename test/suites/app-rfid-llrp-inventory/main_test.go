@@ -59,8 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, appRfidLlrpApp, appRfidLlrpSnap, appRfidLlrpApp, utils.Secret{
-		TestSecretsInterface: true,
+	utils.TestSecret(t, utils.Secret{
+		TestSecretToken: true,
+		Snap:            appRfidLlrpSnap,
+		App:             appRfidLlrpApp,
 	})
 
 	utils.TestConfig(t, appRfidLlrpSnap, utils.Config{

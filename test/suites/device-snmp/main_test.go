@@ -59,8 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, deviceSnmpApp, deviceSnmpSnap, deviceSnmpApp, utils.Secret{
-		TestSecretsInterface: true,
+	utils.TestSecret(t, utils.Secret{
+		TestSecretToken: true,
+		Snap:            deviceSnmpSnap,
+		App:             deviceSnmpApp,
 	})
 
 	utils.TestConfig(t, deviceSnmpSnap, utils.Config{

@@ -59,8 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, deviceRestApp, deviceRestSnap, deviceRestApp, utils.Secret{
-		TestSecretsInterface: true,
+	utils.TestSecret(t, utils.Secret{
+		TestSecretToken: true,
+		Snap:            deviceRestSnap,
+		App:             deviceRestApp,
 	})
 
 	utils.TestConfig(t, deviceRestSnap, utils.Config{

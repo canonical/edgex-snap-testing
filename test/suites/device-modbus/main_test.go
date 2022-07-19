@@ -59,8 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, deviceModbusApp, deviceModbusSnap, deviceModbusApp, utils.Secret{
-		TestSecretsInterface: true,
+	utils.TestSecret(t, utils.Secret{
+		TestSecretToken: true,
+		Snap:            deviceModbusSnap,
+		App:             deviceModbusApp,
 	})
 
 	utils.TestConfig(t, deviceModbusSnap, utils.Config{

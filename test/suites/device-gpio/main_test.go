@@ -59,8 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, deviceGpioApp, deviceGpioSnap, deviceGpioApp, utils.Secret{
-		TestSecretsInterface: true,
+	utils.TestSecret(t, utils.Secret{
+		TestSecretToken: true,
+		Snap:            deviceGpioSnap,
+		App:             deviceGpioApp,
 	})
 
 	utils.TestConfig(t, deviceGpioSnap, utils.Config{
