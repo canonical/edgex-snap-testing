@@ -54,6 +54,9 @@ func TestMain(m *testing.M) {
 	utils.SnapInstallFromStore(nil, deviceVirtualSnap, "latest/edge")
 	utils.SnapInstallFromStore(nil, ascSnap, "latest/edge")
 
+	// set profile to rules engine
+	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
+
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
 
