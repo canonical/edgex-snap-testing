@@ -11,7 +11,6 @@ import (
 const (
 	deviceSnmpSnap        = "edgex-device-snmp"
 	deviceSnmpApp         = "device-snmp"
-	deviceSnmpService     = deviceSnmpSnap + "." + deviceSnmpApp
 	deviceSnmpServicePort = "59993"
 )
 

@@ -11,7 +11,6 @@ import (
 const (
 	deviceModbusSnap        = "edgex-device-modbus"
 	deviceModbusApp         = "device-modbus"
-	deviceModbusService     = deviceModbusSnap + "." + deviceModbusApp
 	deviceModbusServicePort = "59901"
 )
 

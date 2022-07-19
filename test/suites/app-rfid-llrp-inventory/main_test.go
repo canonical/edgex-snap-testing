@@ -11,7 +11,6 @@ import (
 const (
 	appRfidLlrpSnap               = "edgex-app-rfid-llrp-inventory"
 	appRfidLlrpApp                = "app-rfid-llrp-inventory"
-	appRfidLlrpService            = appRfidLlrpSnap + "." + appRfidLlrpApp
 	appRfidLlrpServiceServicePort = "59711"
 )
 

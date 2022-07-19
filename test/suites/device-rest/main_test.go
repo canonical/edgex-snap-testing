@@ -11,7 +11,6 @@ import (
 const (
 	deviceRestSnap        = "edgex-device-rest"
 	deviceRestApp         = "device-rest"
-	deviceRestService     = deviceRestSnap + "." + deviceRestApp
 	deviceRestServicePort = "59986"
 )
 

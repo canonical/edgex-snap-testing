@@ -11,7 +11,6 @@ import (
 const (
 	deviceUSBCamSnap        = "edgex-device-usb-camera"
 	deviceUSBCamApp         = "device-usb-camera"
-	deviceUSBCamService     = deviceUSBCamSnap + "." + deviceUSBCamApp
 	deviceUSBCamServicePort = "59983"
 )
 

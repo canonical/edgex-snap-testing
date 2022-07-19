@@ -10,8 +10,7 @@ import (
 
 const (
 	deviceRfidLlrpSnap        = "edgex-device-rfid-llrp"
-	deviceRfidApp             = "device-rfid-llrp"
-	deviceRfidLlrpService     = deviceRfidLlrpSnap + "." + deviceRfidApp
+	deviceRfidLlrpApp         = "device-rfid-llrp"
 	deviceRfidLlrpServicePort = "59989"
 )
 
