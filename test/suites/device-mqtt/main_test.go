@@ -15,7 +15,6 @@ const (
 )
 
 var start = time.Now()
-var needManualConnection = false
 
 func TestMain(m *testing.M) {
 
