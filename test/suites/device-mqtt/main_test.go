@@ -11,7 +11,6 @@ import (
 const (
 	deviceMqttSnap        = "edgex-device-mqtt"
 	deviceMqttApp         = "device-mqtt"
-	deviceMqttService     = deviceMqttSnap + "." + deviceMqttApp
 	deviceMqttServicePort = "59982"
 )
 
@@ -32,9 +31,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
 		// for local build, the interface isn't auto-connected.
 		// connect manually
-		needManualConnection = true
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceMqttSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceMqttSnap, utils.ServiceChannel)
 	}
@@ -58,9 +61,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, deviceMqttApp, utils.Secret{
-		TestManualConnection: needManualConnection,
-	})
+	utils.TestSecret(t, deviceMqttApp)
 
 	utils.TestConfig(t, deviceMqttSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{

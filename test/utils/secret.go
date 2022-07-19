@@ -5,30 +5,18 @@ import (
 	"testing"
 )
 
-type Secret struct {
-	TestManualConnection bool
-}
-
-func TestSecret(t *testing.T, consumerName string, conf Secret) {
+func TestSecret(t *testing.T, consumerName string) {
 	t.Run("secrets interface", func(t *testing.T) {
-		if conf.TestManualConnection {
-			SnapConnect(nil,
-				"edgexfoundry:edgex-secretstore-token",
-				"edgex-"+consumerName+":edgex-secretstore-token",
-			)
-		}
-		requireCorrectSecret(t, consumerName)
+		TestSeededSecretstoreToken(t, consumerName)
 	})
 }
 
-func requireCorrectSecret(t *testing.T, consumerName string) {
-	providerSecret, stderr := Exec(t, "sudo cat /var/snap/edgexfoundry/current/secrets/"+consumerName+"/secrets-token.json")
-	require.Empty(t, stderr)
-
-	consumerSecret, stderr := Exec(t, "sudo cat /var/snap/edgex-"+consumerName+"/current/"+consumerName+"/secrets-token.json")
-	require.Empty(t, stderr)
-
+func TestSeededSecretstoreToken(t *testing.T, consumerName string) {
 	t.Run("same content on both sides", func(t *testing.T) {
+		providerSecret, _ := Exec(t, "sudo cat /var/snap/edgexfoundry/current/secrets/"+consumerName+"/secrets-token.json")
+		consumerSecret, _ := Exec(t, "sudo cat /var/snap/edgex-"+consumerName+"/current/"+consumerName+"/secrets-token.json")
+		require.NotEmpty(t, providerSecret)
+
 		require.Equal(t, providerSecret, consumerSecret)
 	})
 }
