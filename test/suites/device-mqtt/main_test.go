@@ -60,7 +60,9 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, deviceMqttApp)
+	utils.TestSecret(t, deviceMqttApp, deviceMqttSnap, deviceMqttApp, utils.Secret{
+		TestSecretsInterface: true,
+	})
 
 	utils.TestConfig(t, deviceMqttSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{

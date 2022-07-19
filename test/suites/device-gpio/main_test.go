@@ -29,6 +29,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceGpioSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceGpioSnap, utils.ServiceChannel)
 	}
@@ -36,13 +43,6 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceGpioSnap+":edgex-secretstore-token",
-	)
 
 	exitCode := m.Run()
 
@@ -59,6 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestSecret(t, deviceGpioApp, deviceGpioSnap, deviceGpioApp, utils.Secret{
+		TestSecretsInterface: true,
+	})
+
 	utils.TestConfig(t, deviceGpioSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceGpioApp,

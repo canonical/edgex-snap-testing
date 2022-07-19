@@ -29,6 +29,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceRestSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceRestSnap, utils.ServiceChannel)
 	}
@@ -36,19 +43,6 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceRestSnap+":edgex-secretstore-token",
-	)
-
-	// Start the service so that the default config gets uploaded to consul.
-	// Otherwise, settings that get passed using environment variables on first start get uploaded
-	// and become the default.
-	utils.SnapStart(nil, deviceRestService)
-	utils.WaitServiceOnline(nil, 60, deviceRestServicePort)
 
 	exitCode := m.Run()
 
@@ -65,6 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestSecret(t, deviceRestApp, deviceRestSnap, deviceRestApp, utils.Secret{
+		TestSecretsInterface: true,
+	})
+
 	utils.TestConfig(t, deviceRestSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceRestApp,
