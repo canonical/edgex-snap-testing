@@ -17,55 +17,55 @@ import (
 // }
 
 func SnapInstallFromStore(t *testing.T, name, channel string) {
-	Exec(t, fmt.Sprintf(
+	exec(t, fmt.Sprintf(
 		"sudo snap install %s --channel=%s",
 		name,
 		channel,
-	))
+	), true)
 }
 
 func SnapInstallFromFile(t *testing.T, path string) {
-	Exec(t, fmt.Sprintf(
+	exec(t, fmt.Sprintf(
 		"sudo snap install --dangerous %s",
 		path,
-	))
+	), true)
 }
 
 func SnapRemove(t *testing.T, names ...string) {
 	for _, name := range names {
-		Exec(t, fmt.Sprintf(
+		exec(t, fmt.Sprintf(
 			"sudo snap remove --purge %s",
 			name,
-		))
+		), true)
 	}
 }
 
 func SnapBuild(t *testing.T, workDir string) {
-	Exec(t, fmt.Sprintf(
+	exec(t, fmt.Sprintf(
 		"cd %s && snapcraft",
 		workDir,
-	))
+	), true)
 }
 
 func SnapConnect(t *testing.T, plug, slot string) {
-	Exec(t, fmt.Sprintf(
+	exec(t, fmt.Sprintf(
 		"sudo snap connect %s %s",
 		plug, slot,
-	))
+	), true)
 }
 
 func SnapDisconnect(t *testing.T, plug, slot string) {
-	Exec(t, fmt.Sprintf(
+	exec(t, fmt.Sprintf(
 		"sudo snap disconnect %s %s",
 		plug, slot,
-	))
+	), true)
 }
 
 func SnapVersion(t *testing.T, name string) string {
-	out, _ := Exec(t, fmt.Sprintf(
+	out, _ := exec(t, fmt.Sprintf(
 		"snap info %s | grep installed | awk '{print $2}'",
 		name,
-	))
+	), true)
 	return strings.TrimSpace(out)
 }
 
@@ -78,59 +78,59 @@ func snapJournalCommand(start time.Time, name string) string {
 
 func SnapDumpLogs(t *testing.T, start time.Time, name string) {
 	const filename = "snap.log" // used in action.yml
-	Exec(t, fmt.Sprintf("(%s) > %s",
+	exec(t, fmt.Sprintf("(%s) > %s",
 		snapJournalCommand(start, name),
-		filename))
+		filename), true)
 
 	wd, _ := os.Getwd()
 	fmt.Printf("Wrote snap logs to %s/%s\n", wd, filename)
 }
 
 func SnapLogs(t *testing.T, start time.Time, name string) string {
-	logs, _ := Exec(t, snapJournalCommand(start, name))
+	logs, _ := exec(t, snapJournalCommand(start, name), true)
 	return logs
 }
 
 func SnapSet(t *testing.T, name, key, value string) {
-	Exec(t, fmt.Sprintf(
+	exec(t, fmt.Sprintf(
 		"sudo snap set %s %s='%s'",
 		name,
 		key,
 		value,
-	))
+	), true)
 }
 
 func SnapUnset(t *testing.T, name, key string) {
-	Exec(t, fmt.Sprintf(
+	exec(t, fmt.Sprintf(
 		"sudo snap unset %s %s",
 		name,
 		key,
-	))
+	), true)
 }
 
 func SnapStart(t *testing.T, names ...string) {
 	for _, name := range names {
-		Exec(t, fmt.Sprintf(
+		exec(t, fmt.Sprintf(
 			"sudo snap start %s",
 			name,
-		))
+		), true)
 	}
 }
 
 func SnapStop(t *testing.T, names ...string) {
 	for _, name := range names {
-		Exec(t, fmt.Sprintf(
+		exec(t, fmt.Sprintf(
 			"sudo snap stop %s",
 			name,
-		))
+		), true)
 	}
 }
 
 func SnapRestart(t *testing.T, names ...string) {
 	for _, name := range names {
-		Exec(t, fmt.Sprintf(
+		exec(t, fmt.Sprintf(
 			"sudo snap restart %s",
 			name,
-		))
+		), true)
 	}
 }
