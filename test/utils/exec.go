@@ -8,11 +8,11 @@ import (
 )
 
 func Exec(t *testing.T, command string) (stdout, stderr string) {
-	return exec(t, command, false)
+	return execVerbose(t, command, false)
 }
 
-// exec executes a command
-func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
+// execVerbose executes a command
+func execVerbose(t *testing.T, command string, verbose bool) (stdout, stderr string) {
 	logf(t, "[exec] %s", command)
 
 	cmd := exec.Command("/bin/sh", "-c", command)
