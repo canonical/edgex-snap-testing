@@ -7,8 +7,12 @@ import (
 	"testing"
 )
 
-// Exec executes a command
 func Exec(t *testing.T, command string) (stdout, stderr string) {
+	return exec(t, command, false)
+}
+
+// exec executes a command
+func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
 	logf(t, "[exec] %s", command)
 
 	cmd := exec.Command("/bin/sh", "-c", command)
@@ -27,7 +31,9 @@ func Exec(t *testing.T, command string) (stdout, stderr string) {
 	go func() {
 		for outScanner.Scan() {
 			line := outScanner.Text()
-			logf(t, "[stdout] %s", line)
+			if verbose {
+				logf(t, "[stdout] %s", line)
+			}
 			stdout += line + "\n"
 		}
 		if err := outScanner.Err(); err != nil {
@@ -48,7 +54,9 @@ func Exec(t *testing.T, command string) (stdout, stderr string) {
 	go func() {
 		for errScanner.Scan() {
 			line := errScanner.Text()
-			logf(t, "[stderr] %s", line)
+			if verbose {
+				logf(t, "[stderr] %s", line)
+			}
 			stderr += line + "\n"
 		}
 		if err := errScanner.Err(); err != nil {
