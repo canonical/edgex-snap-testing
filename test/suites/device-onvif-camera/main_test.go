@@ -28,6 +28,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceOnvifCameraSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceOnvifCameraSnap, utils.ServiceChannel)
 	}
@@ -35,13 +42,6 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceOnvifCameraSnap+":edgex-secretstore-token",
-	)
 
 	exitCode := m.Run()
 
@@ -58,6 +58,12 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 deviceOnvifCameraSnap,
+		App:                  deviceOnvifCameraApp,
+	})
+
 	utils.TestConfig(t, deviceOnvifCameraSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceOnvifCameraApp,

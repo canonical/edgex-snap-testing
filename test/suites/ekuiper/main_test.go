@@ -21,6 +21,8 @@ const (
 	ascSnap = "edgex-app-service-configurable"
 )
 
+var testSecretsInterface bool
+
 func TestMain(m *testing.M) {
 	start := time.Now()
 
@@ -38,6 +40,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			ekuiperSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, ekuiperSnap, utils.ServiceChannel)
 	}
@@ -45,20 +54,14 @@ func TestMain(m *testing.M) {
 	utils.SnapInstallFromStore(nil, deviceVirtualSnap, "latest/edge")
 	utils.SnapInstallFromStore(nil, ascSnap, "latest/edge")
 
+	// set profile to rules engine
+	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
+
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
 
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		ekuiperSnap+":edgex-secretstore-token",
-	)
-
-	// set profile to ekuiper
-	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
-
 	// security on (default)
+	testSecretsInterface = true
 	exitCode := m.Run()
 	if exitCode != 0 {
 		goto TEARDOWN
@@ -77,6 +80,7 @@ func TestMain(m *testing.M) {
 		ascSnap,
 	)
 
+	testSecretsInterface = false
 	exitCode = m.Run()
 
 TEARDOWN:
@@ -95,6 +99,12 @@ TEARDOWN:
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: testSecretsInterface,
+		Snap:                 ekuiperSnap,
+		App:                  ekuiperSnap,
+	})
+
 	utils.TestNet(t, ekuiperSnap, utils.Net{
 		StartSnap:        true,
 		TestOpenPorts:    []string{ekuiperServerPort, ekuiperRestfulApiPort},
