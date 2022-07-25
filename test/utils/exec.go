@@ -2,20 +2,20 @@ package utils
 
 import (
 	"bufio"
-	"os/exec"
+	goexec "os/exec"
 	"sync"
 	"testing"
 )
 
 func Exec(t *testing.T, command string) (stdout, stderr string) {
-	return execVerbose(t, command, false)
+	return exec(t, command, false)
 }
 
-// execVerbose executes a command
-func execVerbose(t *testing.T, command string, verbose bool) (stdout, stderr string) {
+// exec executes a command
+func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
 	logf(t, "[exec] %s", command)
 
-	cmd := exec.Command("/bin/sh", "-c", command)
+	cmd := goexec.Command("/bin/sh", "-c", command)
 
 	var wg sync.WaitGroup
 
