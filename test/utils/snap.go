@@ -87,7 +87,7 @@ func SnapDumpLogs(t *testing.T, start time.Time, name string) {
 }
 
 func SnapLogs(t *testing.T, start time.Time, name string) string {
-	logs, _ := exec(t, snapJournalCommand(start, name), true)
+	logs, _ := exec(t, snapJournalCommand(start, name), false)
 	return logs
 }
 
