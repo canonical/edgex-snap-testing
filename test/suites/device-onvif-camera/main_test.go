@@ -58,10 +58,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, utils.Secret{
-		TestSecretToken: true,
-		Snap:            deviceOnvifCameraSnap,
-		App:             deviceOnvifCameraApp,
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 deviceOnvifCameraSnap,
+		App:                  deviceOnvifCameraApp,
 	})
 
 	utils.TestConfig(t, deviceOnvifCameraSnap, utils.Config{

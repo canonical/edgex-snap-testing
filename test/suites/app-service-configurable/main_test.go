@@ -65,10 +65,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, utils.Secret{
-		TestSecretToken: true,
-		Snap:            ascSnap,
-		App:             "app-" + defaultTestProfile,
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 ascSnap,
+		App:                  "app-" + defaultTestProfile,
 	})
 
 	utils.TestConfig(t, ascSnap, utils.Config{

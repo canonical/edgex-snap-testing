@@ -59,10 +59,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	utils.TestSecret(t, utils.Secret{
-		TestSecretToken: true,
-		Snap:            deviceVirtualSnap,
-		App:             deviceVirtualApp,
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 deviceVirtualSnap,
+		App:                  deviceVirtualApp,
 	})
 
 	utils.TestConfig(t, deviceVirtualSnap, utils.Config{
