@@ -129,7 +129,8 @@ func checkStartupMsg(t *testing.T, snap, expectedMsg string) bool {
 		t.Logf("Waiting for startup message. Retry %d/%d", i, maxRetry)
 
 		logs := utils.SnapLogs(t, start, snap)
-		if strings.Contains(logs, fmt.Sprintf(`msg="%s"`, expectedMsg)) {
+		if strings.Contains(logs, fmt.Sprintf("msg=%s", expectedMsg)) ||
+			strings.Contains(logs, fmt.Sprintf(`msg="%s"`, expectedMsg)) {
 			t.Logf("Found startup message: %s", expectedMsg)
 			return true
 		}
