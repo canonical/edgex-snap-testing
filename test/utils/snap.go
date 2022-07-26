@@ -134,3 +134,11 @@ func SnapRestart(t *testing.T, names ...string) {
 		), true)
 	}
 }
+
+func SnapRefresh(t *testing.T, name, channel string) {
+	exec(t, fmt.Sprintf(
+		"sudo snap refresh %s --channel=%s --amend",
+		name,
+		channel,
+	), true)
+}
