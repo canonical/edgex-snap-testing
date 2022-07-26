@@ -11,8 +11,8 @@ import (
 const (
 	deviceUSBCamSnap        = "edgex-device-usb-camera"
 	deviceUSBCamApp         = "device-usb-camera"
-	deviceUSBCamService     = deviceUSBCamSnap + "." + deviceUSBCamApp
 	deviceUSBCamServicePort = "59983"
+	rtspServerPort          = "8554"
 )
 
 func TestMain(m *testing.M) {
@@ -29,6 +29,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceUSBCamSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceUSBCamSnap, utils.ServiceChannel)
 	}
@@ -36,13 +43,6 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceUSBCamSnap+":edgex-secretstore-token",
-	)
 
 	exitCode := m.Run()
 
@@ -59,6 +59,12 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 deviceUSBCamSnap,
+		App:                  deviceUSBCamApp,
+	})
+
 	utils.TestConfig(t, deviceUSBCamSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceUSBCamApp,
@@ -71,8 +77,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceUSBCamSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceUSBCamServicePort},
-		TestBindLoopback: []string{deviceUSBCamServicePort},
+		TestOpenPorts:    []string{deviceUSBCamServicePort, rtspServerPort},
+		TestBindLoopback: []string{deviceUSBCamServicePort, rtspServerPort},
 	})
 
 	utils.TestPackaging(t, deviceUSBCamSnap, utils.Packaging{

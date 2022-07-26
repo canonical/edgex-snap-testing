@@ -10,8 +10,7 @@ import (
 
 const (
 	deviceRfidLlrpSnap        = "edgex-device-rfid-llrp"
-	deviceRfidApp             = "device-rfid-llrp"
-	deviceRfidLlrpService     = deviceRfidLlrpSnap + "." + deviceRfidApp
+	deviceRfidLlrpApp         = "device-rfid-llrp"
 	deviceRfidLlrpServicePort = "59989"
 )
 
@@ -30,6 +29,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceRfidLlrpSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceRfidLlrpSnap, utils.ServiceChannel)
 	}
@@ -37,19 +43,6 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceRfidLlrpSnap+":edgex-secretstore-token",
-	)
-
-	// Start the service so that the default config gets uploaded to consul.
-	// Otherwise, settings that get passed using environment variables on first start get uploaded
-	// and become the default.
-	utils.SnapStart(nil, deviceRfidLlrpService)
-	utils.WaitServiceOnline(nil, 60, deviceRfidLlrpServicePort)
 
 	exitCode := m.Run()
 
@@ -66,9 +59,15 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 deviceRfidLlrpSnap,
+		App:                  deviceRfidLlrpApp,
+	})
+
 	utils.TestConfig(t, deviceRfidLlrpSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
-			App:                      deviceRfidApp,
+			App:                      deviceRfidLlrpApp,
 			DefaultPort:              deviceRfidLlrpServicePort,
 			TestLegacyEnvConfig:      utils.FullConfigTest,
 			TestAppConfig:            true,

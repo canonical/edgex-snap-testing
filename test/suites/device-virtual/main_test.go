@@ -11,7 +11,6 @@ import (
 const (
 	deviceVirtualSnap        = "edgex-device-virtual"
 	deviceVirtualApp         = "device-virtual"
-	deviceVirtualService     = deviceVirtualSnap + "." + deviceVirtualApp
 	deviceVirtualServicePort = "59900"
 )
 
@@ -30,6 +29,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceVirtualSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel)
 	}
@@ -37,19 +43,6 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceVirtualSnap+":edgex-secretstore-token",
-	)
-
-	// Start the service so that the default config gets uploaded to consul.
-	// Otherwise, settings that get passed using environment variables on first start get uploaded
-	// and become the default.
-	utils.SnapStart(nil, deviceVirtualService)
-	utils.WaitServiceOnline(nil, 60, deviceVirtualServicePort)
 
 	exitCode := m.Run()
 
@@ -66,6 +59,12 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 deviceVirtualSnap,
+		App:                  deviceVirtualApp,
+	})
+
 	utils.TestConfig(t, deviceVirtualSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceVirtualApp,

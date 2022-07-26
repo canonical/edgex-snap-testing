@@ -11,7 +11,6 @@ import (
 const (
 	deviceSnmpSnap        = "edgex-device-snmp"
 	deviceSnmpApp         = "device-snmp"
-	deviceSnmpService     = deviceSnmpSnap + "." + deviceSnmpApp
 	deviceSnmpServicePort = "59993"
 )
 
@@ -30,6 +29,13 @@ func TestMain(m *testing.M) {
 	// to catch build error sooner and stop
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+
+		// for local build, the interface isn't auto-connected.
+		// connect manually
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			deviceSnmpSnap+":edgex-secretstore-token",
+		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceSnmpSnap, utils.ServiceChannel)
 	}
@@ -37,13 +43,6 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually regardless
-	utils.SnapConnect(nil,
-		"edgexfoundry:edgex-secretstore-token",
-		deviceSnmpSnap+":edgex-secretstore-token",
-	)
 
 	exitCode := m.Run()
 
@@ -60,6 +59,12 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
+	utils.TestContentInterfaces(t, utils.ContentInterfaces{
+		TestSecretstoreToken: true,
+		Snap:                 deviceSnmpSnap,
+		App:                  deviceSnmpApp,
+	})
+
 	utils.TestConfig(t, deviceSnmpSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceSnmpApp,
