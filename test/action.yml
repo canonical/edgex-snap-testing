@@ -72,6 +72,7 @@ runs:
     # Upload snap logs
     - if: always() 
       uses: actions/upload-artifact@v2
+      working-directory: ${{github.action_path}}
       with:
         name: ${{inputs.name}}.log
         path: ./suites/${{inputs.name}}/snap.log
