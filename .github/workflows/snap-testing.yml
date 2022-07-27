@@ -17,34 +17,34 @@ jobs:
         include:
           - name: device-mqtt
 
-          - name: ekuiper
+          # - name: ekuiper
 
-          - name: app-service-configurable
+          # - name: app-service-configurable
 
-          - name: device-gpio
+          # - name: device-gpio
           
-          - name: device-rest
+          # - name: device-rest
           
-          - name: device-snmp
+          # - name: device-snmp
           
-          - name: device-modbus
+          # - name: device-modbus
           
-          - name: edgexfoundry
+          # - name: edgexfoundry
           
-          - name: cli
-            print_logs: false
+          # - name: cli
+          #   print_logs: false
 
-          - name: ui
+          # - name: ui
           
-          - name: device-rfid-llrp
+          # - name: device-rfid-llrp
           
-          - name: app-rfid-llrp-inventory
+          # - name: app-rfid-llrp-inventory
 
-          - name: device-virtual
+          # - name: device-virtual
           
-          - name: device-usb-camera
+          # - name: device-usb-camera
           
-          - name: device-onvif-camera
+          # - name: device-onvif-camera
           
     # use local action to test
     steps:
