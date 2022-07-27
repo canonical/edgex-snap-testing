@@ -77,7 +77,7 @@ func snapJournalCommand(start time.Time, name string) string {
 }
 
 func SnapDumpLogs(t *testing.T, start time.Time, name string) {
-	const filename = "snap.log" // used in action.yml
+	filename := name + ".log" // used in action.yml
 	exec(t, fmt.Sprintf("(%s) > %s",
 		snapJournalCommand(start, name),
 		filename), true)
