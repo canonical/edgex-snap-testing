@@ -61,7 +61,7 @@ runs:
         go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
     # Print snap logs
-    - if: always() && inputs.print_logs != 'false'
+    - if: always() && inputs.print_logs == 'true'
       shell: bash
       working-directory: ${{github.action_path}}
       run: |
