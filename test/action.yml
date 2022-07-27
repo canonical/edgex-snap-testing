@@ -69,10 +69,19 @@ runs:
         cat ./suites/${{inputs.name}}/snap.log
         echo "::endgroup::"
         
+    # For some reason, github.action_path resolves to a wrong path when directly passed to
+    # upload-artifact's path
+    - if: always()
+      shell: bash
+      working-directory: ${{github.action_path}}
+      run: |
+        echo ${{github.action_path}}
+        echo "action_path=${{github.action_path}}" >> $GITHUB_ENV
+        
     # Upload snap logs
     - if: always() 
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        name: ${{inputs.name}}.log
-        path: ${{github.action_path}}/suites/${{inputs.name}}/snap.log
+        name: ${{inputs.name}}-logs
+        path: ${{env.action_path}}/suites/${{inputs.name}}/*.log
         retention-days: 7
