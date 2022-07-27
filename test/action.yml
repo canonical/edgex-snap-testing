@@ -30,6 +30,7 @@ inputs:
       Logging is enabled by default.
       Setting the value to 'false' disables the logging.
     required: false
+    default: false
 
 
 runs:
@@ -59,17 +60,18 @@ runs:
       run: |
         go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
-#    # Print snap logs
-#     - if: always() && inputs.print_logs != 'false'
-#       shell: bash
-#       working-directory: ${{github.action_path}}
-#       run: |
-#         echo "::group::Snap Logs"
-#         cat ./suites/${{inputs.name}}/snap.log
-#         echo "::endgroup::"
+    # Print snap logs
+    - if: always() && inputs.print_logs != 'false'
+      shell: bash
+      working-directory: ${{github.action_path}}
+      run: |
+        echo "::group::Snap Logs"
+        cat ./suites/${{inputs.name}}/snap.log
+        echo "::endgroup::"
         
     # Upload snap logs
-    - uses: actions/upload-artifact@v2
+    - if: always() 
+      uses: actions/upload-artifact@v2
       with:
         name: ${{inputs.name}}.log
         path: ./suites/${{inputs.name}}/snap.log
