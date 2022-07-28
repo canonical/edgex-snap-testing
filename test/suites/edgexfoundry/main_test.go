@@ -16,37 +16,47 @@ const (
 	supportSchedulerServicePort = "59861"
 )
 
-func TestMain(m *testing.M) {
-	// start clean
+func main(m *testing.M) (int, error) {
+	log.Println("[CLEAN]")
 	utils.SnapRemove(nil,
 		platformSnap,
 	)
 
 	log.Println("[SETUP]")
+
 	start := time.Now()
+	defer utils.SnapDumpLogs(nil, start, platformSnap)
+
+	var err error
 
 	if utils.LocalSnap != "" {
-		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+		err = utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, platformSnap, utils.ServiceChannel)
+		err = utils.SnapInstallFromStore(nil, platformSnap, utils.ServiceChannel)
 	}
+	if err != nil {
+		return 0, err
+	}
+	defer utils.SnapRemove(nil, platformSnap)
 
 	// make sure all services are online before starting the tests
-	utils.WaitPlatformOnline(nil)
+	err = utils.WaitPlatformOnline(nil)
+	if err != nil {
+		return 0, err
+	}
 
-	utils.SnapStart(nil, supportSchedulerService)
+	utils.SnapStart(nil, supportSchedulerService) // is this still necessary??
 
-	exitCode := m.Run()
+	log.Println("[START]")
+	return m.Run(), nil
+}
 
-	log.Println("[TEARDOWN]")
-
-	utils.SnapDumpLogs(nil, start, platformSnap)
-
-	utils.SnapRemove(nil,
-		platformSnap,
-	)
-
-	os.Exit(exitCode)
+func TestMain(m *testing.M) {
+	code, err := main(m)
+	if err != nil {
+		log.Fatalf("Failed to run tests: %s", err)
+	}
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {

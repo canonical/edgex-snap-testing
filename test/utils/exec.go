@@ -2,17 +2,18 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	goexec "os/exec"
 	"sync"
 	"testing"
 )
 
-func Exec(t *testing.T, command string) (stdout, stderr string) {
+func Exec(t *testing.T, command string) (stdout, stderr string, err error) {
 	return exec(t, command, false)
 }
 
 // exec executes a command
-func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
+func exec(t *testing.T, command string, verbose bool) (stdout, stderr string, err error) {
 	logf(t, "[exec] %s", command)
 
 	cmd := goexec.Command("/bin/sh", "-c", command)
@@ -22,8 +23,13 @@ func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
 	// standard output
 	outStream, err := cmd.StdoutPipe()
 	if err != nil {
-		fatalf(t, err.Error())
-		return
+		// fatalf(t, err.Error())
+		// return
+		if t != nil {
+			t.Fatal(err)
+		} else {
+			return "", "", fmt.Errorf(err.Error())
+		}
 	}
 	outScanner := bufio.NewScanner(outStream)
 	// stdout reader
@@ -37,7 +43,7 @@ func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
 			stdout += line + "\n"
 		}
 		if err := outScanner.Err(); err != nil {
-			fatalf(t, err.Error())
+			fatalf(t, err.Error()) // TODO: remove log.Fatal
 		}
 		wg.Done()
 	}()
@@ -45,8 +51,13 @@ func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
 	// standard error
 	errStream, err := cmd.StderrPipe()
 	if err != nil {
-		fatalf(t, err.Error())
-		return
+		// fatalf(t, err.Error())
+		// return
+		if t != nil {
+			t.Fatal(err)
+		} else {
+			return "", "", fmt.Errorf(err.Error())
+		}
 	}
 	errScanner := bufio.NewScanner(errStream)
 	// stderr reader
@@ -60,24 +71,34 @@ func exec(t *testing.T, command string, verbose bool) (stdout, stderr string) {
 			stderr += line + "\n"
 		}
 		if err := errScanner.Err(); err != nil {
-			fatalf(t, err.Error())
+			fatalf(t, err.Error()) // TODO: remove log.Fatal
 		}
 		wg.Done()
 	}()
 
 	// start execution
-	if err := cmd.Start(); err != nil {
-		fatalf(t, err.Error())
-		return
+	if err = cmd.Start(); err != nil {
+		// fatalf(t, err.Error())
+		// return
+		if t != nil {
+			t.Fatal(err)
+		} else {
+			return "", "", fmt.Errorf(err.Error())
+		}
 	}
 
 	// wait for all standard output processing before waiting to exit!
 	wg.Wait()
 
 	// wait until command exits
-	if err := cmd.Wait(); err != nil {
-		fatalf(t, err.Error())
-		return
+	if err = cmd.Wait(); err != nil {
+		// fatalf(t, err.Error())
+		// return
+		if t != nil {
+			t.Fatal(err)
+		} else {
+			return stdout, stderr, fmt.Errorf(err.Error())
+		}
 	}
 
 	return

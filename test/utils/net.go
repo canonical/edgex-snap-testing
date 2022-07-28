@@ -67,7 +67,7 @@ func testBindLoopback(t *testing.T, snapName string, ports []string) {
 
 // WaitServiceOnline waits for a service to come online by dialing its port(s)
 // up to a maximum number
-func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) {
+func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 	if len(ports) == 0 {
 		panic("No ports given as input")
 	}
@@ -89,18 +89,25 @@ PORTS:
 			time.Sleep(1 * time.Second)
 		}
 
+		var err error
 		if returnErr != nil {
-			fatalf(t, "Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
+			err = fmt.Errorf("Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
 		} else {
-			fatalf(t, "Time out: reached max %d retries.", maxRetry)
+			err = fmt.Errorf("Time out: reached max %d retries.", maxRetry)
+		}
+		if t != nil {
+			t.Fatal(err)
+		} else {
+			return err
 		}
 	}
+	return nil
 }
 
 // WaitPlatformOnline waits for all platform ports to come online
 // by dialing its port(s) up to a maximum number
-func WaitPlatformOnline(t *testing.T) {
-	WaitServiceOnline(t, 180, PlatformPorts...)
+func WaitPlatformOnline(t *testing.T) error {
+	return WaitServiceOnline(t, 180, PlatformPorts...)
 }
 
 // requirePortOpen checks if the local port(s) accepts connections
@@ -196,6 +203,6 @@ func filterOpenPorts(t *testing.T, port string) string {
 func lsof(t *testing.T, port string) string {
 	// The chained true command is to make sure execution succeeds even if
 	// 	the first command fails when list is empty
-	stdout, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s || true", port))
+	stdout, _, _ := Exec(t, fmt.Sprintf("sudo lsof -nPi :%s || true", port))
 	return stdout
 }
