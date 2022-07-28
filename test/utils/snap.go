@@ -69,6 +69,14 @@ func SnapVersion(t *testing.T, name string) string {
 	return strings.TrimSpace(out)
 }
 
+func SnapRevision(t *testing.T, service string) string {
+	out, _ := exec(t, fmt.Sprintf(
+		`snap run --shell %s -c "echo \$SNAP_REVISION"`,
+		service,
+	), true)
+	return strings.TrimSpace(out)
+}
+
 func snapJournalCommand(start time.Time, name string) string {
 	// The command should not return error even if nothing is grepped, hence the "|| true"
 	return fmt.Sprintf("sudo journalctl --since \"%s\" --no-pager | grep \"%s\"|| true",
