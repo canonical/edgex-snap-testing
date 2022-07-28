@@ -61,13 +61,13 @@ func testRefresh(t *testing.T, snapName, serviceName string) {
 		}
 
 		t.Logf("Checking for files with original snap revision %s", originalRevision)
-		files, err := WalkMatch(fmt.Sprintf("/var/snap/%s/current", snapName), fmt.Sprintf("*%s/%s*", snapName, originalRevision))
+		files, err := walkMatch(fmt.Sprintf("/var/snap/%s/current", snapName), fmt.Sprintf("*%s/%s*", snapName, originalRevision))
 		require.NoError(t, err)
 		require.Empty(t, files)
 	})
 }
 
-func WalkMatch(root, pattern string) ([]string, error) {
+func walkMatch(root, pattern string) ([]string, error) {
 	var matches []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
