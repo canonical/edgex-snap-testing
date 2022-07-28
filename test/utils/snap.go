@@ -71,7 +71,7 @@ func SnapVersion(t *testing.T, name string) string {
 
 func SnapRevision(t *testing.T, service string) string {
 	out, _ := exec(t, fmt.Sprintf(
-		`snap run --shell %s -c "echo \$SNAP_REVISION"`,
+		"snap list | grep %s | awk '{print $3}'",
 		service,
 	), true)
 	return strings.TrimSpace(out)
