@@ -23,7 +23,7 @@ jobs:
 
           # - name: device-gpio
           
-          # - name: device-rest
+          - name: device-rest
           
           # - name: device-snmp
           

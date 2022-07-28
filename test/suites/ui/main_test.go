@@ -14,14 +14,13 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	start := time.Now()
-
-	log.Println("[SETUP]")
-
 	// start clean
 	utils.SnapRemove(nil,
 		uiSnap,
 	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
 
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)
@@ -34,6 +33,7 @@ func TestMain(m *testing.M) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, uiSnap)
+	utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	utils.SnapRemove(nil,
 		uiSnap,

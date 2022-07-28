@@ -9,22 +9,19 @@ import (
 )
 
 const (
-	platformSnap          = "edgexfoundry"
 	deviceMqttSnap        = "edgex-device-mqtt"
 	deviceMqttApp         = "device-mqtt"
 	deviceMqttServicePort = "59982"
 )
 
 func TestMain(m *testing.M) {
-
-	log.Println("[SETUP]")
-
 	// start clean
 	utils.SnapRemove(nil,
 		deviceMqttSnap,
-		platformSnap,
+		"edgexfoundry",
 	)
 
+	log.Println("[SETUP]")
 	start := time.Now()
 
 	// install the device snap before edgexfoundry
@@ -35,13 +32,13 @@ func TestMain(m *testing.M) {
 		// for local build, the interface isn't auto-connected.
 		// connect manually
 		utils.SnapConnect(nil,
-			platformSnap+":edgex-secretstore-token",
+			"edgexfoundry:edgex-secretstore-token",
 			deviceMqttSnap+":edgex-secretstore-token",
 		)
 	} else {
 		utils.SnapInstallFromStore(nil, deviceMqttSnap, utils.ServiceChannel)
 	}
-	utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel)
+	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
@@ -51,11 +48,11 @@ func TestMain(m *testing.M) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, deviceMqttSnap)
-	utils.SnapDumpLogs(nil, start, platformSnap)
+	utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	utils.SnapRemove(nil,
 		deviceMqttSnap,
-		platformSnap,
+		"edgexfoundry",
 	)
 
 	os.Exit(exitCode)
