@@ -69,10 +69,10 @@ func SnapVersion(t *testing.T, name string) string {
 	return strings.TrimSpace(out)
 }
 
-func SnapRevision(t *testing.T, service string) string {
+func SnapRevision(t *testing.T, name string) string {
 	out, _ := exec(t, fmt.Sprintf(
-		"snap list | grep %s | awk '{print $3}'",
-		service,
+		"snap list %s | awk 'NR==2 {print $3}'",
+		name,
 	), true)
 	return strings.TrimSpace(out)
 }

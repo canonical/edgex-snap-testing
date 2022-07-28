@@ -3,9 +3,6 @@ package utils
 import (
 	"fmt"
 	"github.com/stretchr/testify/require"
-	"os"
-	"path/filepath"
-	"regexp"
 	"testing"
 )
 
@@ -25,17 +22,7 @@ func testRefresh(t *testing.T, snapName string) {
 	const refreshChannel = "latest/beta"
 	var refreshRevision string
 
-	currentDir, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	t.Cleanup(func() {
-		err := os.Chdir(currentDir)
-		if err != nil {
-			t.Fatal(err)
-		}
-
 		if LocalSnap != "" {
 			SnapRemove(t, snapName)
 			SnapInstallFromFile(t, LocalSnap)
@@ -66,48 +53,10 @@ func testRefresh(t *testing.T, snapName string) {
 
 		t.Logf("Checking for files with original snap revision %s", originalRevision)
 		// exclude the file consul/data/raft/raft.db which has an old revision number in the path
-		files, err := walkMatch(fmt.Sprintf("/var/snap/%s/%s", snapName, refreshRevision),
-			fmt.Sprintf("%s/%s", snapName, originalRevision),
-			"consul/data/raft/raft.db")
-		require.NoError(t, err)
-		require.Empty(t, files)
+		stdout, stderr := exec(t, fmt.Sprintf(`cd /var/snap/%s/current && grep --dereference-recursive --line-number %s/%s | grep --invert-match %s`,
+			snapName, snapName, originalRevision, "raft.db"),
+			true)
+		require.Empty(t, stdout)
+		require.Empty(t, stderr)
 	})
-}
-
-func walkMatch(root, pattern, excludedPattern string) ([]string, error) {
-	err := os.Chdir(root)
-	if err != nil {
-		return nil, err
-	}
-
-	var matches []string
-	err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			return nil
-		}
-
-		matched, err := regexp.MatchString(pattern, path)
-		if err != nil {
-			return err
-		}
-
-		matchedConsul, err := regexp.MatchString(excludedPattern, path)
-		if err != nil {
-			return err
-		}
-
-		if matched && !matchedConsul {
-			matches = append(matches, path)
-		}
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return matches, nil
 }
