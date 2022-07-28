@@ -24,10 +24,6 @@ const (
 var testSecretsInterface bool
 
 func TestMain(m *testing.M) {
-	start := time.Now()
-
-	log.Println("[SETUP]")
-
 	// start clean
 	utils.SnapRemove(nil,
 		ekuiperSnap,
@@ -35,6 +31,9 @@ func TestMain(m *testing.M) {
 		deviceVirtualSnap,
 		ascSnap,
 	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
 
 	// install the ekuiper snap before edgexfoundry
 	// to catch build error sooner and stop
@@ -87,6 +86,7 @@ TEARDOWN:
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, ekuiperSnap)
+	utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	utils.SnapRemove(nil,
 		ekuiperSnap,

@@ -16,16 +16,14 @@ const (
 	supportSchedulerServicePort = "59861"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
-
-	log.Println("[SETUP]")
-
 	// start clean
 	utils.SnapRemove(nil,
 		platformSnap,
 	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
 
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)

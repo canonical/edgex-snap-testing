@@ -10,13 +10,12 @@ import (
 const cliSnap = "edgex-cli"
 
 func TestMain(m *testing.M) {
-
-	log.Println("[SETUP]")
-
 	// start clean
 	utils.SnapRemove(nil,
 		cliSnap,
 	)
+
+	log.Println("[SETUP]")
 
 	if utils.LocalSnap != "" {
 		utils.SnapInstallFromFile(nil, utils.LocalSnap)

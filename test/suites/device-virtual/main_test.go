@@ -49,6 +49,7 @@ func TestMain(m *testing.M) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
+	utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	utils.SnapRemove(nil,
 		deviceVirtualSnap,
