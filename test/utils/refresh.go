@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"github.com/stretchr/testify/require"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -58,8 +60,33 @@ func testRefresh(t *testing.T, snapName, serviceName string) {
 			t.Skip("Upgraded to the same revision. Skipping test")
 		}
 
-		stdout, _ := Exec(t, fmt.Sprintf(`cd /var/snap/%s/current && grep -R %s/%s | grep -v "raft.db"`,
-			snapName, snapName, originalRevision))
-		require.Empty(t, stdout)
+		t.Logf("Checking for files with original snap revision %s", originalRevision)
+		files, err := WalkMatch(fmt.Sprintf("/var/snap/%s/current", snapName), fmt.Sprintf("*%s/%s*", snapName, originalRevision))
+		require.NoError(t, err)
+		require.Empty(t, files)
 	})
+}
+
+func WalkMatch(root, pattern string) ([]string, error) {
+	var matches []string
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		if matched, err := filepath.Match(pattern, filepath.Base(path)); err != nil {
+			return err
+			// exclude the file consul/data/raft/raft.db which has an old revision number in the path
+		} else if matched && path != "consul/data/raft/raft.db" {
+			matches = append(matches, path)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return matches, nil
 }
