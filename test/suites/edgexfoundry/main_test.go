@@ -69,8 +69,8 @@ func TestCommon(t *testing.T) {
 			DefaultPort:              supportSchedulerServicePort,
 			TestLegacyEnvConfig:      false, // schemes differ, run specific test instead
 			TestAppConfig:            true,
-			TestGlobalConfig:         true,
-			TestMixedGlobalAppConfig: utils.FullConfigTest,
+			TestGlobalConfig:         false, // multiple servers, test setting startup message instead
+			TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
 		},
 	})
 
