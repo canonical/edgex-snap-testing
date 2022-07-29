@@ -67,7 +67,7 @@ runs:
           cat $file | grep --ignore-case "error"
         fi
 
-        echo -n "\nFull logs will be uploaded as build artifacts."
+        echo -e "\nFull logs will be uploaded as build artifacts."
         echo "::endgroup::"
         
     # For some reason, github.action_path resolves to a wrong path when directly passed to
