@@ -17,15 +17,14 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	start := time.Now()
-
-	log.Println("[SETUP]")
-
 	// start clean
 	utils.SnapRemove(nil,
 		ascSnap,
 		"edgexfoundry",
 	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
 
 	// install the app-service-configurable snap before edgexfoundry
 	// to catch build error sooner and stop
@@ -55,6 +54,7 @@ func TestMain(m *testing.M) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, ascSnap)
+	utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	utils.SnapRemove(nil,
 		ascSnap,

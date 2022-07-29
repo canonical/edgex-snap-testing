@@ -57,7 +57,7 @@ func TestTLSCert(t *testing.T) {
 	t.Logf("Query a service via the proxy to verify the use of new certificate")
 	// A success response should return status 401 because the endpoint is protected.
 	// Note: %%	is a literal percent sign
-	code, _ := utils.Exec(t, fmt.Sprintf("curl --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --cacert %s 'https://localhost:8443/core-data/api/v2/ping'",
+	code, _, _ := utils.Exec(t, fmt.Sprintf("curl --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --cacert %s 'https://localhost:8443/core-data/api/v2/ping'",
 		caCertFile))
 	require.Equal(t, "401", strings.TrimSpace(code))
 }
@@ -82,7 +82,7 @@ func TestAddProxyUser(t *testing.T) {
 
 	t.Log("Generate a JWT token for the admin user")
 	// The seedable "admin" has id 1
-	jwt, _ := utils.Exec(t,
+	jwt, _, _ := utils.Exec(t,
 		fmt.Sprintf("edgexfoundry.secrets-config proxy jwt --algorithm ES256 --private_key %s --id 1 --expiration=1h", privateKeyFile))
 
 	t.Log("Call an API on behalf of admin user")

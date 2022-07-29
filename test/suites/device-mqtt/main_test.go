@@ -14,17 +14,15 @@ const (
 	deviceMqttServicePort = "59982"
 )
 
-var start = time.Now()
-
 func TestMain(m *testing.M) {
-
-	log.Println("[SETUP]")
-
 	// start clean
 	utils.SnapRemove(nil,
 		deviceMqttSnap,
 		"edgexfoundry",
 	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
 
 	// install the device snap before edgexfoundry
 	// to catch build error sooner and stop
@@ -50,6 +48,7 @@ func TestMain(m *testing.M) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, deviceMqttSnap)
+	utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	utils.SnapRemove(nil,
 		deviceMqttSnap,

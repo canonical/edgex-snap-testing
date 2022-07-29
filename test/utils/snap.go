@@ -16,19 +16,27 @@ import (
 // 	}
 // }
 
-func SnapInstallFromStore(t *testing.T, name, channel string) {
-	exec(t, fmt.Sprintf(
+func SnapInstallFromStore(t *testing.T, name, channel string) error {
+	_, stderr, err := exec(t, fmt.Sprintf(
 		"sudo snap install %s --channel=%s",
 		name,
 		channel,
 	), true)
+	if err != nil {
+		return fmt.Errorf("%s: %s", err, stderr)
+	}
+	return nil
 }
 
-func SnapInstallFromFile(t *testing.T, path string) {
-	exec(t, fmt.Sprintf(
+func SnapInstallFromFile(t *testing.T, path string) error {
+	_, stderr, err := exec(t, fmt.Sprintf(
 		"sudo snap install --dangerous %s",
 		path,
 	), true)
+	if err != nil {
+		return fmt.Errorf("%s: %s", err, stderr)
+	}
+	return nil
 }
 
 func SnapRemove(t *testing.T, names ...string) {
@@ -62,7 +70,7 @@ func SnapDisconnect(t *testing.T, plug, slot string) {
 }
 
 func SnapVersion(t *testing.T, name string) string {
-	out, _ := exec(t, fmt.Sprintf(
+	out, _, _ := exec(t, fmt.Sprintf(
 		"snap info %s | grep installed | awk '{print $2}'",
 		name,
 	), true)
@@ -85,7 +93,7 @@ func snapJournalCommand(start time.Time, name string) string {
 }
 
 func SnapDumpLogs(t *testing.T, start time.Time, name string) {
-	const filename = "snap.log" // used in action.yml
+	filename := name + ".log" // used in action.yml
 	exec(t, fmt.Sprintf("(%s) > %s",
 		snapJournalCommand(start, name),
 		filename), true)
@@ -95,7 +103,7 @@ func SnapDumpLogs(t *testing.T, start time.Time, name string) {
 }
 
 func SnapLogs(t *testing.T, start time.Time, name string) string {
-	logs, _ := exec(t, snapJournalCommand(start, name), false)
+	logs, _, _ := exec(t, snapJournalCommand(start, name), false)
 	return logs
 }
 

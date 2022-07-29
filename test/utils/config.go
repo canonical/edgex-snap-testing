@@ -130,7 +130,7 @@ func testChangePort_global(t *testing.T, snap, app, servicePort string) {
 
 		const newPort = "33333"
 
-		// enable new config option to aviod mixed options issue with old env option
+		// enable new config option to avoid mixed options issue with old env option
 		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it

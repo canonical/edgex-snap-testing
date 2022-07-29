@@ -16,14 +16,14 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	log.Println("[SETUP]")
-	start := time.Now()
-
 	// start clean
 	utils.SnapRemove(nil,
 		deviceUSBCamSnap,
 		"edgexfoundry",
 	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
 
 	// install the device snap before edgexfoundry
 	// to catch build error sooner and stop
@@ -49,6 +49,7 @@ func TestMain(m *testing.M) {
 	log.Println("[TEARDOWN]")
 
 	utils.SnapDumpLogs(nil, start, deviceUSBCamSnap)
+	utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	utils.SnapRemove(nil,
 		deviceUSBCamSnap,

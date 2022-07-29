@@ -16,39 +16,52 @@ const (
 	supportSchedulerServicePort = "59861"
 )
 
-var start = time.Now()
-
-func TestMain(m *testing.M) {
+func main(m *testing.M) (int, error) {
+	log.Println("[CLEAN]")
+	utils.SnapRemove(nil,
+		platformSnap,
+	)
 
 	log.Println("[SETUP]")
 
-	// start clean
-	utils.SnapRemove(nil,
-		platformSnap,
-	)
+	// add this to the bottom of the stack to remove after collecting logs
+	defer utils.SnapRemove(nil, platformSnap)
+
+	start := time.Now()
+	defer utils.SnapDumpLogs(nil, start, platformSnap)
+
+	var err error
 
 	if utils.LocalSnap != "" {
-		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+		err = utils.SnapInstallFromFile(nil, utils.LocalSnap)
 	} else {
-		utils.SnapInstallFromStore(nil, platformSnap, utils.ServiceChannel)
+		err = utils.SnapInstallFromStore(nil, platformSnap, utils.ServiceChannel)
+	}
+	if err != nil {
+		return 0, err
 	}
 
 	// make sure all services are online before starting the tests
-	utils.WaitPlatformOnline(nil)
+	err = utils.WaitPlatformOnline(nil)
+	if err != nil {
+		return 0, err
+	}
 
+	// support-scheduler is disabled by default.
+	// Start it to have the default configurations registered in the EdgeX Registry
+	//	in preparation for the local config tests.
 	utils.SnapStart(nil, supportSchedulerService)
 
-	exitCode := m.Run()
+	log.Println("[START]")
+	return m.Run(), nil
+}
 
-	log.Println("[TEARDOWN]")
-
-	utils.SnapDumpLogs(nil, start, platformSnap)
-
-	utils.SnapRemove(nil,
-		platformSnap,
-	)
-
-	os.Exit(exitCode)
+func TestMain(m *testing.M) {
+	code, err := main(m)
+	if err != nil {
+		log.Fatalf("Failed to run tests: %s", err)
+	}
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {
@@ -69,8 +82,8 @@ func TestCommon(t *testing.T) {
 			DefaultPort:              supportSchedulerServicePort,
 			TestLegacyEnvConfig:      false, // schemes differ, run specific test instead
 			TestAppConfig:            true,
-			TestGlobalConfig:         true,
-			TestMixedGlobalAppConfig: utils.FullConfigTest,
+			TestGlobalConfig:         false, // multiple servers, test setting startup message instead
+			TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
 		},
 	})
 
