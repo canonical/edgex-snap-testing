@@ -25,12 +25,8 @@ inputs:
       This is useful only when 'snap' input is not set.
     required: false
   print_logs:
-    description: |
-      Print snap logs.
-      Logging is enabled by default.
-      Setting the value to 'false' disables the logging.
+    description: Deprecated. Logs are uploaded as artifacts.
     required: false
-    default: false
 
 
 runs:
@@ -60,13 +56,18 @@ runs:
       run: |
         go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
-    # Print snap logs
-    - if: always() && inputs.print_logs == 'true'
+    # Print error logs for the service
+    - if: always()
       shell: bash
       working-directory: ${{github.action_path}}
       run: |
-        echo "::group::Snap Logs"
-        cat ./suites/${{inputs.name}}/snap.log
+        echo "::group::Service Errors"
+        file=./suites/${{inputs.name}}/${{inputs.name}}.log
+        if test -f "$file"; then
+          cat $file | grep --ignore-case "error"
+        fi
+
+        echo -n "\nFull logs will be uploaded as build artifacts."
         echo "::endgroup::"
         
     # For some reason, github.action_path resolves to a wrong path when directly passed to
