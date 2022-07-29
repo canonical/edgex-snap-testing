@@ -54,7 +54,7 @@ func TestRefresh(t *testing.T, snapName string) {
 			t.Logf("Looking for files containing previous snap revision %s", originalRevision)
 
 			// The command should not return error even if nothing is grepped, hence the "|| true"
-			stdout, stderr := exec(t,
+			stdout, stderr, _ := exec(t,
 				fmt.Sprintf("sudo grep -RnI '%s/%s' /var/snap/%s/current || true",
 					snapName, originalRevision, snapName),
 				true)

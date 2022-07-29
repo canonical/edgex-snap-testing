@@ -78,7 +78,7 @@ func SnapVersion(t *testing.T, name string) string {
 }
 
 func SnapRevision(t *testing.T, name string) string {
-	out, _ := exec(t, fmt.Sprintf(
+	out, _, _ := exec(t, fmt.Sprintf(
 		"snap list %s | awk 'NR==2 {print $3}'",
 		name,
 	), true)
