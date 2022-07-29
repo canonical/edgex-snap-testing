@@ -1,4 +1,3 @@
-// TODO: rename to packaging.go
 package utils
 
 import (
