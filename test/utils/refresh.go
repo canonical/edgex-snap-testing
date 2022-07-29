@@ -8,17 +8,18 @@ import (
 
 type Refresh struct {
 	TestRefreshServicesAndConfigPaths bool
+	Regexes                           []string
 }
 
 func TestRefresh(t *testing.T, snapName string, conf Refresh) {
 	t.Run("refresh", func(t *testing.T) {
 		if conf.TestRefreshServicesAndConfigPaths {
-			testRefresh(t, snapName)
+			testRefresh(t, snapName, conf.Regexes...)
 		}
 	})
 }
 
-func testRefresh(t *testing.T, snapName string) {
+func testRefresh(t *testing.T, snapName string, regexes ...string) {
 	const refreshChannel = "latest/beta"
 	var refreshRevision string
 
@@ -52,11 +53,16 @@ func testRefresh(t *testing.T, snapName string) {
 		}
 
 		t.Logf("Checking for files with original snap revision %s", originalRevision)
-		// exclude the file consul/data/raft/raft.db which has an old revision number in the path
-		stdout, stderr := exec(t, fmt.Sprintf(`cd /var/snap/%s/current && grep --dereference-recursive --line-number %s/%s | grep --invert-match %s`,
-			snapName, snapName, originalRevision, "raft.db"),
-			true)
-		require.Empty(t, stdout)
+
+		// exclude files that have an old revision number in the path using regex
+		command := fmt.Sprintf(`cd /var/snap/%s/current && grep --dereference-recursive --line-number %s/%s | grep --invert-match `,
+			snapName, snapName, originalRevision)
+		for _, reg := range regexes {
+			command += fmt.Sprintf("--word-regexp %s ", reg)
+		}
+
+		stdout, stderr := exec(t, command, true)
+		require.Empty(t, stdout, fmt.Sprintf(`files not upgraded to use "current" symlink in config files:%s`, stdout))
 		require.Empty(t, stderr)
 	})
 }

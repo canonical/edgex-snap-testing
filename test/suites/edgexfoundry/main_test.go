@@ -86,5 +86,6 @@ func TestCommon(t *testing.T) {
 
 	utils.TestRefresh(t, platformSnap, utils.Refresh{
 		TestRefreshServicesAndConfigPaths: true,
+		Regexes:                           []string{"raft.db"},
 	})
 }
