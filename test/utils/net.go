@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"strings"
 	"testing"
@@ -77,11 +78,21 @@ PORTS:
 		var returnErr error
 
 		for i := 1; i <= maxRetry; i++ {
-			logf(t, "Waiting for service port %s. Retry %d/%d", port, i, maxRetry)
+			msg := fmt.Sprintf("Waiting for service port %s. Retry %d/%d", port, i, maxRetry)
+			if t != nil {
+				t.Log(msg)
+			} else {
+				log.Print(msg)
+			}
 
 			conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
 			if conn != nil {
-				logf(t, "Service port %s is open.", port)
+				msg := fmt.Sprintf("Service port %s is open.", port)
+				if t != nil {
+					t.Log(msg)
+				} else {
+					log.Print(msg)
+				}
 				continue PORTS
 			}
 			returnErr = err

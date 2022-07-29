@@ -24,6 +24,9 @@ func main(m *testing.M) (int, error) {
 
 	log.Println("[SETUP]")
 
+	// add this to the bottom of the stack to remove after collecting logs
+	defer utils.SnapRemove(nil, platformSnap)
+
 	start := time.Now()
 	defer utils.SnapDumpLogs(nil, start, platformSnap)
 
@@ -37,7 +40,6 @@ func main(m *testing.M) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer utils.SnapRemove(nil, platformSnap)
 
 	// make sure all services are online before starting the tests
 	err = utils.WaitPlatformOnline(nil)
@@ -45,7 +47,10 @@ func main(m *testing.M) (int, error) {
 		return 0, err
 	}
 
-	utils.SnapStart(nil, supportSchedulerService) // is this still necessary??
+	// support-scheduler is disabled by default.
+	// Start it to have the default configurations registered in the EdgeX Registry
+	//	in preparation for the local config tests.
+	utils.SnapStart(nil, supportSchedulerService)
 
 	log.Println("[START]")
 	return m.Run(), nil
