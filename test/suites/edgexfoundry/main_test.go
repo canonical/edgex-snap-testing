@@ -84,7 +84,5 @@ func TestCommon(t *testing.T) {
 		TestSemanticSnapVersion: true,
 	})
 
-	utils.TestRefresh(t, platformSnap, utils.Refresh{
-		TestRefreshServicesAndConfigPaths: true,
-	})
+	utils.TestRefresh(t, platformSnap)
 }
