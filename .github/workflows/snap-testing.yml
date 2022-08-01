@@ -7,6 +7,8 @@ on:
   schedule:
     # weekly tests run 6AM every Sunday
     - cron: "0 6 * * SUN"
+    # TODO: remove this debugging schedule
+    - cron: "20 10 * * MON"
   # allow manual trigger
   workflow_dispatch:
 
