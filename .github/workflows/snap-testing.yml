@@ -37,7 +37,6 @@ jobs:
           - name: edgexfoundry
           
           - name: cli
-            print_logs: false
 
           - name: ui
           
@@ -75,6 +74,5 @@ jobs:
           name: ${{matrix.name}}
           channel: ${{matrix.channel}}
           platform_channel: ${{matrix.platform_channel}}
-          print_logs: ${{matrix.print_logs}}
           full_config_test: true
 
