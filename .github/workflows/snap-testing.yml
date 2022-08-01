@@ -62,5 +62,5 @@ jobs:
           name: ${{matrix.name}}
           channel: ${{matrix.channel}}
           platform_channel: ${{matrix.platform_channel}}
-          full_config_test: ${{ github.event_name == 'schedule' && true || false }}
+          full_config_test: true
 

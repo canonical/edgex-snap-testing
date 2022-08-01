@@ -26,8 +26,7 @@ inputs:
     required: false
   full_config_test:
     description: |
-      Option for enabling full config options test.
-      This is used when testing services' legacy and mixed options.
+      Option for enabling full config options test to include for e.g. legacy options testing.
     required: false
 
 
