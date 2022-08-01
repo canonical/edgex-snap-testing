@@ -69,7 +69,6 @@ func TestCommon(t *testing.T) {
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceOnvifCameraApp,
 			DefaultPort:              deviceOnvifCameraServicePort,
-			TestLegacyEnvConfig:      utils.FullConfigTest,
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
