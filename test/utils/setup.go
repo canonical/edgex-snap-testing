@@ -5,9 +5,9 @@ import (
 	"time"
 )
 
-// SetupDeviceTests setup up the environment for testing
+// SetupServiceTests setup up the environment for testing
 // It returns a teardown function to be called at the end of the tests
-func SetupDeviceTests(snapName string) (teardown func(), err error) {
+func SetupServiceTests(snapName string) (teardown func(), err error) {
 	log.Println("[CLEAN]")
 	SnapRemove(nil,
 		snapName,

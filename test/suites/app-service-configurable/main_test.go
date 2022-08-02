@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"testing"
-	"time"
 )
 
 const (
@@ -17,52 +16,18 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	// start clean
-	utils.SnapRemove(nil,
-		ascSnap,
-		"edgexfoundry",
-	)
-
-	log.Println("[SETUP]")
-	start := time.Now()
-
-	// install the app-service-configurable snap before edgexfoundry
-	// to catch build error sooner and stop
-	if utils.LocalSnap() {
-		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
-	} else {
-		utils.SnapInstallFromStore(nil, ascSnap, utils.ServiceChannel)
-	}
-	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
-
-	// make sure all services are online before starting the tests
-	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually
-	if utils.LocalSnap() {
-		utils.SnapConnect(nil,
-			"edgexfoundry:edgex-secretstore-token",
-			ascSnap+":edgex-secretstore-token",
-		)
+	teardown, err := utils.SetupServiceTests(ascSnap)
+	if err != nil {
+		log.Fatalf("Failed to setup tests: %s", err)
 	}
 
 	// set profile to rules engine
 	utils.SnapSet(nil, ascSnap, "profile", defaultTestProfile)
 
-	exitCode := m.Run()
+	code := m.Run()
+	teardown()
 
-	log.Println("[TEARDOWN]")
-
-	utils.SnapDumpLogs(nil, start, ascSnap)
-	utils.SnapDumpLogs(nil, start, "edgexfoundry")
-
-	utils.SnapRemove(nil,
-		ascSnap,
-		"edgexfoundry",
-	)
-
-	os.Exit(exitCode)
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {

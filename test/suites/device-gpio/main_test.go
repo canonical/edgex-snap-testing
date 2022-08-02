@@ -14,7 +14,7 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	teardown, err := utils.SetupDeviceTests(deviceGpioSnap)
+	teardown, err := utils.SetupServiceTests(deviceGpioSnap)
 	if err != nil {
 		log.Fatalf("Failed to setup tests: %s", err)
 	}

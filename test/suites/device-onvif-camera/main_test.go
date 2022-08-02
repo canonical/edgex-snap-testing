@@ -14,7 +14,7 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	teardown, err := utils.SetupDeviceTests(deviceOnvifCameraSnap)
+	teardown, err := utils.SetupServiceTests(deviceOnvifCameraSnap)
 	if err != nil {
 		log.Fatalf("Failed to setup tests: %s", err)
 	}

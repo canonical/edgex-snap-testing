@@ -14,7 +14,7 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	teardown, err := utils.SetupDeviceTests(deviceSnmpSnap)
+	teardown, err := utils.SetupServiceTests(deviceSnmpSnap)
 	if err != nil {
 		log.Fatalf("Failed to setup tests: %s", err)
 	}
