@@ -14,51 +14,64 @@ const (
 	deviceVirtualServicePort = "59900"
 )
 
-func TestMain(m *testing.M) {
-	start := time.Now()
-
-	log.Println("[SETUP]")
-
-	// start clean
+func main(m *testing.M) (int, error) {
+	log.Println("[CLEAN]")
 	utils.SnapRemove(nil,
 		deviceVirtualSnap,
 		"edgexfoundry",
 	)
+
+	log.Println("[SETUP]")
+
+	// add this to the bottom of the defer stack to remove after collecting logs
+	defer utils.SnapRemove(nil,
+		deviceVirtualSnap,
+		"edgexfoundry",
+	)
+
+	start := time.Now()
+	defer utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
+	defer utils.SnapDumpLogs(nil, start, "edgexfoundry")
 
 	// install the device snap before edgexfoundry
 	// to catch build error sooner and stop
 	if utils.LocalSnap() {
-		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
+		if err := utils.SnapInstallFromFile(nil, utils.LocalSnapPath); err != nil {
+			return 0, err
+		}
 	} else {
-		utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel)
+		if err := utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel); err != nil {
+			return 0, err
+		}
 	}
-	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
+
+	if err := utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel); err != nil {
+		return 0, err
+	}
 
 	// make sure all services are online before starting the tests
-	utils.WaitPlatformOnline(nil)
+	if err := utils.WaitPlatformOnline(nil); err != nil {
+		return 0, err
+	}
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually
 	if utils.LocalSnap() {
-		utils.SnapConnect(nil,
-			"edgexfoundry:edgex-secretstore-token",
-			deviceVirtualSnap+":edgex-secretstore-token",
-		)
+		if err := utils.SnapConnectSecretstoreToken(nil, deviceVirtualSnap); err != nil {
+			return 0, err
+		}
 	}
 
-	exitCode := m.Run()
+	log.Println("[START]")
+	return m.Run(), nil
+}
 
-	log.Println("[TEARDOWN]")
-
-	utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
-	utils.SnapDumpLogs(nil, start, "edgexfoundry")
-
-	utils.SnapRemove(nil,
-		deviceVirtualSnap,
-		"edgexfoundry",
-	)
-
-	os.Exit(exitCode)
+func TestMain(m *testing.M) {
+	code, err := main(m)
+	if err != nil {
+		log.Fatalf("Failed to run tests: %s", err)
+	}
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {

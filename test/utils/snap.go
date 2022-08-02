@@ -55,11 +55,21 @@ func SnapBuild(t *testing.T, workDir string) {
 	), true)
 }
 
-func SnapConnect(t *testing.T, plug, slot string) {
-	exec(t, fmt.Sprintf(
+func SnapConnect(t *testing.T, plug, slot string) error {
+	_, stderr, err := exec(t, fmt.Sprintf(
 		"sudo snap connect %s %s",
 		plug, slot,
 	), true)
+	if err != nil {
+		return fmt.Errorf("%s: %s", err, stderr)
+	}
+	return nil
+}
+
+func SnapConnectSecretstoreToken(t *testing.T, snap string) error {
+	return SnapConnect(t,
+		"edgexfoundry:edgex-secretstore-token",
+		snap+":edgex-secretstore-token")
 }
 
 func SnapDisconnect(t *testing.T, plug, slot string) {
