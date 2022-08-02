@@ -32,8 +32,8 @@ func main(m *testing.M) (int, error) {
 
 	var err error
 
-	if utils.LocalSnap != "" {
-		err = utils.SnapInstallFromFile(nil, utils.LocalSnap)
+	if utils.LocalSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
 	} else {
 		err = utils.SnapInstallFromStore(nil, platformSnap, utils.ServiceChannel)
 	}

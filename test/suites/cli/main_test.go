@@ -17,8 +17,8 @@ func TestMain(m *testing.M) {
 
 	log.Println("[SETUP]")
 
-	if utils.LocalSnap != "" {
-		utils.SnapInstallFromFile(nil, utils.LocalSnap)
+	if utils.LocalSnap() {
+		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
 	} else {
 		utils.SnapInstallFromStore(nil, cliSnap, utils.ServiceChannel)
 	}

@@ -28,16 +28,8 @@ func TestMain(m *testing.M) {
 
 	// install the app-service-configurable snap before edgexfoundry
 	// to catch build error sooner and stop
-	if utils.LocalSnap != "" {
-		utils.SnapInstallFromFile(nil, utils.LocalSnap)
-
-		// for local build, the interface isn't auto-connected.
-		// connect manually
-		utils.SnapConnect(nil,
-			"edgexfoundry:edgex-secretstore-token",
-			ascSnap+":edgex-secretstore-token",
-		)
-
+	if utils.LocalSnap() {
+		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
 	} else {
 		utils.SnapInstallFromStore(nil, ascSnap, utils.ServiceChannel)
 	}
@@ -45,6 +37,15 @@ func TestMain(m *testing.M) {
 
 	// make sure all services are online before starting the tests
 	utils.WaitPlatformOnline(nil)
+
+	// for local build, the interface isn't auto-connected.
+	// connect manually
+	if utils.LocalSnap() {
+		utils.SnapConnect(nil,
+			"edgexfoundry:edgex-secretstore-token",
+			ascSnap+":edgex-secretstore-token",
+		)
+	}
 
 	// set profile to rules engine
 	utils.SnapSet(nil, ascSnap, "profile", defaultTestProfile)
