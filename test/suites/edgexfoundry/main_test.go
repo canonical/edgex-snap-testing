@@ -51,6 +51,7 @@ func main(m *testing.M) (int, error) {
 	// Start it to have the default configurations registered in the EdgeX Registry
 	//	in preparation for the local config tests.
 	utils.SnapStart(nil, supportSchedulerService)
+	utils.WaitServiceOnline(nil, 60, supportSchedulerServicePort)
 
 	log.Println("[START]")
 	return m.Run(), nil
