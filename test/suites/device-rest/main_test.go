@@ -14,10 +14,14 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	code, err := utils.RunDeviceTests(m, deviceRestSnap)
+	teardown, err := utils.SetupDeviceTests(deviceRestSnap)
 	if err != nil {
-		log.Fatalf("Failed to run tests: %s", err)
+		log.Fatalf("Failed to setup tests: %s", err)
 	}
+
+	code := m.Run()
+	teardown()
+
 	os.Exit(code)
 }
 
