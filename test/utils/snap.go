@@ -158,3 +158,7 @@ func SnapRefresh(t *testing.T, name, channel string) {
 		channel,
 	), true)
 }
+
+func LocalSnap() bool {
+	return LocalSnapPath != ""
+}
