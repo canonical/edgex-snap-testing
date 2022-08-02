@@ -4,6 +4,9 @@ name: Snap Testing
 on:
   pull_request:
     branches: [ main ]
+  schedule:
+    # weekly tests run 6AM every Sunday
+    - cron: "0 3 * * SUN"
   # allow manual trigger
   workflow_dispatch:
 
@@ -32,7 +35,6 @@ jobs:
           - name: edgexfoundry
           
           - name: cli
-            print_logs: false
 
           - name: ui
           
@@ -60,4 +62,5 @@ jobs:
           name: ${{matrix.name}}
           channel: ${{matrix.channel}}
           platform_channel: ${{matrix.platform_channel}}
-          print_logs: ${{matrix.print_logs}}
+          full_config_test: true
+

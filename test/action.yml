@@ -24,8 +24,9 @@ inputs:
       This is used when testing services against the edgexfoundry snap.
       This is useful only when 'snap' input is not set.
     required: false
-  print_logs:
-    description: Deprecated. Logs are uploaded as artifacts.
+  full_config_test:
+    description: |
+      Option for enabling full config options test to include for e.g. legacy options testing.
     required: false
 
 
@@ -53,6 +54,7 @@ runs:
         LOCAL_SNAP: ${{steps.path.outputs.local_snap}}
         PLATFORM_CHANNEL: ${{inputs.platform_channel}}
         SERVICE_CHANNEL: ${{inputs.channel}}
+        FULL_CONFIG_TEST: ${{inputs.full_config_test}}
       run: |
         go test -p 1 -timeout 30m -v ./suites/${{inputs.name}}
 
