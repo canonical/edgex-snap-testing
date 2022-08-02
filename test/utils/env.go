@@ -8,10 +8,10 @@ import (
 const (
 	// environment variables
 	// used to override defaults
-	platformChannelEnv = "PLATFORM_CHANNEL_ENV" // edgexfoundry channel when testing other snaps (has default)
-	serviceChannelEnv  = "SERVICE_CHANNEL_ENV"  // channel of the snap to be tested (has default)
-	localSnapEnv       = "LOCAL_SNAP_ENV"       // path to local snap to be tested instead of downloading from a channel
-	fullConfigTestEnv  = "FULL_CONFIG_TEST_ENV" // toggle full config tests (has default)
+	platformChannelEnv = "PLATFORM_CHANNEL" // edgexfoundry channel when testing other snaps (has default)
+	serviceChannelEnv  = "SERVICE_CHANNEL"  // channel of the snap to be tested (has default)
+	localSnapEnv       = "LOCAL_SNAP"       // path to local snap to be tested instead of downloading from a channel
+	fullConfigTestEnv  = "FULL_CONFIG_TEST" // toggle full config tests (has default)
 )
 
 var (
