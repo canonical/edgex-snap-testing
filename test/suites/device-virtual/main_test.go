@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"testing"
-	"time"
 )
 
 const (
@@ -15,50 +14,15 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	start := time.Now()
-
-	log.Println("[SETUP]")
-
-	// start clean
-	utils.SnapRemove(nil,
-		deviceVirtualSnap,
-		"edgexfoundry",
-	)
-
-	// install the device snap before edgexfoundry
-	// to catch build error sooner and stop
-	if utils.LocalSnap() {
-		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
-	} else {
-		utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel)
-	}
-	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
-
-	// make sure all services are online before starting the tests
-	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually
-	if utils.LocalSnap() {
-		utils.SnapConnect(nil,
-			"edgexfoundry:edgex-secretstore-token",
-			deviceVirtualSnap+":edgex-secretstore-token",
-		)
+	teardown, err := utils.SetupServiceTests(deviceVirtualSnap)
+	if err != nil {
+		log.Fatalf("Failed to setup tests: %s", err)
 	}
 
-	exitCode := m.Run()
+	code := m.Run()
+	teardown()
 
-	log.Println("[TEARDOWN]")
-
-	utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
-	utils.SnapDumpLogs(nil, start, "edgexfoundry")
-
-	utils.SnapRemove(nil,
-		deviceVirtualSnap,
-		"edgexfoundry",
-	)
-
-	os.Exit(exitCode)
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {
