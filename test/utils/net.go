@@ -113,7 +113,7 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 	var returnErr error
 	for i := 1; i <= maxRetry; i++ {
 
-		msg := fmt.Sprintf("Retry %d/%d: Waiting for service ports: %s", i, maxRetry, prettyPorts(closedPorts))
+		msg := fmt.Sprintf("Retry %d/%d: Waiting for ports: %s", i, maxRetry, prettyPorts(closedPorts))
 		if t != nil {
 			t.Log(msg)
 		} else {
@@ -123,14 +123,7 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 		var closedPortsTemp []string
 		for _, port := range closedPorts {
 			conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
-			if conn != nil {
-				msg := fmt.Sprintf("Port %s (%s) is open.", port, portService[port])
-				if t != nil {
-					t.Log(msg)
-				} else {
-					log.Print(msg)
-				}
-			} else {
+			if conn == nil {
 				closedPortsTemp = append(closedPortsTemp, port)
 			}
 			returnErr = err
