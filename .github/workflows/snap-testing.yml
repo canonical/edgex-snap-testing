@@ -84,6 +84,9 @@ jobs:
         with:
           repo: ${{matrix.repo}}
 
+      - name: Checkout the local actions
+        uses: actions/checkout@v2
+
       - name: Test snap
         uses: ./test
         with:
