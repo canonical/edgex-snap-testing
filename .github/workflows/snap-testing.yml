@@ -9,6 +9,12 @@ on:
     - cron: "0 3 * * SUN"
   # allow manual trigger
   workflow_dispatch:
+    inputs:
+      localBuild:
+        description: 'True to enable local build'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build_and_test:
@@ -19,34 +25,49 @@ jobs:
       matrix:
         include:
           - name: device-mqtt
+            repo: edgexfoundry/device-mqtt-go
 
           - name: ekuiper
+            repo: canonical/edgex-ekuiper-snap
 
           - name: app-service-configurable
+            repo: edgexfoundry/app-service-configurable
 
           - name: device-gpio
+            repo: edgexfoundry/device-gpio
           
           - name: device-rest
+            repo: edgexfoundry/device-rest-go
           
           - name: device-snmp
+            repo: edgexfoundry/device-snmp-go
           
           - name: device-modbus
+            repo: edgexfoundry/device-modbus-go
           
           - name: edgexfoundry
+            repo: edgexfoundry/edgex-go
           
           - name: cli
+            repo: edgexfoundry/edgex-cli
 
           - name: ui
+            repo: edgexfoundry/edgex-ui-go
           
           - name: device-rfid-llrp
+            repo: edgexfoundry/device-rfid-llrp-go
           
           - name: app-rfid-llrp-inventory
+            repo: edgexfoundry/app-rfid-llrp-inventory
 
           - name: device-virtual
+            repo: edgexfoundry/device-virtual-go
           
           - name: device-usb-camera
+            repo: edgexfoundry/device-usb-camera
           
           - name: device-onvif-camera
+            repo: edgexfoundry/device-onvif-camera
           
     # use local action to test
     steps:
@@ -56,10 +77,18 @@ jobs:
       - name: Checkout the local actions again
         uses: actions/checkout@v2
 
+      - name: Build snap
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.localBuild }}
+        uses: ./build
+        id: build
+        with:
+          repo: ${{matrix.repo}}
+
       - name: Test snap
         uses: ./test
         with:
           name: ${{matrix.name}}
+          snap: ${{ inputs.localBuild == true && steps.build.outputs.snap || '' }}
           channel: ${{matrix.channel}}
           platform_channel: ${{matrix.platform_channel}}
           full_config_test: true
