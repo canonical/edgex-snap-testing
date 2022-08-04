@@ -16,52 +16,15 @@ const (
 	supportSchedulerServicePort = "59861"
 )
 
-func main(m *testing.M) (int, error) {
-	log.Println("[CLEAN]")
-	utils.SnapRemove(nil,
-		platformSnap,
-	)
-
-	log.Println("[SETUP]")
-
-	// add this to the bottom of the stack to remove after collecting logs
-	defer utils.SnapRemove(nil, platformSnap)
-
-	start := time.Now()
-	defer utils.SnapDumpLogs(nil, start, platformSnap)
-
-	var err error
-
-	if utils.LocalSnap() {
-		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
-	} else {
-		err = utils.SnapInstallFromStore(nil, platformSnap, utils.ServiceChannel)
-	}
-	if err != nil {
-		return 0, err
-	}
-
-	// make sure all services are online before starting the tests
-	err = utils.WaitPlatformOnline(nil)
-	if err != nil {
-		return 0, err
-	}
-
-	// support-scheduler is disabled by default.
-	// Start it to have the default configurations registered in the EdgeX Registry
-	//	in preparation for the local config tests.
-	utils.SnapStart(nil, supportSchedulerService)
-	utils.WaitServiceOnline(nil, 60, supportSchedulerServicePort)
-
-	log.Println("[START]")
-	return m.Run(), nil
-}
-
 func TestMain(m *testing.M) {
-	code, err := main(m)
+	teardown, err := setupServiceTests(platformSnap)
 	if err != nil {
-		log.Fatalf("Failed to run tests: %s", err)
+		log.Fatalf("Failed to setup tests: %s", err)
 	}
+
+	code := m.Run()
+	teardown()
+
 	os.Exit(code)
 }
 
@@ -99,4 +62,49 @@ func TestCommon(t *testing.T) {
 	})
 
 	utils.TestRefresh(t, platformSnap)
+}
+
+func setupServiceTests(snapName string) (teardown func(), err error) {
+	log.Println("[CLEAN]")
+	utils.SnapRemove(nil,
+		snapName,
+	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
+
+	teardown = func() {
+		log.Println("[TEARDOWN]")
+		utils.SnapDumpLogs(nil, start, snapName)
+		utils.SnapRemove(nil,
+			snapName,
+		)
+	}
+
+	if utils.LocalSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
+	} else {
+		err = utils.SnapInstallFromStore(nil, snapName, utils.PlatformChannel)
+	}
+	if err != nil {
+		teardown()
+		return
+	}
+
+	// make sure all services are online before starting the tests
+	if err = utils.WaitPlatformOnline(nil); err != nil {
+		teardown()
+		return
+	}
+
+	// support-scheduler is disabled by default.
+	// Start it to have the default configurations registered in the EdgeX Registry
+	//	in preparation for the local config tests.
+	utils.SnapStart(nil, supportSchedulerService)
+	if err = utils.WaitServiceOnline(nil, 60, supportSchedulerServicePort); err != nil {
+		teardown()
+		return
+	}
+
+	return
 }

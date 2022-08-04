@@ -24,51 +24,26 @@ const (
 var testSecretsInterface bool
 
 func TestMain(m *testing.M) {
-	// start clean
-	utils.SnapRemove(nil,
-		ekuiperSnap,
-		"edgexfoundry",
-		deviceVirtualSnap,
-		ascSnap,
-	)
-
-	log.Println("[SETUP]")
-	start := time.Now()
-
-	// install the ekuiper snap before edgexfoundry
-	// to catch build error sooner and stop
-	if utils.LocalSnap() {
-		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
-	} else {
-		utils.SnapInstallFromStore(nil, ekuiperSnap, utils.ServiceChannel)
+	teardown, err := setupServiceTest(ekuiperSnap)
+	if err != nil {
+		log.Fatalf("Failed to setup tests: %s", err)
 	}
-	utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel)
-	utils.SnapInstallFromStore(nil, deviceVirtualSnap, "latest/edge")
-	utils.SnapInstallFromStore(nil, ascSnap, "latest/edge")
 
 	// set profile to rules engine
 	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
 
-	// make sure all services are online before starting the tests
-	utils.WaitPlatformOnline(nil)
-
-	// for local build, the interface isn't auto-connected.
-	// connect manually
-	if utils.LocalSnap() {
-		utils.SnapConnect(nil,
-			"edgexfoundry:edgex-secretstore-token",
-			ekuiperSnap+":edgex-secretstore-token",
-		)
-	}
-
 	// security on (default)
 	testSecretsInterface = true
-	exitCode := m.Run()
-	if exitCode != 0 {
-		goto TEARDOWN
+
+	code := m.Run()
+	if code != 0 {
+		teardown()
+		os.Exit(code)
 	}
 
 	// security off
+	testSecretsInterface = false
+
 	utils.SnapStop(nil, "edgex-ekuiper")
 	utils.SnapSet(nil, "edgexfoundry", "security-secret-store", "off")
 	utils.SnapSet(nil, "edgex-ekuiper", "edgex-security", "off")
@@ -81,23 +56,8 @@ func TestMain(m *testing.M) {
 		ascSnap,
 	)
 
-	testSecretsInterface = false
-	exitCode = m.Run()
-
-TEARDOWN:
-	log.Println("[TEARDOWN]")
-
-	utils.SnapDumpLogs(nil, start, ekuiperSnap)
-	utils.SnapDumpLogs(nil, start, "edgexfoundry")
-
-	utils.SnapRemove(nil,
-		ekuiperSnap,
-		"edgexfoundry",
-		deviceVirtualSnap,
-		ascSnap,
-	)
-
-	os.Exit(exitCode)
+	code = m.Run()
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {
@@ -116,4 +76,73 @@ func TestCommon(t *testing.T) {
 	utils.TestPackaging(t, ekuiperSnap, utils.Packaging{
 		TestSemanticSnapVersion: true,
 	})
+}
+
+func setupServiceTest(snapName string) (teardown func(), err error) {
+	log.Println("[CLEAN]")
+	utils.SnapRemove(nil,
+		snapName,
+		"edgexfoundry",
+		deviceVirtualSnap,
+		ascSnap,
+	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
+
+	teardown = func() {
+		log.Println("[TEARDOWN]")
+		utils.SnapDumpLogs(nil, start, snapName)
+
+		utils.SnapRemove(nil,
+			snapName,
+			"edgexfoundry",
+			deviceVirtualSnap,
+			ascSnap,
+		)
+	}
+
+	// install the ekuiper snap before edgexfoundry
+	// to catch build error sooner and stop
+	if utils.LocalSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
+	} else {
+		err = utils.SnapInstallFromStore(nil, snapName, utils.ServiceChannel)
+	}
+	if err != nil {
+		teardown()
+		return
+	}
+
+	if err = utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel); err != nil {
+		teardown()
+		return
+	}
+
+	if err = utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel); err != nil {
+		teardown()
+		return
+	}
+
+	if err = utils.SnapInstallFromStore(nil, ascSnap, utils.ServiceChannel); err != nil {
+		teardown()
+		return
+	}
+
+	// for local build, the interface isn't auto-connected.
+	// connect manually
+	if utils.LocalSnap() {
+		if err = utils.SnapConnectSecretstoreToken(nil, snapName); err != nil {
+			teardown()
+			return
+		}
+	}
+
+	// make sure all services are online before starting the tests
+	if err = utils.WaitPlatformOnline(nil); err != nil {
+		teardown()
+		return
+	}
+
+	return
 }

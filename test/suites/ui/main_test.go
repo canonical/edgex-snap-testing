@@ -14,32 +14,15 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	// start clean
-	utils.SnapRemove(nil,
-		uiSnap,
-	)
-
-	log.Println("[SETUP]")
-	start := time.Now()
-
-	if utils.LocalSnap() {
-		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
-	} else {
-		utils.SnapInstallFromStore(nil, uiSnap, utils.ServiceChannel)
+	teardown, err := setupServiceTest(uiSnap)
+	if err != nil {
+		log.Fatalf("Failed to setup tests: %s", err)
 	}
 
-	exitCode := m.Run()
+	code := m.Run()
+	teardown()
 
-	log.Println("[TEARDOWN]")
-
-	utils.SnapDumpLogs(nil, start, uiSnap)
-	utils.SnapDumpLogs(nil, start, "edgexfoundry")
-
-	utils.SnapRemove(nil,
-		uiSnap,
-	)
-
-	os.Exit(exitCode)
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {
@@ -52,4 +35,41 @@ func TestCommon(t *testing.T) {
 	utils.TestPackaging(t, uiSnap, utils.Packaging{
 		TestSemanticSnapVersion: true,
 	})
+}
+
+func setupServiceTest(snapName string) (teardown func(), err error) {
+	log.Println("[CLEAN]")
+	utils.SnapRemove(nil,
+		snapName,
+	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
+
+	teardown = func() {
+		log.Println("[TEARDOWN]")
+		utils.SnapDumpLogs(nil, start, snapName)
+
+		utils.SnapRemove(nil,
+			snapName,
+		)
+	}
+
+	if utils.LocalSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
+	} else {
+		err = utils.SnapInstallFromStore(nil, snapName, utils.ServiceChannel)
+	}
+	if err != nil {
+		teardown()
+		return
+	}
+
+	// make sure service is online before starting the tests
+	if err = utils.WaitServiceOnline(nil, 60, uiServicePort); err != nil {
+		teardown()
+		return
+	}
+
+	return
 }

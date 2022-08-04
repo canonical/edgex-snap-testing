@@ -5,38 +5,56 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const cliSnap = "edgex-cli"
 
 func TestMain(m *testing.M) {
-	// start clean
-	utils.SnapRemove(nil,
-		cliSnap,
-	)
-
-	log.Println("[SETUP]")
-
-	if utils.LocalSnap() {
-		utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
-	} else {
-		utils.SnapInstallFromStore(nil, cliSnap, utils.ServiceChannel)
+	teardown, err := setupServiceTest(cliSnap)
+	if err != nil {
+		log.Fatalf("Failed to setup tests: %s", err)
 	}
 
-	exitCode := m.Run()
+	code := m.Run()
+	teardown()
 
-	log.Println("[TEARDOWN]")
-
-	utils.SnapRemove(nil,
-		cliSnap,
-	)
-
-	os.Exit(exitCode)
+	os.Exit(code)
 }
 
 func TestCommon(t *testing.T) {
-
 	utils.TestPackaging(t, cliSnap, utils.Packaging{
 		TestSemanticSnapVersion: true,
 	})
+}
+
+func setupServiceTest(snapName string) (teardown func(), err error) {
+	log.Println("[CLEAN]")
+	utils.SnapRemove(nil,
+		snapName,
+	)
+
+	log.Println("[SETUP]")
+	start := time.Now()
+
+	teardown = func() {
+		log.Println("[TEARDOWN]")
+		utils.SnapDumpLogs(nil, start, snapName)
+
+		utils.SnapRemove(nil,
+			snapName,
+		)
+	}
+
+	if utils.LocalSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
+	} else {
+		err = utils.SnapInstallFromStore(nil, snapName, utils.ServiceChannel)
+	}
+	if err != nil {
+		teardown()
+		return
+	}
+
+	return
 }
