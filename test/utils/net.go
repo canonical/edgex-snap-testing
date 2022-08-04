@@ -156,65 +156,6 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 // by dialing its port(s) up to a maximum number
 func WaitPlatformOnline(t *testing.T) error {
 	return WaitServiceOnline(t, 180, PlatformPorts...)
-
-	// closedPorts := make([]string, len(PlatformPorts))
-	// copy(closedPorts, PlatformPorts)
-
-	// prettyPorts := func(ports []string) string {
-	// 	prettyList := make([]string, len(ports))
-	// 	for i, p := range ports {
-	// 		prettyList[i] = fmt.Sprintf("%s (%s)", p, PortService[p])
-	// 	}
-	// 	return strings.Join(prettyList, ", ")
-	// }
-
-	// var returnErr error
-	// for i := 1; i <= maxRetry; i++ {
-
-	// 	msg := fmt.Sprintf("Retry %d/%d: Waiting for service ports: %s", i, maxRetry, prettyPorts(closedPorts))
-	// 	if t != nil {
-	// 		t.Log(msg)
-	// 	} else {
-	// 		log.Print(msg)
-	// 	}
-
-	// 	var closedPortsTemp []string
-	// 	for _, port := range closedPorts {
-	// 		conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
-	// 		if conn != nil {
-	// 			msg := fmt.Sprintf("Port %s (%s) is open.", port, PortService[port])
-	// 			if t != nil {
-	// 				t.Log(msg)
-	// 			} else {
-	// 				log.Print(msg)
-	// 			}
-	// 		} else {
-	// 			closedPortsTemp = append(closedPortsTemp, port)
-	// 		}
-	// 		returnErr = err
-	// 	}
-	// 	closedPorts = closedPortsTemp
-
-	// 	if len(closedPorts) == 0 {
-	// 		return nil
-	// 	}
-
-	// 	time.Sleep(1 * time.Second)
-	// }
-
-	// var err error
-	// if returnErr != nil {
-	// 	err = fmt.Errorf("Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
-	// } else {
-	// 	err = fmt.Errorf("Time out: reached max %d retries.", maxRetry)
-	// }
-	// if t != nil {
-	// 	t.Fatal(err)
-	// } else {
-	// 	return err
-	// }
-
-	// return nil
 }
 
 // requirePortOpen checks if the local port(s) accepts connections
