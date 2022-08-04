@@ -28,6 +28,47 @@ var PlatformPorts = []string{
 	"6379",  // redis
 }
 
+var portService = map[string]string{
+	// platform services
+	"59880": "core-data",
+	"59881": "core-metadata",
+	"59882": "core-command",
+	"8000":  "kong",
+	"5432":  "kong-database",
+	"8200":  "vault",
+	"8500":  "consul",
+	"6379":  "redis",
+	"59861": "support-scheduler",
+	// app services
+	"59711": "app-rfid-llrp-inventory",
+	"59701": "app-service-configurable",
+	// device services
+	"59910": "device-gpio",
+	"59901": "device-modbus",
+	"59982": "device-mqtt",
+	"59984": "device-onvif-camera",
+	"59986": "device-rest",
+	"59989": "device-rfid-llrp",
+	"59993": "device-snmp",
+	"59983": "device-usb-camera",
+	"8554":  "device-usb-camera/rtsp",
+	"59900": "device-virtual",
+	// others
+	"20498": "ekuiper",
+	"59720": "ekuiper/rest-api",
+	"4000":  "ui",
+}
+
+// // ServicePort looks up the service port by app name
+// func ServicePort(serviceName string) string {
+// 	for p, s := range portService {
+// 		if s == serviceName {
+// 			return p
+// 		}
+// 	}
+// 	panic("Found no port number for service: " + serviceName)
+// }
+
 func TestNet(t *testing.T, snapName string, conf Net) {
 	t.Run("net", func(t *testing.T) {
 		if conf.StartSnap {
@@ -69,49 +110,60 @@ func testBindLoopback(t *testing.T, snapName string, ports []string) {
 // WaitServiceOnline waits for a service to come online by dialing its port(s)
 // up to a maximum number
 func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
-	if len(ports) == 0 {
-		panic("No ports given as input")
+	closedPorts := make([]string, len(ports))
+	copy(closedPorts, ports)
+
+	prettyPorts := func(ports []string) string {
+		prettyList := make([]string, len(ports))
+		for i, p := range ports {
+			if s, found := portService[p]; found {
+				prettyList[i] = fmt.Sprintf("%s (%s)", p, s)
+			} else {
+				prettyList[i] = p
+			}
+		}
+		return strings.Join(prettyList, ", ")
 	}
 
-PORTS:
-	for _, port := range ports {
-		var returnErr error
+	var returnErr error
+	for i := 1; i <= maxRetry; i++ {
 
-		for i := 1; i <= maxRetry; i++ {
-			msg := fmt.Sprintf("Waiting for service port %s. Retry %d/%d", port, i, maxRetry)
-			if t != nil {
-				t.Log(msg)
-			} else {
-				log.Print(msg)
-			}
+		msg := fmt.Sprintf("Retry %d/%d: Waiting for ports: %s", i, maxRetry, prettyPorts(closedPorts))
+		if t != nil {
+			t.Log(msg)
+		} else {
+			log.Print(msg)
+		}
 
+		var closedPortsTemp []string
+		for _, port := range closedPorts {
 			conn, err := net.DialTimeout("tcp", ":"+port, dialTimeout)
-			if conn != nil {
-				msg := fmt.Sprintf("Service port %s is open.", port)
-				if t != nil {
-					t.Log(msg)
-				} else {
-					log.Print(msg)
-				}
-				continue PORTS
+			if conn == nil {
+				closedPortsTemp = append(closedPortsTemp, port)
 			}
 			returnErr = err
+		}
+		closedPorts = closedPortsTemp
 
-			time.Sleep(1 * time.Second)
+		if len(closedPorts) == 0 {
+			return nil
 		}
 
-		var err error
-		if returnErr != nil {
-			err = fmt.Errorf("Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
-		} else {
-			err = fmt.Errorf("Time out: reached max %d retries.", maxRetry)
-		}
-		if t != nil {
-			t.Fatal(err)
-		} else {
-			return err
-		}
+		time.Sleep(1 * time.Second)
 	}
+
+	var err error
+	if returnErr != nil {
+		err = fmt.Errorf("Time out: reached max %d retries. Error: %v", maxRetry, returnErr)
+	} else {
+		err = fmt.Errorf("Time out: reached max %d retries.", maxRetry)
+	}
+	if t != nil {
+		t.Fatal(err)
+	} else {
+		return err
+	}
+
 	return nil
 }
 
