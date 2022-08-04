@@ -24,9 +24,8 @@ runs:
         fetch-depth: 0
         repository: ${{inputs.repo}}
 
-    # Check base version
-    - name: Base version
-      shell: bash
+    # Get snap base version
+    - shell: bash
       run: |
         echo "base=$(sed -n 's/^base: //p' snap/snapcraft.yaml)" >> $GITHUB_ENV
 
