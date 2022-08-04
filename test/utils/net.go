@@ -38,6 +38,7 @@ var portService = map[string]string{
 	"8200":  "vault",
 	"8500":  "consul",
 	"6379":  "redis",
+	"59861": "support-scheduler",
 	// app services
 	"59711": "app-rfid-llrp-inventory",
 	"59701": "app-service-configurable",
@@ -57,6 +58,16 @@ var portService = map[string]string{
 	"59720": "ekuiper/rest-api",
 	"4000":  "ui",
 }
+
+// // ServicePort looks up the service port by app name
+// func ServicePort(serviceName string) string {
+// 	for p, s := range portService {
+// 		if s == serviceName {
+// 			return p
+// 		}
+// 	}
+// 	panic("Found no port number for service: " + serviceName)
+// }
 
 func TestNet(t *testing.T, snapName string, conf Net) {
 	t.Run("net", func(t *testing.T) {
@@ -105,7 +116,11 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 	prettyPorts := func(ports []string) string {
 		prettyList := make([]string, len(ports))
 		for i, p := range ports {
-			prettyList[i] = fmt.Sprintf("%s (%s)", p, portService[p])
+			if s, found := portService[p]; found {
+				prettyList[i] = fmt.Sprintf("%s (%s)", p, s)
+			} else {
+				prettyList[i] = p
+			}
 		}
 		return strings.Join(prettyList, ", ")
 	}
