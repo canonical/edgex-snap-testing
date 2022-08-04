@@ -24,9 +24,16 @@ runs:
         fetch-depth: 0
         repository: ${{inputs.repo}}
 
+    # Get snap base version
+    - shell: bash
+      run: |
+        echo "base=$(sed -n 's/^base: //p' snap/snapcraft.yaml)" >> $GITHUB_ENV
+
     # Build the snap
     - uses: snapcore/action-build@v1
       id: build
+      with:
+        snapcraft-args: ${{ env.base == 'core22' && '--verbose' || '' }}
     
     # Upload the snap as build artifact
     - uses: actions/upload-artifact@v2
