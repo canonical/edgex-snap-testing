@@ -24,7 +24,7 @@ const (
 var testSecretsInterface bool
 
 func TestMain(m *testing.M) {
-	teardown, err := setupServiceTest(ekuiperSnap)
+	teardown, err := setup()
 	if err != nil {
 		log.Fatalf("Failed to setup tests: %s", err)
 	}
@@ -42,6 +42,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// security off
+	log.Println("[SECURITY-OFF] Re-run the test with security off")
 	testSecretsInterface = false
 
 	utils.SnapStop(nil, "edgex-ekuiper")
@@ -78,10 +79,10 @@ func TestCommon(t *testing.T) {
 	})
 }
 
-func setupServiceTest(snapName string) (teardown func(), err error) {
+func setup() (teardown func(), err error) {
 	log.Println("[CLEAN]")
 	utils.SnapRemove(nil,
-		snapName,
+		ekuiperSnap,
 		"edgexfoundry",
 		deviceVirtualSnap,
 		ascSnap,
@@ -92,10 +93,14 @@ func setupServiceTest(snapName string) (teardown func(), err error) {
 
 	teardown = func() {
 		log.Println("[TEARDOWN]")
-		utils.SnapDumpLogs(nil, start, snapName)
+
+		utils.SnapDumpLogs(nil, start, ekuiperSnap)
+		utils.SnapDumpLogs(nil, start, "edgexfoundry")
+		utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
+		utils.SnapDumpLogs(nil, start, ascSnap)
 
 		utils.SnapRemove(nil,
-			snapName,
+			ekuiperSnap,
 			"edgexfoundry",
 			deviceVirtualSnap,
 			ascSnap,
@@ -107,7 +112,7 @@ func setupServiceTest(snapName string) (teardown func(), err error) {
 	if utils.LocalSnap() {
 		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
 	} else {
-		err = utils.SnapInstallFromStore(nil, snapName, utils.ServiceChannel)
+		err = utils.SnapInstallFromStore(nil, ekuiperSnap, utils.ServiceChannel)
 	}
 	if err != nil {
 		teardown()
@@ -132,7 +137,7 @@ func setupServiceTest(snapName string) (teardown func(), err error) {
 	// for local build, the interface isn't auto-connected.
 	// connect manually
 	if utils.LocalSnap() {
-		if err = utils.SnapConnectSecretstoreToken(nil, snapName); err != nil {
+		if err = utils.SnapConnectSecretstoreToken(nil, ekuiperSnap); err != nil {
 			teardown()
 			return
 		}

@@ -17,7 +17,7 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	teardown, err := setupServiceTests(platformSnap)
+	teardown, err := setup()
 	if err != nil {
 		log.Fatalf("Failed to setup tests: %s", err)
 	}
@@ -64,27 +64,23 @@ func TestCommon(t *testing.T) {
 	utils.TestRefresh(t, platformSnap)
 }
 
-func setupServiceTests(snapName string) (teardown func(), err error) {
+func setup() (teardown func(), err error) {
 	log.Println("[CLEAN]")
-	utils.SnapRemove(nil,
-		snapName,
-	)
+	utils.SnapRemove(nil, platformSnap)
 
 	log.Println("[SETUP]")
 	start := time.Now()
 
 	teardown = func() {
 		log.Println("[TEARDOWN]")
-		utils.SnapDumpLogs(nil, start, snapName)
-		utils.SnapRemove(nil,
-			snapName,
-		)
+		utils.SnapDumpLogs(nil, start, platformSnap)
+		utils.SnapRemove(nil, platformSnap)
 	}
 
 	if utils.LocalSnap() {
 		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
 	} else {
-		err = utils.SnapInstallFromStore(nil, snapName, utils.PlatformChannel)
+		err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel)
 	}
 	if err != nil {
 		teardown()
