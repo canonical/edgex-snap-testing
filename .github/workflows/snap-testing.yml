@@ -74,17 +74,14 @@ jobs:
       - name: Checkout the local actions
         uses: actions/checkout@v2
 
-      - name: Checkout the local actions again
-        uses: actions/checkout@v2
-
       - name: Build snap
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.localBuild }}
+        if: ${{ inputs.localBuild }}
         uses: ./build
         id: build
         with:
           repo: ${{matrix.repo}}
 
-      - name: Checkout the local actions
+      - name: Checkout the local actions again
         uses: actions/checkout@v2
 
       - name: Test snap
