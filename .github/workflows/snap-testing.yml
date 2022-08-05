@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       localBuild:
-        description: 'True to enable local build'
+        description: Build snaps locally
         required: false
         default: false
         type: boolean
