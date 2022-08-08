@@ -17,17 +17,6 @@ type Net struct {
 
 const dialTimeout = 2 * time.Second
 
-var PlatformPorts = []string{
-	"59880", // core-data
-	"59881", // core-metadata
-	"59882", // core-command
-	"8000",  // kong
-	"5432",  // kong-database
-	"8200",  // vault
-	"8500",  // consul
-	"6379",  // redis
-}
-
 var portService = map[string]string{
 	// platform services
 	"59880": "core-data",
@@ -59,15 +48,33 @@ var portService = map[string]string{
 	"4000":  "ui",
 }
 
-// // ServicePort looks up the service port by app name
-// func ServicePort(serviceName string) string {
-// 	for p, s := range portService {
-// 		if s == serviceName {
-// 			return p
-// 		}
-// 	}
-// 	panic("Found no port number for service: " + serviceName)
-// }
+// servicePort looks up the service port by app name
+func servicePort(serviceName string) string {
+	for p, s := range portService {
+		if s == serviceName {
+			return p
+		}
+	}
+	panic("Found no port number for service: " + serviceName)
+}
+
+func PlatformPorts(includePublicPorts bool) (ports []string) {
+	ports = append(ports,
+		servicePort("core-data"),
+		servicePort("core-metadata"),
+		servicePort("core-command"),
+		servicePort("vault"),
+		servicePort("consul"),
+	)
+	if includePublicPorts {
+		ports = append(ports,
+			servicePort("kong"),
+			servicePort("kong-database"),
+			servicePort("redis"),
+		)
+	}
+	return
+}
 
 func TestNet(t *testing.T, snapName string, conf Net) {
 	t.Run("net", func(t *testing.T) {
@@ -170,7 +177,7 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 // WaitPlatformOnline waits for all platform ports to come online
 // by dialing its port(s) up to a maximum number
 func WaitPlatformOnline(t *testing.T) error {
-	return WaitServiceOnline(t, 180, PlatformPorts...)
+	return WaitServiceOnline(t, 180, PlatformPorts(true)...)
 }
 
 // requirePortOpen checks if the local port(s) accepts connections

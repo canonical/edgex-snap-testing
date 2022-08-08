@@ -29,16 +29,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-	// check network interface status for all platform ports except for:
-	// Kong’s port: 8000
-	// Kong-db's port: 5432
-	// Redis's port: 6379
-	var localPlatformPorts []string
-	for _, port := range utils.PlatformPorts {
-		if port != "8000" && port != "5432" && port != "6379" {
-			localPlatformPorts = append(localPlatformPorts, port)
-		}
-	}
 
 	utils.TestConfig(t, platformSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
@@ -53,8 +43,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, platformSnap, utils.Net{
 		StartSnap:        false, // the service are started by default
-		TestOpenPorts:    utils.PlatformPorts,
-		TestBindLoopback: localPlatformPorts,
+		TestOpenPorts:    utils.PlatformPorts(true),
+		TestBindLoopback: utils.PlatformPorts(false), // exclude public ports
 	})
 
 	utils.TestPackaging(t, platformSnap, utils.Packaging{
