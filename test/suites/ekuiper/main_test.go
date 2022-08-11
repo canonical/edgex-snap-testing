@@ -58,6 +58,8 @@ func TestMain(m *testing.M) {
 	)
 
 	code = m.Run()
+	teardown()
+
 	os.Exit(code)
 }
 
