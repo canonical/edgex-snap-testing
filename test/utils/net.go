@@ -65,12 +65,12 @@ func PlatformPorts(includePublicPorts bool) (ports []string) {
 		servicePort("core-command"),
 		servicePort("vault"),
 		servicePort("consul"),
+		servicePort("kong-database"),
+		servicePort("redis"),
 	)
 	if includePublicPorts {
 		ports = append(ports,
 			servicePort("kong"),
-			servicePort("kong-database"),
-			servicePort("redis"),
 		)
 	}
 	return
