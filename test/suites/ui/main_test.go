@@ -60,11 +60,5 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	// make sure service is online before starting the tests
-	if err = utils.WaitServiceOnline(nil, 60, uiServicePort); err != nil {
-		teardown()
-		return
-	}
-
 	return
 }
