@@ -28,39 +28,45 @@ graph LR
 ```
 
 ## Test locally
-Test one, e.g.:
+Example command to run tests:
+#### Run one testing suite
 ```bash
-go test -p 1 ./test/suites/device-mqtt
+go test -v ./test/suites/device-mqtt
 ```
-The `-p 1` is set to force sequential run and avoid snapd and logical error.
 
-Set `-v` for verbose output.
+Flag `-v` is for verbose output.
 
-To test all:
+#### Run all suites
 ```bash
-go test -p 1 ./test/suites/...
+go test -v -p 1 ./test/suites/...
 ```
 
-Test one suite with env variables, e.g.:
+The `-p 1` is set to force sequential run and avoid snapd and logical errors when running multipe testing suites.
+
+#### Run one suite with env variables
+The environment variables are defined in [test/utils/env.go](./test/utils/env.go)
+
+Full config test:
 ```bash
-FULL_CONFIG_TEST=true go test -p 1 ./test/suites/device-mqtt
+FULL_CONFIG_TEST=true go -v test ./test/suites/device-mqtt
 ```
+
+Testing with a local snap:
 ```bash
-LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -p 1 ./test/suites/device-mqtt
+LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -v --count=1 ./test/suites/device-mqtt
 ```
 
-Run only one test for a suite:
+The `--count=1` flag is to avoid Go test caching when testing the rebuilt snap.
+
+#### Run only one test from a suite
 ```
-go test -p 1 ./test/suites/edgexfoundry --run=TestAddProxyUser
+go test -v ./test/suites/edgexfoundry --run=TestAddProxyUser
 ```
 
-Test the testing utils:
+#### Test the testing utils
 ```bash
 go test ./test/utils -count=10
 ```
-
-## Override behavior
-Use environment variables, as defined in [test/utils/env.go](./test/utils/env.go)
 
 ## Test using Github Actions
 This project includes two Github Actions that can be used in workflows to test snaps:
