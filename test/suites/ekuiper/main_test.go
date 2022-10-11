@@ -32,32 +32,9 @@ func TestMain(m *testing.M) {
 	// set profile to rules engine
 	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
 
-	// security on (default)
 	testSecretsInterface = true
 
 	code := m.Run()
-	if code != 0 {
-		teardown()
-		os.Exit(code)
-	}
-
-	// security off
-	log.Println("[SECURITY-OFF] Re-run the test with security off")
-	testSecretsInterface = false
-
-	utils.SnapStop(nil, "edgex-ekuiper")
-	utils.SnapSet(nil, "edgexfoundry", "security-secret-store", "off")
-	utils.SnapSet(nil, "edgex-ekuiper", "edgex-security", "off")
-	utils.SnapSet(nil, "edgex-device-virtual", "config.edgex-security-secret-store", "false")
-	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
-
-	utils.SnapStart(nil,
-		ekuiperService,
-		deviceVirtualSnap,
-		ascSnap,
-	)
-
-	code = m.Run()
 	teardown()
 
 	os.Exit(code)

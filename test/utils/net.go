@@ -76,6 +76,17 @@ func PlatformPorts(includePublicPorts bool) (ports []string) {
 	return
 }
 
+func PlatformPortsNoSecurity(includePublicPorts bool) (ports []string) {
+	ports = append(ports,
+		servicePort("core-data"),
+		servicePort("core-metadata"),
+		servicePort("core-command"),
+		servicePort("consul"),
+		servicePort("redis"),
+	)
+	return
+}
+
 func TestNet(t *testing.T, snapName string, conf Net) {
 	t.Run("net", func(t *testing.T) {
 		if conf.StartSnap {
@@ -178,6 +189,12 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 // by dialing its port(s) up to a maximum number
 func WaitPlatformOnline(t *testing.T) error {
 	return WaitServiceOnline(t, 180, PlatformPorts(true)...)
+}
+
+// WaitPlatformOnlineNoSecurity waits for only necessary platform ports in no security mode to come online
+// by dialing its port(s) up to a maximum number
+func WaitPlatformOnlineNoSecurity(t *testing.T) error {
+	return WaitServiceOnline(t, 180, PlatformPortsNoSecurity(true)...)
 }
 
 // requirePortOpen checks if the local port(s) accepts connections
