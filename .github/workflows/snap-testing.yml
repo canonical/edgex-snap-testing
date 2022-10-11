@@ -69,6 +69,9 @@ jobs:
           - name: device-onvif-camera
             repo: edgexfoundry/device-onvif-camera
           
+          - name: edgex-no-sec
+            repo: edgexfoundry/edgex-go
+          
     # use local action to test
     steps:
       - name: Checkout the local actions
