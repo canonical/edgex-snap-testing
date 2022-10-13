@@ -9,12 +9,7 @@ import (
 )
 
 const (
-	platformSnap            = "edgexfoundry"
-	supportSchedulerApp     = "support-scheduler"
-	supportSchedulerService = platformSnap + "." + supportSchedulerApp
-
-	supportSchedulerServicePort = "59861"
-
+	platformSnap      = "edgexfoundry"
 	deviceVirtualSnap = "edgex-device-virtual"
 	deviceVirtualPort = "59900"
 )
@@ -32,18 +27,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestCommon(t *testing.T) {
-
-	utils.TestConfig(t, platformSnap, utils.Config{
-		TestChangePort: utils.ConfigChangePort{
-			App:                      supportSchedulerApp,
-			DefaultPort:              supportSchedulerServicePort,
-			TestLegacyEnvConfig:      false, // schemes differ, run specific test instead
-			TestAppConfig:            true,
-			TestGlobalConfig:         false, // multiple servers, test setting startup message instead
-			TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
-		},
-	})
-
 	utils.TestNet(t, platformSnap, utils.Net{
 		StartSnap:        false, // the service are started by default
 		TestOpenPorts:    utils.PlatformPortsNoSecurity(true),
@@ -97,15 +80,6 @@ func setup() (teardown func(), err error) {
 	}
 
 	if err = utils.WaitPlatformOnlineNoSecurity(nil); err != nil {
-		teardown()
-		return
-	}
-
-	// support-scheduler is disabled by default.
-	// Start it to have the default configurations registered in the EdgeX Registry
-	//	in preparation for the local config tests.
-	utils.SnapStart(nil, supportSchedulerService)
-	if err = utils.WaitServiceOnline(nil, 60, supportSchedulerServicePort); err != nil {
 		teardown()
 		return
 	}
