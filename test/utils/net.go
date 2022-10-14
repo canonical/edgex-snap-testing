@@ -49,7 +49,7 @@ var portService = map[string]string{
 }
 
 // servicePort looks up the service port by app name
-func servicePort(serviceName string) string {
+func ServicePort(serviceName string) string {
 	for p, s := range portService {
 		if s == serviceName {
 			return p
@@ -60,30 +60,19 @@ func servicePort(serviceName string) string {
 
 func PlatformPorts(includePublicPorts bool) (ports []string) {
 	ports = append(ports,
-		servicePort("core-data"),
-		servicePort("core-metadata"),
-		servicePort("core-command"),
-		servicePort("vault"),
-		servicePort("consul"),
-		servicePort("kong-database"),
-		servicePort("redis"),
+		ServicePort("core-data"),
+		ServicePort("core-metadata"),
+		ServicePort("core-command"),
+		ServicePort("vault"),
+		ServicePort("consul"),
+		ServicePort("kong-database"),
+		ServicePort("redis"),
 	)
 	if includePublicPorts {
 		ports = append(ports,
-			servicePort("kong"),
+			ServicePort("kong"),
 		)
 	}
-	return
-}
-
-func PlatformPortsNoSecurity(includePublicPorts bool) (ports []string) {
-	ports = append(ports,
-		servicePort("core-data"),
-		servicePort("core-metadata"),
-		servicePort("core-command"),
-		servicePort("consul"),
-		servicePort("redis"),
-	)
 	return
 }
 
@@ -189,12 +178,6 @@ func WaitServiceOnline(t *testing.T, maxRetry int, ports ...string) error {
 // by dialing its port(s) up to a maximum number
 func WaitPlatformOnline(t *testing.T) error {
 	return WaitServiceOnline(t, 180, PlatformPorts(true)...)
-}
-
-// WaitPlatformOnlineNoSecurity waits for only necessary platform ports in no security mode to come online
-// by dialing its port(s) up to a maximum number
-func WaitPlatformOnlineNoSecurity(t *testing.T) error {
-	return WaitServiceOnline(t, 180, PlatformPortsNoSecurity(true)...)
 }
 
 // requirePortOpen checks if the local port(s) accepts connections

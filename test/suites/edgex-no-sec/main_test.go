@@ -14,6 +14,17 @@ const (
 	deviceVirtualPort = "59900"
 )
 
+func PlatformPortsNoSecurity(includePublicPorts bool) (ports []string) {
+	ports = append(ports,
+		utils.ServicePort("core-data"),
+		utils.ServicePort("core-metadata"),
+		utils.ServicePort("core-command"),
+		utils.ServicePort("consul"),
+		utils.ServicePort("redis"),
+	)
+	return
+}
+
 func TestMain(m *testing.M) {
 	teardown, err := setup()
 	if err != nil {
@@ -29,8 +40,8 @@ func TestMain(m *testing.M) {
 func TestCommon(t *testing.T) {
 	utils.TestNet(t, platformSnap, utils.Net{
 		StartSnap:        false, // the service are started by default
-		TestOpenPorts:    utils.PlatformPortsNoSecurity(true),
-		TestBindLoopback: utils.PlatformPortsNoSecurity(false), // exclude public ports
+		TestOpenPorts:    PlatformPortsNoSecurity(true),
+		TestBindLoopback: PlatformPortsNoSecurity(false), // exclude public ports
 	})
 
 	utils.TestDeviceVirtualReading(t)
@@ -79,7 +90,7 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	if err = utils.WaitPlatformOnlineNoSecurity(nil); err != nil {
+	if err = utils.WaitServiceOnline(nil, 180, PlatformPortsNoSecurity(false)...); err != nil {
 		teardown()
 		return
 	}

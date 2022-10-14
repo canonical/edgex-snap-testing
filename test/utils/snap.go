@@ -169,7 +169,15 @@ func SnapRefresh(t *testing.T, name, channel string) {
 	), true)
 }
 
-func SnapServices(t *testing.T, name string) string {
+func SnapServicesStartup(t *testing.T, name string) string {
+	out, _, _ := exec(t, fmt.Sprintf(
+		"snap services %s | awk 'FNR == 2 {print $2}'",
+		name,
+	), true)
+	return strings.TrimSpace(out)
+}
+
+func SnapServicesCurrent(t *testing.T, name string) string {
 	out, _, _ := exec(t, fmt.Sprintf(
 		"snap services %s | awk 'FNR == 2 {print $3}'",
 		name,
