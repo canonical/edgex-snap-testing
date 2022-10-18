@@ -8,12 +8,12 @@ import (
 )
 
 func TestServiceStatus(t *testing.T) {
-	var securityServices = []string{"kong-daemon", "postgres", "vault"}
-	
 	t.Run("security services", func(t *testing.T) {
+		var securityServices = []string{"kong-daemon", "postgres", "vault"}
+
 		for _, service := range securityServices {
-			require.Equal(t, "disabled", utils.SnapServicesStartup(t, "edgexfoundry."+service))
-			require.Equal(t, "inactive", utils.SnapServicesCurrent(t, "edgexfoundry."+service))
+			require.False(t, utils.SnapServicesEnabled(t, "edgexfoundry."+service))
+			require.False(t, utils.SnapServicesActive(t, "edgexfoundry."+service))
 		}
 	})
 }

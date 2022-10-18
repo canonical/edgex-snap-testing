@@ -9,20 +9,29 @@ import (
 )
 
 const (
-	platformSnap      = "edgexfoundry"
+	platformSnap = "edgexfoundry"
+
 	deviceVirtualSnap = "edgex-device-virtual"
 	deviceVirtualPort = "59900"
+
+	ekuiperSnap           = "edgex-ekuiper"
+	ekuiperApp            = "kuiper"
+	ekuiperService        = ekuiperSnap + "." + ekuiperApp
+	ekuiperServerPort     = "20498"
+	ekuiperRestfulApiPort = "59720"
+
+	ascSnap             = "edgex-app-service-configurable"
+	ascServiceRulesPort = "59701"
 )
 
-func PlatformPortsNoSecurity(includePublicPorts bool) (ports []string) {
-	ports = append(ports,
+func platformPortsNoSec() []string {
+	return []string{
 		utils.ServicePort("core-data"),
 		utils.ServicePort("core-metadata"),
 		utils.ServicePort("core-command"),
 		utils.ServicePort("consul"),
 		utils.ServicePort("redis"),
-	)
-	return
+	}
 }
 
 func TestMain(m *testing.M) {
@@ -40,8 +49,8 @@ func TestMain(m *testing.M) {
 func TestCommon(t *testing.T) {
 	utils.TestNet(t, platformSnap, utils.Net{
 		StartSnap:        false, // the service are started by default
-		TestOpenPorts:    PlatformPortsNoSecurity(true),
-		TestBindLoopback: PlatformPortsNoSecurity(false), // exclude public ports
+		TestOpenPorts:    platformPortsNoSec(),
+		TestBindLoopback: platformPortsNoSec(), // exclude public ports
 	})
 
 	utils.TestDeviceVirtualReading(t)
@@ -49,7 +58,7 @@ func TestCommon(t *testing.T) {
 
 func setup() (teardown func(), err error) {
 	log.Println("[CLEAN]")
-	utils.SnapRemove(nil, platformSnap, deviceVirtualSnap)
+	utils.SnapRemove(nil, platformSnap, deviceVirtualSnap, ekuiperSnap, ascSnap)
 
 	log.Println("[SETUP]")
 	start := time.Now()
@@ -59,9 +68,13 @@ func setup() (teardown func(), err error) {
 
 		utils.SnapDumpLogs(nil, start, platformSnap)
 		utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
+		utils.SnapDumpLogs(nil, start, ekuiperSnap)
+		utils.SnapDumpLogs(nil, start, ascSnap)
 
 		utils.SnapRemove(nil, platformSnap)
 		utils.SnapRemove(nil, deviceVirtualSnap)
+		utils.SnapRemove(nil, ekuiperSnap)
+		utils.SnapRemove(nil, ascSnap)
 	}
 
 	if utils.LocalSnap() {
@@ -79,9 +92,23 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
+	if err = utils.SnapInstallFromStore(nil, ekuiperSnap, utils.ServiceChannel); err != nil {
+		teardown()
+		return
+	}
+
+	if err = utils.SnapInstallFromStore(nil, ascSnap, utils.ServiceChannel); err != nil {
+		teardown()
+		return
+	}
+
 	// turn security off
 	utils.SnapSet(nil, platformSnap, "security-secret-store", "off")
 	utils.SnapSet(nil, deviceVirtualSnap, "config.edgex-security-secret-store", "false")
+	utils.SnapSet(nil, ascSnap, "app-options", "true")
+	utils.SnapSet(nil, ascSnap, "config.edgex-security-secret-store", "false")
+	utils.SnapSet(nil, ekuiperSnap, "edgex-security", "off")
+	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
 
 	// make sure all services are online before starting the tests
 	utils.SnapStart(nil, deviceVirtualSnap)
@@ -90,7 +117,21 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	if err = utils.WaitServiceOnline(nil, 180, PlatformPortsNoSecurity(false)...); err != nil {
+	utils.SnapStart(nil, ekuiperSnap)
+	if err = utils.WaitServiceOnline(nil, 60, ekuiperServerPort, ekuiperRestfulApiPort); err != nil {
+		teardown()
+		return
+	}
+
+	// set profile to rules engine
+	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
+	utils.SnapStart(nil, ascSnap)
+	if err = utils.WaitServiceOnline(nil, 60, ascServiceRulesPort); err != nil {
+		teardown()
+		return
+	}
+
+	if err = utils.WaitServiceOnline(nil, 180, platformPortsNoSec()...); err != nil {
 		teardown()
 		return
 	}
