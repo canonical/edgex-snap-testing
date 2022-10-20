@@ -50,7 +50,7 @@ func TestCommon(t *testing.T) {
 	utils.TestNet(t, platformSnap, utils.Net{
 		StartSnap:        false, // the service are started by default
 		TestOpenPorts:    platformPortsNoSec(),
-		TestBindLoopback: platformPortsNoSec(), // exclude public ports
+		TestBindLoopback: platformPortsNoSec(),
 	})
 
 	utils.TestDeviceVirtualReading(t)
@@ -108,7 +108,6 @@ func setup() (teardown func(), err error) {
 	utils.SnapSet(nil, ascSnap, "app-options", "true")
 	utils.SnapSet(nil, ascSnap, "config.edgex-security-secret-store", "false")
 	utils.SnapSet(nil, ekuiperSnap, "edgex-security", "off")
-	utils.Exec(nil, "sudo rm /var/snap/edgex-ekuiper/current/edgex-ekuiper/secrets-token.json")
 
 	// make sure all services are online before starting the tests
 	utils.SnapStart(nil, deviceVirtualSnap)
@@ -117,7 +116,7 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	utils.SnapStart(nil, ekuiperSnap)
+	utils.SnapRestart(nil, ekuiperSnap)
 	if err = utils.WaitServiceOnline(nil, 60, ekuiperServerPort, ekuiperRestfulApiPort); err != nil {
 		teardown()
 		return
