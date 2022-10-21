@@ -2,13 +2,7 @@ package test
 
 import (
 	"edgex-snap-testing/test/utils"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strconv"
 	"testing"
-	"time"
 )
 
 func TestStreamsAndRules(t *testing.T) {
@@ -59,52 +53,9 @@ func TestStreamsAndRules(t *testing.T) {
 			}'`)
 	})
 
+	// wait device-virtual to come online and produce readings
 	utils.WaitServiceOnline(t, 60, deviceVirtualPort)
-
-	// wait device-virtual producing readings with maximum 60 seconds
-	for i := 1; ; i++ {
-		time.Sleep(1 * time.Second)
-		req, err := http.NewRequest("GET", "http://localhost:59880/api/v2/event/count", nil)
-		if err != nil {
-			fmt.Print(err)
-			return
-		}
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			fmt.Print(err)
-			return
-		}
-		defer resp.Body.Close()
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Print(err)
-			return
-		}
-
-		mapContainer := make(map[string]json.RawMessage)
-		err = json.Unmarshal(body, &mapContainer)
-		if err != nil {
-			fmt.Print(err)
-			return
-		}
-
-		count := mapContainer["Count"]
-		countToInt, _ := strconv.Atoi(string(count))
-
-		fmt.Printf("waiting for device-virtual produce readings, current retry count: %d/60\n", i)
-
-		if i <= 60 && countToInt > 0 {
-			fmt.Println("device-virtual is producing readings now")
-			break
-		}
-
-		if i > 60 && countToInt <= 0 {
-			fmt.Println("waiting for device-virtual produce readings, reached maximum retry count of 60")
-			break
-		}
-	}
+	utils.TestDeviceVirtualReading(t)
 
 	t.Run("check rule_log", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper-cli getstatus rule rule_log`)

@@ -169,6 +169,22 @@ func SnapRefresh(t *testing.T, name, channel string) {
 	), true)
 }
 
+func SnapServicesEnabled(t *testing.T, name string) bool {
+	out, _, _ := exec(t, fmt.Sprintf(
+		"snap services %s | awk 'FNR == 2 {print $2}'",
+		name,
+	), true)
+	return strings.TrimSpace(out) == "enabled"
+}
+
+func SnapServicesActive(t *testing.T, name string) bool {
+	out, _, _ := exec(t, fmt.Sprintf(
+		"snap services %s | awk 'FNR == 2 {print $3}'",
+		name,
+	), true)
+	return strings.TrimSpace(out) == "active"
+}
+
 func LocalSnap() bool {
 	return LocalSnapPath != ""
 }

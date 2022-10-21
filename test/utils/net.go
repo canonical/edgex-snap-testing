@@ -49,7 +49,7 @@ var portService = map[string]string{
 }
 
 // servicePort looks up the service port by app name
-func servicePort(serviceName string) string {
+func ServicePort(serviceName string) string {
 	for p, s := range portService {
 		if s == serviceName {
 			return p
@@ -60,17 +60,17 @@ func servicePort(serviceName string) string {
 
 func PlatformPorts(includePublicPorts bool) (ports []string) {
 	ports = append(ports,
-		servicePort("core-data"),
-		servicePort("core-metadata"),
-		servicePort("core-command"),
-		servicePort("vault"),
-		servicePort("consul"),
-		servicePort("kong-database"),
-		servicePort("redis"),
+		ServicePort("core-data"),
+		ServicePort("core-metadata"),
+		ServicePort("core-command"),
+		ServicePort("vault"),
+		ServicePort("consul"),
+		ServicePort("kong-database"),
+		ServicePort("redis"),
 	)
 	if includePublicPorts {
 		ports = append(ports,
-			servicePort("kong"),
+			ServicePort("kong"),
 		)
 	}
 	return
