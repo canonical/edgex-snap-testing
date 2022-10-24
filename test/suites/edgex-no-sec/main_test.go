@@ -117,8 +117,8 @@ func setup() (teardown func(), err error) {
 	}
 
 	// subscribe to ASC events
-	utils.SnapSet(nil, ekuiperSnap, "snap set edgex-ekuiper config.edgex.default.topic", "rules-events")
-	utils.SnapSet(nil, ekuiperSnap, "snap set edgex-ekuiper config.edgex.default.messagetype", "event")
+	utils.SnapSet(nil, ekuiperSnap, "config.edgex.default.topic", "rules-events")
+	utils.SnapSet(nil, ekuiperSnap, "config.edgex.default.messagetype", "event")
 	utils.SnapStart(nil, ekuiperSnap)
 	if err = utils.WaitServiceOnline(nil, 60, ekuiperServerPort, ekuiperRestfulApiPort); err != nil {
 		teardown()
