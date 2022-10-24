@@ -107,7 +107,7 @@ func setup() (teardown func(), err error) {
 	utils.SnapSet(nil, deviceVirtualSnap, "config.edgex-security-secret-store", "false")
 	utils.SnapSet(nil, ascSnap, "app-options", "true")
 	utils.SnapSet(nil, ascSnap, "config.edgex-security-secret-store", "false")
-	utils.SnapSet(nil, ekuiperSnap, "edgex-security", "off")
+	utils.SnapSet(nil, ekuiperSnap, "config.edgex-security-secret-store", "false")
 
 	// make sure all services are online before starting the tests
 	utils.SnapStart(nil, deviceVirtualSnap)
@@ -116,7 +116,10 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	utils.SnapRestart(nil, ekuiperSnap)
+	// subscribe to ASC events
+	utils.SnapSet(nil, ekuiperSnap, "snap set edgex-ekuiper config.edgex.default.topic", "rules-events")
+	utils.SnapSet(nil, ekuiperSnap, "snap set edgex-ekuiper config.edgex.default.messagetype", "event")
+	utils.SnapStart(nil, ekuiperSnap)
 	if err = utils.WaitServiceOnline(nil, 60, ekuiperServerPort, ekuiperRestfulApiPort); err != nil {
 		teardown()
 		return
