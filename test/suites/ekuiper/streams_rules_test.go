@@ -64,11 +64,11 @@ func TestStreamsAndRules(t *testing.T) {
 
 	// wait device-virtual to come online and produce readings
 	utils.WaitServiceOnline(t, 60, deviceVirtualPort)
+	start := time.Now()
 	utils.TestDeviceVirtualReading(t)
 
 	t.Run("check rule_log", func(t *testing.T) {
 		//check logs for the record of expected log
-		start := time.Now()
 		time.Sleep(1 * time.Second)
 		logs := utils.SnapLogs(t, start, ekuiperSnap)
 		expectLog := "sink result for rule rule_log"
