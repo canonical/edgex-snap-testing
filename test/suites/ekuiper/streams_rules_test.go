@@ -15,6 +15,11 @@ type Reading struct {
 	TotalCount int `json:"totalCount"`
 }
 
+type RuleStatus struct {
+	SouceCount int `json:"source_stream1_0_records_out_total"`
+	LogCount   int `json:"sink_log_0_0_records_out_total"`
+}
+
 func TestStreamsAndRules(t *testing.T) {
 	t.Cleanup(func() {
 		utils.SnapStop(t,
@@ -63,16 +68,66 @@ func TestStreamsAndRules(t *testing.T) {
 
 	// wait device-virtual to come online and produce readings
 	utils.WaitServiceOnline(t, 60, deviceVirtualPort)
-	start := time.Now()
 	utils.TestDeviceVirtualReading(t)
 
 	t.Run("check rule_log", func(t *testing.T) {
-		//check logs for the record of expected log
-		time.Sleep(15 * time.Second)
-		logs := utils.SnapLogs(t, start, ekuiperSnap)
-		expectLog := "sink result for rule rule_log"
+		var ruleStatus RuleStatus
+		var body string
 
-		require.True(t, strings.Contains(logs, expectLog))
+		// waiting for readings to come from edgex to ekuiper
+		for i := 1; ; i++ {
+			time.Sleep(1 * time.Second)
+			stdout, _, err := utils.Exec(t, "edgex-ekuiper.kuiper-cli getstatus rule rule_log")
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			startIndex := strings.Index(stdout, "{")
+
+			if startIndex < 0 {
+				t.Fatal("Error getting status of rule rule_log in JSON format")
+			} else {
+				body = stdout[startIndex:]
+			}
+
+			err = json.Unmarshal([]byte(body), &ruleStatus)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			t.Logf("Waiting for readings to come from edgex to ekuiper, current retry count: %d/60", i)
+
+			if i <= 60 && ruleStatus.SouceCount > 0 {
+				t.Logf("Readings are coming to ekuiper now")
+				break
+			}
+
+			if i > 60 && ruleStatus.SouceCount <= 0 {
+				t.Logf("Waiting for readings to come from edgex to ekuiper, reached maximum retry count of 60")
+				break
+			}
+		}
+
+		stdout, _, err := utils.Exec(t, "edgex-ekuiper.kuiper-cli getstatus rule rule_log")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		startIndex := strings.Index(stdout, "{")
+
+		if startIndex < 0 {
+			t.Fatal("Error getting status of rule rule_log in JSON format")
+		} else {
+			body = stdout[startIndex:]
+		}
+
+		err = json.Unmarshal([]byte(body), &ruleStatus)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		require.Greaterf(t, ruleStatus.LogCount, 0, "No readings have been published to log by ekuiper")
+
 	})
 
 	t.Run("check rule_edgex_message_bus", func(t *testing.T) {

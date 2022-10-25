@@ -20,7 +20,7 @@ func TestDeviceVirtualReading(t *testing.T) {
 	t.Run("query readings", func(t *testing.T) {
 		var eventCount EventCount
 
-		// wait device-virtual producing readings with maximum 60 seconds
+		// wait device-virtual to produce readings with maximum 60 seconds
 		for i := 1; ; i++ {
 			time.Sleep(1 * time.Second)
 			resp, err := http.Get("http://localhost:59880/api/v2/event/count")
@@ -42,7 +42,7 @@ func TestDeviceVirtualReading(t *testing.T) {
 				return
 			}
 
-			t.Logf("waiting for device-virtual produce readings, current retry count: %d/60\n", i)
+			t.Logf("waiting for device-virtual to produce readings, current retry count: %d/60\n", i)
 
 			if i <= 60 && eventCount.Count > 0 {
 				t.Logf("device-virtual is producing readings now, readings queried from core-data")
@@ -50,7 +50,7 @@ func TestDeviceVirtualReading(t *testing.T) {
 			}
 
 			if i > 60 && eventCount.Count <= 0 {
-				t.Logf("waiting for device-virtual produce readings, reached maximum retry count of 60")
+				t.Logf("waiting for device-virtual to produce readings, reached maximum retry count of 60")
 				break
 			}
 		}
