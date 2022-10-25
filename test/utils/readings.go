@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/require"
-	"io/ioutil"
 	"net/http"
 	"testing"
 	"time"
@@ -30,16 +29,8 @@ func TestDeviceVirtualReading(t *testing.T) {
 			}
 			defer resp.Body.Close()
 
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				fmt.Print(err)
-				return
-			}
-
-			err = json.Unmarshal(body, &eventCount)
-			if err != nil {
-				fmt.Print(err)
-				return
+			if err = json.NewDecoder(resp.Body).Decode(&eventCount); err != nil {
+				t.Fatal(err)
 			}
 
 			t.Logf("waiting for device-virtual to produce readings, current retry count: %d/60\n", i)
