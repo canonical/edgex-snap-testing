@@ -3,7 +3,6 @@ package test
 import (
 	"edgex-snap-testing/test/utils"
 	"encoding/json"
-	"fmt"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"net/http"
@@ -35,7 +34,7 @@ func TestStreamsAndRules(t *testing.T) {
 		utils.Exec(t,
 			`edgex-ekuiper.kuiper-cli create rule rule_log '
 			{
-				"sql":"SELECT * from stream1",
+				"sql":"SELECT * FROM stream1 WHERE meta(deviceName) != \"device-test\"",
 				"actions":[
 					{
 						"log":{}
@@ -48,7 +47,7 @@ func TestStreamsAndRules(t *testing.T) {
 		utils.Exec(t,
 			`edgex-ekuiper.kuiper-cli create rule rule_edgex_message_bus '
 			{
-			   "sql":"SELECT * from stream1",
+			   "sql":"SELECT * FROM stream1 WHERE meta(deviceName) != \"device-test\"",
 			   "actions": [
 				  {
 					 "edgex": {
@@ -69,7 +68,7 @@ func TestStreamsAndRules(t *testing.T) {
 
 	t.Run("check rule_log", func(t *testing.T) {
 		//check logs for the record of expected log
-		time.Sleep(1 * time.Second)
+		time.Sleep(15 * time.Second)
 		logs := utils.SnapLogs(t, start, ekuiperSnap)
 		expectLog := "sink result for rule rule_log"
 
@@ -83,21 +82,18 @@ func TestStreamsAndRules(t *testing.T) {
 		var reading Reading
 		resp, err := http.Get("http://localhost:59880/api/v2/reading/device/name/device-test")
 		if err != nil {
-			fmt.Print(err)
-			return
+			t.Fatal(err)
 		}
 		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			fmt.Print(err)
-			return
+			t.Fatal(err)
 		}
 
 		err = json.Unmarshal(body, &reading)
 		if err != nil {
-			fmt.Print(err)
-			return
+			t.Fatal(err)
 		}
 
 		require.Greaterf(t, reading.TotalCount, 0, "No readings have been re-published to EdgeX message bus by ekuiper")
