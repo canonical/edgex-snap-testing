@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/require"
-	"io/ioutil"
 	"net/http"
 	"testing"
 )
@@ -58,16 +57,8 @@ func TestRulesEngine(t *testing.T) {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Print(err)
-			return
-		}
-
-		err = json.Unmarshal(body, &reading)
-		if err != nil {
-			fmt.Print(err)
-			return
+		if err = json.NewDecoder(resp.Body).Decode(&reading); err != nil {
+			t.Fatal(err)
 		}
 
 		require.Greaterf(t, reading.TotalCount, 0, "No readings have been re-published to EdgeX message bus by ekuiper")

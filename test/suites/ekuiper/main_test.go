@@ -17,8 +17,6 @@ const (
 
 	deviceVirtualSnap = "edgex-device-virtual"
 	deviceVirtualPort = "59900"
-
-	ascSnap = "edgex-app-service-configurable"
 )
 
 var testSecretsInterface bool
@@ -30,8 +28,6 @@ func TestMain(m *testing.M) {
 	}
 
 	// set profile to rules engine
-	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
-
 	testSecretsInterface = true
 
 	code := m.Run()
@@ -64,7 +60,6 @@ func setup() (teardown func(), err error) {
 		ekuiperSnap,
 		"edgexfoundry",
 		deviceVirtualSnap,
-		ascSnap,
 	)
 
 	log.Println("[SETUP]")
@@ -76,13 +71,11 @@ func setup() (teardown func(), err error) {
 		utils.SnapDumpLogs(nil, start, ekuiperSnap)
 		utils.SnapDumpLogs(nil, start, "edgexfoundry")
 		utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
-		utils.SnapDumpLogs(nil, start, ascSnap)
 
 		utils.SnapRemove(nil,
 			ekuiperSnap,
 			"edgexfoundry",
 			deviceVirtualSnap,
-			ascSnap,
 		)
 	}
 
@@ -104,11 +97,6 @@ func setup() (teardown func(), err error) {
 	}
 
 	if err = utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel); err != nil {
-		teardown()
-		return
-	}
-
-	if err = utils.SnapInstallFromStore(nil, ascSnap, utils.ServiceChannel); err != nil {
 		teardown()
 		return
 	}
