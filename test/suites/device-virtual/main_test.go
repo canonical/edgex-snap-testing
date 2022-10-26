@@ -40,6 +40,7 @@ func TestCommon(t *testing.T) {
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
 		},
+		TestAutoStart: true,
 	})
 
 	utils.TestNet(t, deviceVirtualSnap, utils.Net{
@@ -51,9 +52,4 @@ func TestCommon(t *testing.T) {
 	utils.TestPackaging(t, deviceVirtualSnap, utils.Packaging{
 		TestSemanticSnapVersion: true,
 	})
-
-	utils.TestAutoStart(t, deviceVirtualSnap, utils.Autostart{
-		TestAutoStart: true,
-	})
-
 }

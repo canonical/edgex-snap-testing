@@ -1,9 +1,13 @@
 package utils
 
-import "testing"
+import (
+	"github.com/stretchr/testify/require"
+	"testing"
+)
 
 type Config struct {
 	TestChangePort ConfigChangePort
+	TestAutoStart  bool
 }
 
 type ConfigChangePort struct {
@@ -20,6 +24,7 @@ const serviceWaitTimeout = 60 // seconds
 func TestConfig(t *testing.T, snapName string, conf Config) {
 	t.Run("config", func(t *testing.T) {
 		TestChangePort(t, snapName, conf.TestChangePort)
+		TestAutoStart(t, snapName, conf.TestAutoStart)
 	})
 }
 
@@ -186,4 +191,37 @@ func testChangePort_mixedGlobalApp(t *testing.T, snap, app, servicePort string) 
 		WaitServiceOnline(t, serviceWaitTimeout, newAppPort)
 	})
 
+}
+
+func TestAutoStart(t *testing.T, snapName string, testAutoStart bool) {
+	t.Run("autostart", func(t *testing.T) {
+		if testAutoStart {
+			TestProcessAutostartGlobal(t, snapName)
+		}
+	})
+}
+
+func TestProcessAutostartGlobal(t *testing.T, snapName string) {
+	t.Run("set and unset autostart", func(t *testing.T) {
+		t.Cleanup(func() {
+			SnapUnset(t, snapName, "autostart")
+			SnapStop(t, snapName)
+		})
+
+		SnapStop(t, snapName)
+		require.False(t, SnapServicesEnabled(t, snapName))
+		require.False(t, SnapServicesActive(t, snapName))
+
+		SnapSet(t, snapName, "autostart", "true")
+		require.True(t, SnapServicesEnabled(t, snapName))
+		require.True(t, SnapServicesActive(t, snapName))
+
+		SnapUnset(t, snapName, "autostart")
+		require.True(t, SnapServicesEnabled(t, snapName))
+		require.True(t, SnapServicesActive(t, snapName))
+
+		SnapSet(t, snapName, "autostart", "false")
+		require.False(t, SnapServicesEnabled(t, snapName))
+		require.False(t, SnapServicesActive(t, snapName))
+	})
 }
