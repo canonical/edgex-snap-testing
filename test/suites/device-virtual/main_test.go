@@ -51,4 +51,9 @@ func TestCommon(t *testing.T) {
 	utils.TestPackaging(t, deviceVirtualSnap, utils.Packaging{
 		TestSemanticSnapVersion: true,
 	})
+
+	utils.TestAutoStart(t, deviceVirtualSnap, utils.Autostart{
+		TestAutoStart: true,
+	})
+
 }
