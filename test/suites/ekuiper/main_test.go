@@ -43,6 +43,10 @@ func TestCommon(t *testing.T) {
 		App:                  ekuiperSnap,
 	})
 
+	utils.TestConfig(t, ekuiperSnap, utils.Config{
+		TestAutoStart: true,
+	})
+
 	utils.TestNet(t, ekuiperSnap, utils.Net{
 		StartSnap:        true,
 		TestOpenPorts:    []string{ekuiperServerPort, ekuiperRestfulApiPort},

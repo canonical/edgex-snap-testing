@@ -41,6 +41,7 @@ func TestCommon(t *testing.T) {
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
 		},
+		TestAutoStart: true,
 	})
 
 	utils.TestNet(t, deviceSnmpSnap, utils.Net{

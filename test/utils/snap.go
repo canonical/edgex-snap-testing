@@ -137,7 +137,7 @@ func SnapUnset(t *testing.T, name, key string) {
 func SnapStart(t *testing.T, names ...string) {
 	for _, name := range names {
 		exec(t, fmt.Sprintf(
-			"sudo snap start %s",
+			"sudo snap start --enable %s",
 			name,
 		), true)
 	}
@@ -146,7 +146,7 @@ func SnapStart(t *testing.T, names ...string) {
 func SnapStop(t *testing.T, names ...string) {
 	for _, name := range names {
 		exec(t, fmt.Sprintf(
-			"sudo snap stop %s",
+			"sudo snap stop --disable %s",
 			name,
 		), true)
 	}
