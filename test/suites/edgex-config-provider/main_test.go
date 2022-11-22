@@ -2,21 +2,31 @@ package test
 
 import (
 	"edgex-snap-testing/test/utils"
-	"fmt"
 	"log"
 	"os"
-	"strings"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/require"
 )
 
 const (
 	platformSnap = "edgexfoundry"
-
-	deviceVirtualSnap = "edgex-device-virtual"
+	provider     = "edgex-config-provider-example"
 )
+
+var services = []string{
+	"device-virtual",
+	//
+	"app-service-configurable",
+	"app-rfid-llrp-inventory",
+	"device-gpio",
+	"device-modbus",
+	"device-mqtt",
+	"device-rest",
+	"device-rfid-llrp",
+	"device-snmp",
+	"device-usb-camera",
+	"device-onvif-camera",
+}
 
 const startupMsg = "CONFIG BY EXAMPLE PROVIDER"
 
@@ -34,7 +44,11 @@ func TestMain(m *testing.M) {
 
 func setup() (teardown func(), err error) {
 	log.Println("[CLEAN]")
-	utils.SnapRemove(nil, platformSnap, deviceVirtualSnap)
+	utils.SnapRemove(nil, platformSnap)
+	for _, name := range services {
+		utils.SnapRemove(nil, "edgex-"+name)
+	}
+	utils.SnapRemove(nil, provider)
 
 	log.Println("[SETUP]")
 	start := time.Now()
@@ -43,48 +57,62 @@ func setup() (teardown func(), err error) {
 		log.Println("[TEARDOWN]")
 
 		utils.SnapDumpLogs(nil, start, platformSnap)
-		utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
+		for _, name := range services {
+			utils.SnapDumpLogs(nil, start, "edgex-"+name)
+		}
 
 		utils.SnapRemove(nil, platformSnap)
-		utils.SnapRemove(nil, deviceVirtualSnap)
+		for _, name := range services {
+			utils.SnapRemove(nil, "edgex-"+name)
+		}
+		utils.SnapRemove(nil, provider)
 
+		// remove cloned directory
+		os.RemoveAll(provider)
 	}
 
-	// clone the example provider
-	const workDir = "edgex-config-provider"
-	utils.Exec(nil, "git clone https://github.com/canonical/edgex-config-provider.git --depth=1 "+workDir)
+	// install the provider
+	if utils.LocalSnap() {
+		if err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath); err != nil {
+			teardown()
+			return
+		}
+	} else {
+		const workDir = provider + "/"
+		// clone the example provider
+		if _, _, err = utils.Exec(nil, "git clone https://github.com/canonical/edgex-config-provider.git --branch=snap-testing --depth=1 "+workDir); err != nil {
+			teardown()
+			return
+		}
 
-	// TODO: add other config sources
+		// change the startup message, for the sake of testing
+		// if _, _, err = utils.Exec(nil, fmt.Sprintf(
+		// 	`find %s -type f -name 'configuration.toml' | xargs \
+		// 	sed --in-place --regexp-extended 's/StartupMsg.*/StartupMsg="%s"/'`,
+		// 	workDir, startupMsg)); err != nil {
+		// 	teardown()
+		// 	return
+		// }
 
-	// change startup message, for the sake of testing
+		// build the example provider snap
+		if err = utils.SnapBuild(nil, workDir); err != nil {
+			teardown()
+			return
+		}
 
-	utils.Exec(nil, fmt.Sprintf(`find %s -type f -name 'configuration.toml' | xargs \
-    		sed --in-place --regexp-extended 's/StartupMsg.*/StartupMsg="%s"/'`,
-		workDir, startupMsg))
+		const configProviderSnapFile = workDir + provider + "_*_*.snap"
+		if err = utils.SnapInstallFromFile(nil, configProviderSnapFile); err != nil {
+			teardown()
+			return
+		}
+	}
 
-	// build the example provider snap
-	utils.SnapBuild(nil, workDir)
-
-	const configProviderSnapFile = workDir + "/edgex-config-provider-example_2.3_amd64.snap"
-	if err = utils.SnapInstallFromFile(nil, configProviderSnapFile); err != nil {
+	if err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel); err != nil {
 		teardown()
 		return
 	}
 
-	if err = utils.SnapInstallFromStore(nil, deviceVirtualSnap, utils.ServiceChannel); err != nil {
-		teardown()
-		return
-	}
-
-	// connect
-	const interfaceName = "device-virtual-config"
-	if err = utils.SnapConnect(nil, deviceVirtualSnap+":"+interfaceName, "edgex-config-provider-example:"+interfaceName); err != nil {
-		teardown()
-		return
-	}
-
-	err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel)
-	if err != nil {
+	if err = utils.WaitPlatformOnline(nil); err != nil {
 		teardown()
 		return
 	}
@@ -93,28 +121,32 @@ func setup() (teardown func(), err error) {
 }
 
 func TestConfigProvider(t *testing.T) {
-	start := time.Now()
-	utils.SnapStart(t, deviceVirtualSnap)
 
-	require.True(t, checkStartupMsg(t, deviceVirtualSnap, startupMsg, start))
-}
+	for _, name := range services {
+		t.Run(name, func(t *testing.T) {
+			snapName := "edgex-" + name
+			interfaceName := name + "-config"
 
-func checkStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time) bool {
-	const maxRetry = 10
+			// install the consumer
+			utils.SnapInstallFromStore(t, snapName, utils.ServiceChannel)
 
-	utils.WaitPlatformOnline(t)
+			if name == "device-mqtt" {
+				// utils.SnapInstallFromStore(nil, "mosquitto", "latest/stable")
+				utils.SnapSet(t, snapName, "app-options", "true")
+				utils.SnapSet(t, snapName, "config.mqttbrokerinfo-host", "test.mosquitto.org")
+			}
 
-	for i := 1; i <= maxRetry; i++ {
-		time.Sleep(1 * time.Second)
-		t.Logf("Waiting for startup message. Retry %d/%d", i, maxRetry)
+			// connect to provider's slot
+			utils.SnapConnect(t,
+				snapName+":"+interfaceName,
+				provider+":"+interfaceName)
 
-		logs := utils.SnapLogs(t, since, snap)
-		if strings.Contains(logs, fmt.Sprintf("msg=%s", expectedMsg)) ||
-			strings.Contains(logs, fmt.Sprintf(`msg="%s"`, expectedMsg)) {
-			t.Logf("Found startup message: %s", expectedMsg)
-			return true
-		}
+			start := time.Now()
+			utils.SnapStart(t, snapName)
+
+			utils.WaitStartupMsg(t, snapName, startupMsg, start, 10)
+
+			// TODO add snap teardown here
+		})
 	}
-	t.Logf("Time out: reached max %d retries.", maxRetry)
-	return false
 }

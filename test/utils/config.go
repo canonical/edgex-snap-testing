@@ -1,8 +1,12 @@
 package utils
 
 import (
-	"github.com/stretchr/testify/require"
+	"fmt"
+	"strings"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 type Config struct {
@@ -224,4 +228,19 @@ func TestAutostartGlobal(t *testing.T, snapName string) {
 		require.False(t, SnapServicesEnabled(t, snapName))
 		require.False(t, SnapServicesActive(t, snapName))
 	})
+}
+
+func WaitStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time, retries int) {
+	for i := 1; i <= retries; i++ {
+		time.Sleep(1 * time.Second)
+		t.Logf("Waiting for startup message. Retry %d/%d", i, retries)
+
+		logs := SnapLogs(t, since, snap)
+		if strings.Contains(logs, fmt.Sprintf("msg=%s", expectedMsg)) ||
+			strings.Contains(logs, fmt.Sprintf(`msg="%s"`, expectedMsg)) {
+			t.Logf(`Found startup message: "%s"`, expectedMsg)
+			return
+		}
+	}
+	t.Fatalf(`Time out: reached max %d retries looking for "%s"`, retries, expectedMsg)
 }

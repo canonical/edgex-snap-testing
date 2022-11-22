@@ -48,11 +48,15 @@ func SnapRemove(t *testing.T, names ...string) {
 	}
 }
 
-func SnapBuild(t *testing.T, workDir string) {
-	exec(t, fmt.Sprintf(
+func SnapBuild(t *testing.T, workDir string) error {
+	_, stderr, err := exec(t, fmt.Sprintf(
 		"cd %s && snapcraft",
 		workDir,
 	), true)
+	if err != nil {
+		return fmt.Errorf("%s: %s", err, stderr)
+	}
+	return nil
 }
 
 func SnapConnect(t *testing.T, plug, slot string) error {
