@@ -14,23 +14,37 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the snap source
-        uses: actions/checkout@v3
-        with:
-          repository: canonical/edgex-config-provider
-          ref: snap-testing
+      # - name: Checkout the snap source
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: canonical/edgex-config-provider
+      #     ref: snap-testing
 
-      - name: Setup snapcraft
-        uses: snapcore/action-build@v1
-        id: snapcraft
+      # - name: Setup snapcraft
+      #   uses: snapcore/action-build@v1
+      #   id: snapcraft
+      
+      # - name: Checkout the local actions
+      #   uses: actions/checkout@v3
       
       - name: Checkout the local actions
+        uses: actions/checkout@v3
+
+      - name: Build snap
+        # if: ${{ inputs.localBuild }}
+        uses: ./build
+        id: build
+        with:
+          repo: canonical/edgex-config-provider
+          branch: snap-testing
+
+      - name: Checkout the local actions again
         uses: actions/checkout@v3
 
       - name: Test snap
         uses: ./test
         with:
           name: edgex-config-provider
-          snap: ${{ steps.snapcraft.outputs.snap }}
+          snap: ${{ steps.build.outputs.snap }}
           platform_channel: latest/edge
 

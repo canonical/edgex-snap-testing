@@ -8,6 +8,10 @@ inputs:
     description: Source code repo with snap
     required: false
     default: ${{github.repository}}
+  branch:
+    description: Source code repo branch
+    required: false
+    default: main
 
 outputs:
   snap:
@@ -23,6 +27,7 @@ runs:
       with:
         fetch-depth: 0
         repository: ${{inputs.repo}}
+        ref: ${{inputs.branch}}
 
     # Get snap base version
     - shell: bash
