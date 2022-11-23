@@ -15,7 +15,7 @@ const (
 
 var services = []string{
 	"device-virtual",
-	//
+	/////////////////
 	"app-service-configurable",
 	"app-rfid-llrp-inventory",
 	"device-gpio",
@@ -73,15 +73,6 @@ func setup() (teardown func(), err error) {
 			return
 		}
 
-		// change the startup message, for the sake of testing
-		// if _, _, err = utils.Exec(nil, fmt.Sprintf(
-		// 	`find %s -type f -name 'configuration.toml' | xargs \
-		// 	sed --in-place --regexp-extended 's/StartupMsg.*/StartupMsg="%s"/'`,
-		// 	workDir, startupMsg)); err != nil {
-		// 	teardown()
-		// 	return
-		// }
-
 		// build the example provider snap
 		if err = utils.SnapBuild(nil, workDir); err != nil {
 			teardown()
@@ -127,13 +118,32 @@ func TestConfigProvider(t *testing.T) {
 			// install the consumer
 			utils.SnapInstallFromStore(t, snapName, utils.ServiceChannel)
 
-			if name == "device-mqtt" {
-				// utils.SnapInstallFromStore(nil, "mosquitto", "latest/stable")
-				utils.SnapSet(t, snapName, "app-options", "true")
-				utils.SnapSet(t, snapName, "config.mqttbrokerinfo-host", "test.mosquitto.org")
+			// add basic config to make the services run
+			switch name {
+			case "device-mqtt":
+				const mqttBroker = "mosquitto"
+				if !utils.SnapInstalled(t, mqttBroker) {
+					utils.SnapInstallFromStore(t, mqttBroker, "latest/stable")
+					t.Cleanup(func() {
+						utils.SnapRemove(t, mqttBroker)
+					})
+				}
+				if !utils.SnapServicesActive(t, mqttBroker) {
+					utils.SnapStart(t, mqttBroker)
+					t.Cleanup(func() {
+						utils.SnapStop(t, mqttBroker)
+					})
+				}
+			case "app-service-configurable":
+				utils.SnapSet(nil, snapName, "profile", "http-export")
 			}
 
+			// NOTE: Connect after setting options to work around the error resulted
+			// from creation/removal of an env file in read-only file system.
+			// See https://warthogs.atlassian.net/browse/EDGEX-586
+			//
 			// connect to provider's slot
+			interfaceName := name + "-config"
 			utils.SnapConnect(t,
 				snapName+":"+interfaceName,
 				provider+":"+interfaceName)
