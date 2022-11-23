@@ -41,7 +41,7 @@ func SnapInstallFromFile(t *testing.T, path string) error {
 
 func SnapInstalled(t *testing.T, name string) bool {
 	out, _, _ := exec(t, fmt.Sprintf(
-		"snap list %s",
+		"snap list %s || true",
 		name,
 	), true)
 	return strings.Contains(out, name)
