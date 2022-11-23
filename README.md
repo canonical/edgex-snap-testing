@@ -62,6 +62,9 @@ The `--count=1` flag is to avoid Go test caching when testing the rebuilt snap.
 ```
 go test -v ./test/suites/edgexfoundry --run=TestAddProxyUser
 ```
+```
+go test -v ./test/suites/edgex-config-provider -run=TestConfigProvider/device-virtual
+```
 
 #### Test the testing utils
 ```bash

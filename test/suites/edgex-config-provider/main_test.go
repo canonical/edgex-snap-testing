@@ -45,9 +45,6 @@ func TestMain(m *testing.M) {
 func setup() (teardown func(), err error) {
 	log.Println("[CLEAN]")
 	utils.SnapRemove(nil, platformSnap)
-	for _, name := range services {
-		utils.SnapRemove(nil, "edgex-"+name)
-	}
 	utils.SnapRemove(nil, provider)
 
 	log.Println("[SETUP]")
@@ -55,18 +52,9 @@ func setup() (teardown func(), err error) {
 
 	teardown = func() {
 		log.Println("[TEARDOWN]")
-
 		utils.SnapDumpLogs(nil, start, platformSnap)
-		for _, name := range services {
-			utils.SnapDumpLogs(nil, start, "edgex-"+name)
-		}
-
 		utils.SnapRemove(nil, platformSnap)
-		for _, name := range services {
-			utils.SnapRemove(nil, "edgex-"+name)
-		}
 		utils.SnapRemove(nil, provider)
-
 		// remove cloned directory
 		os.RemoveAll(provider)
 	}
@@ -125,7 +113,16 @@ func TestConfigProvider(t *testing.T) {
 	for _, name := range services {
 		t.Run(name, func(t *testing.T) {
 			snapName := "edgex-" + name
-			interfaceName := name + "-config"
+
+			// clean start
+			utils.SnapRemove(t, snapName)
+
+			start := time.Now()
+
+			t.Cleanup(func() {
+				utils.SnapDumpLogs(t, start, snapName)
+				utils.SnapRemove(t, snapName)
+			})
 
 			// install the consumer
 			utils.SnapInstallFromStore(t, snapName, utils.ServiceChannel)
@@ -141,12 +138,9 @@ func TestConfigProvider(t *testing.T) {
 				snapName+":"+interfaceName,
 				provider+":"+interfaceName)
 
-			start := time.Now()
 			utils.SnapStart(t, snapName)
 
 			utils.WaitStartupMsg(t, snapName, startupMsg, start, 10)
-
-			// TODO add snap teardown here
 		})
 	}
 }
