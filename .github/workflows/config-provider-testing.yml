@@ -1,0 +1,36 @@
+name: Config Provider Testing
+
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "0 3 * * SUN"
+  # allow manual trigger
+  workflow_dispatch:
+
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the local actions
+        uses: actions/checkout@v3
+
+      - name: Build snap
+        uses: ./build
+        id: build
+        with:
+          repo: canonical/edgex-config-provider
+          branch: snap-testing
+
+      - name: Checkout the local actions again
+        uses: actions/checkout@v3
+
+      - name: Test snap
+        uses: ./test
+        with:
+          name: edgex-config-provider
+          snap: ${{ steps.build.outputs.snap }}
+          platform_channel: latest/edge
+

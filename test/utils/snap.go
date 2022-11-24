@@ -39,6 +39,14 @@ func SnapInstallFromFile(t *testing.T, path string) error {
 	return nil
 }
 
+func SnapInstalled(t *testing.T, name string) bool {
+	out, _, _ := exec(t, fmt.Sprintf(
+		"snap list %s || true",
+		name,
+	), true)
+	return strings.Contains(out, name)
+}
+
 func SnapRemove(t *testing.T, names ...string) {
 	for _, name := range names {
 		exec(t, fmt.Sprintf(
@@ -48,11 +56,15 @@ func SnapRemove(t *testing.T, names ...string) {
 	}
 }
 
-func SnapBuild(t *testing.T, workDir string) {
-	exec(t, fmt.Sprintf(
+func SnapBuild(t *testing.T, workDir string) error {
+	_, stderr, err := exec(t, fmt.Sprintf(
 		"cd %s && snapcraft",
 		workDir,
 	), true)
+	if err != nil {
+		return fmt.Errorf("%s: %s", err, stderr)
+	}
+	return nil
 }
 
 func SnapConnect(t *testing.T, plug, slot string) error {
