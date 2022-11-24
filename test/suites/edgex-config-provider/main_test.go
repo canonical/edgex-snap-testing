@@ -14,8 +14,6 @@ const (
 )
 
 var services = []string{
-	"device-virtual",
-	/////////////////
 	"app-service-configurable",
 	"app-rfid-llrp-inventory",
 	"device-gpio",
@@ -25,6 +23,7 @@ var services = []string{
 	"device-rfid-llrp",
 	"device-snmp",
 	"device-usb-camera",
+	"device-virtual",
 	"device-onvif-camera",
 }
 
