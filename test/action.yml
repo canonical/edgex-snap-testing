@@ -28,8 +28,11 @@ inputs:
     description: |
       Option for enabling full config options test to include for e.g. legacy options testing.
     required: false
-
-
+  go-args:
+    description: |
+      Flags for running go test
+    required: false
+  
 runs:
   using: composite
 
@@ -56,7 +59,7 @@ runs:
         SERVICE_CHANNEL: ${{inputs.channel}}
         FULL_CONFIG_TEST: ${{inputs.full_config_test}}
       run: |
-        go test -failfast -p 1 -timeout 30m -v ./suites/${{inputs.name}}
+        go test -failfast -p 1 -timeout 30m -v ./suites/${{inputs.name}} ${{inputs.go-args}}
 
     # Print error logs for the service
     - if: always()
