@@ -46,4 +46,4 @@ runs:
         name: ${{steps.build.outputs.snap}}
         path: ${{steps.build.outputs.snap}}
         if-no-files-found: error
-        retention-days: 7
+        retention-days: 30
