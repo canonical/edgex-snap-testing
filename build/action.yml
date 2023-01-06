@@ -11,7 +11,7 @@ inputs:
   branch:
     description: Source code repo branch
     required: false
-    default: main
+    default: ${{github.ref}}
 
 outputs:
   snap:
