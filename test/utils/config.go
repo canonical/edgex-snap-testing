@@ -17,7 +17,6 @@ type Config struct {
 type ConfigChangePort struct {
 	App                      string
 	DefaultPort              string
-	TestLegacyEnvConfig      bool
 	TestAppConfig            bool
 	TestGlobalConfig         bool
 	TestMixedGlobalAppConfig bool
@@ -41,9 +40,6 @@ func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
 		WaitServiceOnline(nil, 60, conf.DefaultPort)
 		SnapStop(nil, service)
 
-		if conf.TestLegacyEnvConfig {
-			testChangePort_legacyEnv(t, snapName, conf.App, conf.DefaultPort)
-		}
 		if conf.TestAppConfig {
 			testChangePort_app(t, snapName, conf.App, conf.DefaultPort)
 		}
@@ -54,39 +50,6 @@ func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
 			testChangePort_mixedGlobalApp(t, snapName, conf.App, conf.DefaultPort)
 		}
 	})
-}
-
-func testChangePort_legacyEnv(t *testing.T, snap, app, servicePort string) {
-	t.Run("legacy env config", func(t *testing.T) {
-		service := snap + "." + app
-		if !FullConfigTest {
-			t.Skip("Full config test is disabled.")
-		}
-		// start clean
-		SnapStop(t, service)
-
-		t.Cleanup(func() {
-			SnapUnset(t, snap, "env")
-			SnapStop(t, service)
-		})
-
-		const newPort = "11111"
-
-		// make sure the port is available before using it
-		RequirePortAvailable(t, newPort)
-
-		// set env. and validate the new port comes online
-		SnapSet(t, snap, "env.service.port", newPort)
-		SnapStart(t, service)
-
-		WaitServiceOnline(t, serviceWaitTimeout, newPort)
-
-		// unset env. and validate the default port comes online
-		SnapUnset(t, snap, "env.service.port")
-		SnapRestart(t, service)
-		WaitServiceOnline(t, serviceWaitTimeout, servicePort)
-	})
-
 }
 
 func testChangePort_app(t *testing.T, snap, app, servicePort string) {
@@ -233,7 +196,7 @@ func TestAutostartGlobal(t *testing.T, snapName string) {
 func WaitStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time, retries int) {
 	for i := 1; i <= retries; i++ {
 		time.Sleep(1 * time.Second)
-		t.Logf("Waiting for startup message. Retry %d/%d", i, retries)
+		t.Logf("Retry %d/%d: Waiting for startup message: %s", i, retries, expectedMsg)
 
 		logs := SnapLogs(t, since, snap)
 		if strings.Contains(logs, fmt.Sprintf("msg=%s", expectedMsg)) ||

@@ -36,7 +36,6 @@ func TestCommon(t *testing.T) {
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceGpioApp,
 			DefaultPort:              deviceGpioServicePort,
-			TestLegacyEnvConfig:      utils.FullConfigTest,
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
