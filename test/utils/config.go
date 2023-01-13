@@ -61,14 +61,10 @@ func testChangePort_app(t *testing.T, snap, app, servicePort string) {
 
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
-			SnapUnset(t, snap, "app-options")
 			SnapStop(t, service)
 		})
 
 		const newPort = "22222"
-
-		// enable new apps option to aviod mixed options issue with old env option
-		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
@@ -96,14 +92,10 @@ func testChangePort_global(t *testing.T, snap, app, servicePort string) {
 
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "config")
-			SnapUnset(t, snap, "app-options")
 			SnapStop(t, service)
 		})
 
 		const newPort = "33333"
-
-		// enable new config option to avoid mixed options issue with old env option
-		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
@@ -135,15 +127,11 @@ func testChangePort_mixedGlobalApp(t *testing.T, snap, app, servicePort string) 
 		t.Cleanup(func() {
 			SnapUnset(t, snap, "apps")
 			SnapUnset(t, snap, "config")
-			SnapUnset(t, snap, "app-options")
 			SnapStop(t, service)
 		})
 
 		const newAppPort = "44444"
 		const newConfigPort = "55555"
-
-		// enable new apps/config options to aviod mixed options issue with old env option
-		SnapSet(t, snap, "app-options", "true")
 
 		// make sure the ports are available before using it
 		RequirePortAvailable(t, newAppPort)

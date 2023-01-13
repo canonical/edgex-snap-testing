@@ -19,7 +19,6 @@ import (
 func TestTLSCert(t *testing.T) {
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, "apps")
-		utils.SnapUnset(t, platformSnap, "app-options")
 	})
 
 	t.Logf("Generate CA and server certificates")
@@ -31,7 +30,6 @@ func TestTLSCert(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Logf("Add the self-signed certificate")
-	utils.SnapSet(t, platformSnap, "app-options", "true")
 	// The options must be set together
 	utils.Exec(t, fmt.Sprintf(
 		"sudo snap set %s apps.secrets-config.proxy.tls.key='%s' apps.secrets-config.proxy.tls.cert='%s'",
@@ -67,7 +65,6 @@ func TestTLSCert(t *testing.T) {
 func TestAddProxyUser(t *testing.T) {
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, "apps")
-		utils.SnapUnset(t, platformSnap, "app-options")
 	})
 
 	t.Log("Generate private and public keys")
@@ -77,7 +74,6 @@ func TestAddProxyUser(t *testing.T) {
 	publicKey, err := os.ReadFile(publicKeyFile)
 	require.NoError(t, err)
 
-	utils.SnapSet(t, platformSnap, "app-options", "true")
 	utils.SnapSet(t, platformSnap, "apps.secrets-config.proxy.admin.public-key", string(publicKey))
 
 	t.Log("Generate a JWT token for the admin user")
