@@ -103,9 +103,8 @@ func setup() (teardown func(), err error) {
 	}
 
 	// turn security off
-	utils.SnapSet(nil, platformSnap, "security-secret-store", "off")
+	utils.SnapSet(nil, platformSnap, "security", "false")
 	utils.SnapSet(nil, deviceVirtualSnap, "config.edgex-security-secret-store", "false")
-	utils.SnapSet(nil, ascSnap, "app-options", "true")
 	utils.SnapSet(nil, ascSnap, "config.edgex-security-secret-store", "false")
 	utils.SnapSet(nil, ekuiperSnap, "config.edgex-security-secret-store", "false")
 

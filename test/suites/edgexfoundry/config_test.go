@@ -12,36 +12,31 @@ import (
 
 const supportSchedulerStartupMsg = "This is the Support Scheduler Microservice"
 
-func TestChangePort_legacyEnv(t *testing.T) {
-	if !utils.FullConfigTest {
-		t.Skip("Full config test is disabled.")
-	}
-
+func TestChangeStartupMsg_app(t *testing.T) {
 	const (
-		newPort        = "11111"
-		envServicePort = "env." + supportSchedulerApp + ".service.port"
+		newStartupMsg = "snap-testing (app)"
+		startupMsgKey = "apps.support-scheduler.config.service-startupmsg"
 	)
 
-	// start clean
-	utils.SnapStop(t, supportSchedulerService)
-
 	t.Cleanup(func() {
-		utils.SnapUnset(t, platformSnap, envServicePort)
-		utils.SnapStop(t, supportSchedulerService)
+		utils.SnapUnset(t, platformSnap, startupMsgKey)
+		utils.SnapRestart(t, supportSchedulerService)
 	})
 
-	// make sure the port is available before using it
-	utils.RequirePortAvailable(t, newPort)
-
-	// set env. and validate the new port comes online
-	utils.SnapSet(t, platformSnap, envServicePort, newPort)
-	utils.SnapStart(t, supportSchedulerService)
-	utils.WaitServiceOnline(t, 60, newPort)
-
-	// unset env. and validate the default port comes online
-	utils.SnapUnset(t, platformSnap, envServicePort)
+	t.Log("Set and verify new startup message:", newStartupMsg)
+	utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
+	ts := time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
-	utils.WaitServiceOnline(t, 60, supportSchedulerServicePort)
+
+	require.True(t, checkStartupMsg(t, supportSchedulerService, newStartupMsg, ts),
+		"new startup message = %s", newStartupMsg)
+
+	t.Log("Unset and check default message")
+	utils.SnapUnset(t, platformSnap, startupMsgKey)
+	ts = time.Now()
+	utils.SnapRestart(t, supportSchedulerService)
+	require.True(t, checkStartupMsg(t, supportSchedulerService, supportSchedulerStartupMsg, ts),
+		"default startup message = %s", supportSchedulerStartupMsg)
 }
 
 func TestChangeStartupMsg_global(t *testing.T) {
@@ -50,28 +45,20 @@ func TestChangeStartupMsg_global(t *testing.T) {
 		startupMsgKey = "config.service-startupmsg"
 	)
 
-	// start clean
-	utils.SnapStop(t, supportSchedulerService)
-
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, startupMsgKey)
-		utils.SnapStop(t, supportSchedulerService)
+		utils.SnapRestart(t, supportSchedulerService)
 	})
 
-	utils.SnapSet(t, platformSnap, "app-options", "true")
-
-	ts := time.Now()
-	utils.SnapStart(t, supportSchedulerService)
-	require.True(t, checkStartupMsg(t, supportSchedulerService, supportSchedulerStartupMsg, ts),
-		"default startup message = %s", supportSchedulerStartupMsg)
-
+	t.Log("Set and verify new startup message:", newStartupMsg)
 	utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
-	ts = time.Now()
+	ts := time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
+
 	require.True(t, checkStartupMsg(t, supportSchedulerService, newStartupMsg, ts),
 		"new startup message = %s", newStartupMsg)
 
-	// unset config and re-check
+	t.Log("Unset and check default message")
 	utils.SnapUnset(t, platformSnap, startupMsgKey)
 	ts = time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
@@ -84,37 +71,25 @@ func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 		appNewStartupMsg = "snap-testing (app specific)"
 		appStartupMsgKey = "apps." + supportSchedulerApp + ".config.service-startupmsg"
 
-		globalNewStartupMsg = "snap-testing (global)"
+		globalNewStartupMsg = "snap-testing (global override)"
 		globalStartupMsgKey = "config.service-startupmsg"
 	)
 
-	// start clean
-	utils.SnapStop(t, supportSchedulerService)
-
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, globalStartupMsgKey)
-		utils.SnapStop(t, supportSchedulerService)
+		utils.SnapRestart(t, supportSchedulerService)
 	})
 
-	utils.SnapSet(t, platformSnap, "app-options", "true")
-
-	utils.SnapStart(t, supportSchedulerService)
-	ts := time.Now()
-	require.True(t,
-		checkStartupMsg(t, supportSchedulerService, supportSchedulerStartupMsg, ts),
-		"default startup message = %s", supportSchedulerStartupMsg)
-
-	// set apps. and config. with different testing message,
-	// and validate that app-specific option has been picked up because it has higher precedence
+	t.Log("Set local and global startup messages and verify that local has taken precedence")
 	utils.SnapSet(t, platformSnap, appStartupMsgKey, appNewStartupMsg)
 	utils.SnapSet(t, platformSnap, globalStartupMsgKey, globalNewStartupMsg)
-	ts = time.Now()
+	ts := time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
 	require.True(t,
 		checkStartupMsg(t, supportSchedulerService, appNewStartupMsg, ts),
 		"new startup message = %s", appNewStartupMsg)
 
-	// unset config and re-check
+	t.Log("Unset and check default message")
 	utils.SnapUnset(t, platformSnap, appStartupMsgKey)
 	utils.SnapUnset(t, platformSnap, globalStartupMsgKey)
 	ts = time.Now()
@@ -131,7 +106,7 @@ func checkStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time) bo
 
 	for i := 1; i <= maxRetry; i++ {
 		time.Sleep(1 * time.Second)
-		t.Logf("Waiting for startup message. Retry %d/%d", i, maxRetry)
+		t.Logf("Retry %d/%d: Waiting for startup message: %s", i, maxRetry, expectedMsg)
 
 		logs := utils.SnapLogs(t, since, snap)
 		if strings.Contains(logs, fmt.Sprintf("msg=%s", expectedMsg)) ||
