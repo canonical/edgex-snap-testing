@@ -12,6 +12,33 @@ import (
 
 const supportSchedulerStartupMsg = "This is the Support Scheduler Microservice"
 
+func TestChangeStartupMsg_app(t *testing.T) {
+	const (
+		newStartupMsg = "snap-testing (app)"
+		startupMsgKey = "apps.support-scheduler.config.service-startupmsg"
+	)
+
+	t.Cleanup(func() {
+		utils.SnapUnset(t, platformSnap, startupMsgKey)
+		utils.SnapRestart(t, supportSchedulerService)
+	})
+
+	t.Log("Set and verify new startup message:", newStartupMsg)
+	utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
+	ts := time.Now()
+	utils.SnapRestart(t, supportSchedulerService)
+
+	require.True(t, checkStartupMsg(t, supportSchedulerService, newStartupMsg, ts),
+		"new startup message = %s", newStartupMsg)
+
+	t.Log("Unset and check default message")
+	utils.SnapUnset(t, platformSnap, startupMsgKey)
+	ts = time.Now()
+	utils.SnapRestart(t, supportSchedulerService)
+	require.True(t, checkStartupMsg(t, supportSchedulerService, supportSchedulerStartupMsg, ts),
+		"default startup message = %s", supportSchedulerStartupMsg)
+}
+
 func TestChangeStartupMsg_global(t *testing.T) {
 	const (
 		newStartupMsg = "snap-testing (global)"
@@ -44,7 +71,7 @@ func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 		appNewStartupMsg = "snap-testing (app specific)"
 		appStartupMsgKey = "apps." + supportSchedulerApp + ".config.service-startupmsg"
 
-		globalNewStartupMsg = "snap-testing (global)"
+		globalNewStartupMsg = "snap-testing (global override)"
 		globalStartupMsgKey = "config.service-startupmsg"
 	)
 

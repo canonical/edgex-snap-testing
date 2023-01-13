@@ -34,7 +34,7 @@ func TestCommon(t *testing.T) {
 		TestChangePort: utils.ConfigChangePort{
 			App:                      supportSchedulerApp,
 			DefaultPort:              supportSchedulerServicePort,
-			TestAppConfig:            false, // covered in startup message testing
+			TestAppConfig:            false, // covered in local startup message testing
 			TestGlobalConfig:         false, // multiple servers, test setting startup message instead
 			TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
 		},
