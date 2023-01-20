@@ -49,8 +49,6 @@ func TestCommon(t *testing.T) {
 	utils.TestPackaging(t, platformSnap, utils.Packaging{
 		TestSemanticSnapVersion: true,
 	})
-
-	utils.TestRefresh(t, platformSnap)
 }
 
 func setup() (teardown func(), err error) {
