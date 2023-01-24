@@ -32,24 +32,26 @@ func TestConfig(t *testing.T, snapName string, conf Config) {
 }
 
 func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
-	t.Run("change service port", func(t *testing.T) {
+	if conf.TestAppConfig || conf.TestGlobalConfig || conf.TestMixedGlobalAppConfig {
+		t.Run("change service port", func(t *testing.T) {
 
-		// start once so that default configs get uploaded to the registry
-		service := snapName + "." + conf.App
-		SnapStart(nil, service)
-		WaitServiceOnline(nil, 60, conf.DefaultPort)
-		SnapStop(nil, service)
+			// start once so that default configs get uploaded to the registry
+			service := snapName + "." + conf.App
+			SnapStart(t, service)
+			WaitServiceOnline(t, 60, conf.DefaultPort)
+			SnapStop(t, service)
 
-		if conf.TestAppConfig {
-			testChangePort_app(t, snapName, conf.App, conf.DefaultPort)
-		}
-		if conf.TestGlobalConfig {
-			testChangePort_global(t, snapName, conf.App, conf.DefaultPort)
-		}
-		if conf.TestMixedGlobalAppConfig {
-			testChangePort_mixedGlobalApp(t, snapName, conf.App, conf.DefaultPort)
-		}
-	})
+			if conf.TestAppConfig {
+				testChangePort_app(t, snapName, conf.App, conf.DefaultPort)
+			}
+			if conf.TestGlobalConfig {
+				testChangePort_global(t, snapName, conf.App, conf.DefaultPort)
+			}
+			if conf.TestMixedGlobalAppConfig {
+				testChangePort_mixedGlobalApp(t, snapName, conf.App, conf.DefaultPort)
+			}
+		})
+	}
 }
 
 func testChangePort_app(t *testing.T, snap, app, servicePort string) {
