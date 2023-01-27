@@ -64,6 +64,14 @@ func exec(t *testing.T, command string, verbose bool) (stdout, stderr string, er
 	// wait until command exits
 	if err = cmd.Wait(); err != nil {
 		if t != nil {
+			if !verbose {
+				if len(stdout) != 0 {
+					t.Logf("[stdout] %s", stdout)
+				}
+				if len(stderr) != 0 {
+					t.Logf("[stderr] %s", stderr)
+				}
+			}
 			t.Fatal(err)
 		} else {
 			return stdout, stderr, err
