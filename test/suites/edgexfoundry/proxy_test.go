@@ -118,20 +118,20 @@ func generateCerts(t *testing.T) (caKeyFile, caCertFile, serverCsrFile, serverKe
 	serverCertFile = tmpDir + "/server.crt"
 
 	// Generate the Certificate Authority (CA) Private Key
-	utils.Exec(nil, fmt.Sprintf("openssl ecparam -name prime256v1 -genkey -noout -out %s",
+	utils.Exec(t, fmt.Sprintf("openssl ecparam -name prime256v1 -genkey -noout -out %s",
 		caKeyFile))
 	// Generate the Certificate Authority Certificate
-	utils.Exec(nil, fmt.Sprintf("openssl req -new -x509 -sha256 -key %s -out %s -subj '/CN=snap-testing-ca'",
+	utils.Exec(t, fmt.Sprintf("openssl req -new -x509 -sha256 -key %s -out %s -subj '/CN=snap-testing-ca'",
 		caKeyFile, caCertFile))
 
 	// Generate the Server Certificate Private Keys
-	utils.Exec(nil, fmt.Sprintf("openssl ecparam -name prime256v1 -genkey -noout -out %s",
+	utils.Exec(t, fmt.Sprintf("openssl ecparam -name prime256v1 -genkey -noout -out %s",
 		serverKeyFile))
 	// Generate the Server Certificate Signing Request
-	utils.Exec(nil, fmt.Sprintf("openssl req -new -sha256 -key %s -out %s -subj '/CN=localhost'",
+	utils.Exec(t, fmt.Sprintf("openssl req -new -sha256 -key %s -out %s -subj '/CN=localhost'",
 		serverKeyFile, serverCsrFile))
 	// Generate the Server Certificate
-	utils.Exec(nil, fmt.Sprintf("openssl x509 -req -in %s -CA %s -CAkey %s -CAcreateserial -out %s -days 1 -sha256",
+	utils.Exec(t, fmt.Sprintf("openssl x509 -req -in %s -CA %s -CAkey %s -CAcreateserial -out %s -days 1 -sha256",
 		serverCsrFile, caCertFile, caKeyFile, serverCertFile))
 
 	return
