@@ -21,7 +21,7 @@ func TestServiceStatus(t *testing.T) {
 func TestAccess(t *testing.T) {
 	t.Run("consul", func(t *testing.T) {
 		t.Log("Access Consul locally")
-		resp, err := http.Get("http://localhost:8500/v1/kv/edgex/core/2.0/core-data/Service/Port")
+		resp, err := http.Get("http://localhost:8500/v1/kv/edgex/v3/core-data/Service/Port")
 		require.NoError(t, err)
 		defer resp.Body.Close()
 		require.Equal(t, 200, resp.StatusCode)
