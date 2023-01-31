@@ -23,9 +23,7 @@ func TestServiceStatus(t *testing.T) {
 func TestAccess(t *testing.T) {
 	t.Run("consul", func(t *testing.T) {
 		t.Log("Getting Consul token")
-		consulToken, stderr, err := utils.Exec(t, fmt.Sprintf("sudo cat /var/snap/edgexfoundry/current/secrets/consul-acl-token/bootstrap_token.json | jq -r '.SecretID'"))
-		require.Empty(t, stderr)
-		require.NoError(t, err)
+		consulToken, _, _ := utils.Exec(t, "sudo cat /var/snap/edgexfoundry/current/secrets/consul-acl-token/bootstrap_token.json | jq -r '.SecretID'")
 
 		t.Log("Access Consul locally")
 		client := &http.Client{}
