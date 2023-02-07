@@ -4,9 +4,10 @@ import (
 	"edgex-snap-testing/test/utils"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type Reading struct {
@@ -27,10 +28,10 @@ func TestRulesEngine(t *testing.T) {
 		ascSnap)
 
 	t.Run("create stream and rule", func(t *testing.T) {
-		utils.Exec(t, `edgex-ekuiper.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
+		utils.Exec(t, `edgex-ekuiper.kuiper create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
 
 		utils.Exec(t,
-			`edgex-ekuiper.kuiper-cli create rule rule_edgex_message_bus '
+			`edgex-ekuiper.kuiper create rule rule_edgex_message_bus '
 			{
 			   "sql":"SELECT * from stream1",
 			   "actions": [
