@@ -10,8 +10,6 @@ import (
 
 const (
 	ekuiperSnap           = "edgex-ekuiper"
-	ekuiperApp            = "kuiperd"
-	ekuiperService        = ekuiperSnap + "." + ekuiperApp
 	ekuiperServerPort     = "20498"
 	ekuiperRestfulApiPort = "59720"
 

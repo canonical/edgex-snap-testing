@@ -15,8 +15,6 @@ const (
 	deviceVirtualPort = "59900"
 
 	ekuiperSnap           = "edgex-ekuiper"
-	ekuiperApp            = "kuiper"
-	ekuiperService        = ekuiperSnap + "." + ekuiperApp
 	ekuiperServerPort     = "20498"
 	ekuiperRestfulApiPort = "59720"
 
@@ -108,31 +106,25 @@ func setup() (teardown func(), err error) {
 	utils.SnapSet(nil, ascSnap, "config.edgex-security-secret-store", "false")
 	utils.SnapSet(nil, ekuiperSnap, "config.edgex-security-secret-store", "false")
 
-	// make sure all services are online before starting the tests
-	utils.SnapStart(nil, deviceVirtualSnap)
-	if err = utils.WaitServiceOnline(nil, 60, deviceVirtualPort); err != nil {
-		teardown()
-		return
-	}
-
-	// subscribe to ASC events
+	// use ASC for event filtering
 	utils.SnapSet(nil, ekuiperSnap, "config.edgex.default.topic", "rules-events")
 	utils.SnapSet(nil, ekuiperSnap, "config.edgex.default.messagetype", "event")
-	utils.SnapStart(nil, ekuiperSnap)
-	if err = utils.WaitServiceOnline(nil, 60, ekuiperServerPort, ekuiperRestfulApiPort); err != nil {
-		teardown()
-		return
-	}
-
-	// set profile to rules engine
 	utils.SnapSet(nil, ascSnap, "profile", "rules-engine")
-	utils.SnapStart(nil, ascSnap)
-	if err = utils.WaitServiceOnline(nil, 60, ascServiceRulesPort); err != nil {
-		teardown()
-		return
-	}
+
+	// make sure all services are online before starting the tests
 
 	if err = utils.WaitServiceOnline(nil, 180, platformPortsNoSec()...); err != nil {
+		teardown()
+		return
+	}
+
+	utils.SnapStart(nil, deviceVirtualSnap, ekuiperSnap, ascSnap)
+	if err = utils.WaitServiceOnline(nil, 60,
+		deviceVirtualPort,
+		ekuiperServerPort,
+		ekuiperRestfulApiPort,
+		ascServiceRulesPort,
+	); err != nil {
 		teardown()
 		return
 	}
