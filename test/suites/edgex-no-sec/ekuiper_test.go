@@ -16,13 +16,13 @@ type Reading struct {
 func TestRulesEngine(t *testing.T) {
 	t.Cleanup(func() {
 		utils.SnapStop(t,
-			ekuiperService,
+			ekuiperSnap,
 			deviceVirtualSnap,
 			ascSnap)
 	})
 
 	utils.SnapStart(t,
-		ekuiperService,
+		ekuiperSnap,
 		deviceVirtualSnap,
 		ascSnap)
 

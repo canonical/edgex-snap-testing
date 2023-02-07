@@ -3,10 +3,11 @@ package test
 import (
 	"edgex-snap-testing/test/utils"
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 type Reading struct {
@@ -20,12 +21,12 @@ type RuleStatus struct {
 func TestStreamsAndRules(t *testing.T) {
 	t.Cleanup(func() {
 		utils.SnapStop(t,
-			ekuiperService,
+			ekuiperSnap,
 			deviceVirtualSnap)
 	})
 
 	utils.SnapStart(t,
-		ekuiperService,
+		ekuiperSnap,
 		deviceVirtualSnap)
 
 	t.Run("create stream", func(t *testing.T) {
