@@ -29,12 +29,12 @@ func TestStreamsAndRules(t *testing.T) {
 		deviceVirtualSnap)
 
 	t.Run("create stream", func(t *testing.T) {
-		utils.Exec(t, `edgex-ekuiper.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
+		utils.Exec(t, `edgex-ekuiper.kuiper create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
 	})
 
 	t.Run("create rule_log", func(t *testing.T) {
 		utils.Exec(t,
-			`edgex-ekuiper.kuiper-cli create rule rule_log '
+			`edgex-ekuiper.kuiper create rule rule_log '
 			{
 				"sql":"SELECT * FROM stream1 WHERE meta(deviceName) != \"device-test\"",
 				"actions":[
@@ -47,7 +47,7 @@ func TestStreamsAndRules(t *testing.T) {
 
 	t.Run("create rule_edgex_message_bus", func(t *testing.T) {
 		utils.Exec(t,
-			`edgex-ekuiper.kuiper-cli create rule rule_edgex_message_bus '
+			`edgex-ekuiper.kuiper create rule rule_edgex_message_bus '
 			{
 			   "sql":"SELECT * FROM stream1 WHERE meta(deviceName) != \"device-test\"",
 			   "actions": [
