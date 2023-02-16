@@ -55,8 +55,13 @@ Testing with a local snap:
 ```bash
 LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -v --count=1 ./test/suites/device-mqtt
 ```
-
 The `--count=1` flag is to avoid Go test caching when testing the rebuilt snap.
+
+Test by revision:
+```
+PLATFORM_CHANNEL=4259 go test -v ./test/suites/edgex-no-sec
+```
+This requires developer access; see `snap install -h` for details.
 
 #### Run only one test from a suite
 ```

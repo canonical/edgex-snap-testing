@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -17,11 +18,20 @@ import (
 // }
 
 func SnapInstallFromStore(t *testing.T, name, channel string) error {
+
+	option := "--channel"
+	// install by revision if channel is a number
+	if _, err := strconv.Atoi(channel); err == nil {
+		option = "--revision"
+	}
+
 	_, stderr, err := exec(t, fmt.Sprintf(
-		"sudo snap install %s --channel=%s",
+		"sudo snap install %s %s=%s",
 		name,
+		option,
 		channel,
 	), true)
+
 	if err != nil {
 		return fmt.Errorf("%s: %s", err, stderr)
 	}
