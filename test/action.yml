@@ -89,4 +89,4 @@ runs:
       with:
         name: ${{inputs.name}}-logs
         path: ${{env.action_path}}/suites/${{inputs.name}}/*.log
-        retention-days: 7
+        retention-days: 30
