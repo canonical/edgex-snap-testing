@@ -48,7 +48,7 @@ The environment variables are defined in [test/utils/env.go](./test/utils/env.go
 
 Full config test:
 ```bash
-FULL_CONFIG_TEST=true go -v test ./test/suites/device-mqtt
+FULL_CONFIG_TEST=true go test -v ./test/suites/device-mqtt
 ```
 
 Testing with a local snap:
