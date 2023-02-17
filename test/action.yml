@@ -69,7 +69,7 @@ runs:
         echo "::group::Service Errors"
         file=./suites/${{inputs.name}}/${{inputs.name}}.log
         if test -f "$file"; then
-          cat $file | grep --ignore-case "error"
+          cat $file | grep --ignore-case --extended-regexp --word-regexp "error|ERR"
         fi
 
         echo -e "\nFull logs will be uploaded as build artifacts."
