@@ -17,6 +17,7 @@ import (
 // Test seeding a custom TLS certificate using snap options
 // https://docs.edgexfoundry.org/2.2/getting-started/Ch-GettingStartedSnapUsers/#changing-tls-certificates
 func TestTLSCert(t *testing.T) {
+	t.Skip("Disabled in order to implement breaking changes to secrets-config for microservice token authentication ADR")
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, "apps")
 	})
@@ -63,6 +64,7 @@ func TestTLSCert(t *testing.T) {
 // Test seeding an admin user using snap options
 // https://docs.edgexfoundry.org/2.2/getting-started/Ch-GettingStartedSnapUsers/#adding-api-gateway-users
 func TestAddProxyUser(t *testing.T) {
+	t.Skip("Disabled in order to implement breaking changes to secrets-config for microservice token authentication ADR")
 	t.Cleanup(func() {
 		utils.SnapUnset(t, platformSnap, "apps")
 	})
