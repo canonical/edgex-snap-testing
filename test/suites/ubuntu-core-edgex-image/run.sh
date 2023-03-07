@@ -1,3 +1,5 @@
+#!/bin/bash -ex
+
 # clean and build the image
 sudo rm -rf pc.img
 ubuntu-image snap model.signed.yaml --validation=enforce --snap pc-gadget/pc_*_amd64.snap
