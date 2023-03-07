@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	scripts := []string{"setup.sh", "build.sh", "test.sh"}
+	scripts := []string{"setup.sh", "build.sh", "run.sh"}
 
 	for _, s := range scripts {
 		cmd := exec.Command("bash", s)
@@ -19,4 +19,13 @@ func main() {
 			os.Exit(1)
 		}
 	}
+
+	// todo: find a way to execute test.sh after compeleting Ubuntu Core Setup in run.sh script
+	// cmd := exec.Command("bash", "test.sh")
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
+	// if err := cmd.Run(); err != nil {
+    // 	fmt.Fprintf(os.Stderr, "Failed to execute test.sh: %s\n", err)
+   	// 	os.Exit(1)
+	// }
 }

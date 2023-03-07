@@ -6,7 +6,7 @@ brand-id: 3ehWphH4KXEI2BY8mla8ydYPJm8BCfkd
 model: ubuntu-core-22-amd64
 architecture: amd64
 # timestamp should be within your signature's validity period
-timestamp: "2098-06-21T10:45:00+00:00"
+timestamp: '2023-03-07T13:40:10+00:00'
 base: core22
 grade: dangerous
 snaps:
