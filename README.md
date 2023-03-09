@@ -1,31 +1,30 @@
 # EdgeX Snap Tests
 Test scripts, Github actions, and workflows for the [EdgeX Foundry](https://docs.edgexfoundry.org/) snaps.
 
+The following diagram shows the Snap Testing workflow for building and testing snaps from upstream source code:
 ```mermaid
-graph LR
-
-    subgraph tests [Edgex Snap Testing Project]
-        
-        builda[[Build Action]] -- 1b --> snapcraft[Snap Build]
-        testa[[Test Action]] -- 2c --> gotests[Test Suites]
-        
-        gotests -- >>PR --> localtestj[Local Test Job]
-        localtestj -- 3 --> testa
-        
-    end
-
-    subgraph source [Source Project]
-        Source -- >>PR<br/>>>Push<br/>>>Manual Trigger --> buildj
-        
-        subgraph snap [Snap Testing Workflow]
-            buildj -- 2a --> testj
-            buildj[Build Job] -- 1a --> builda
-            snapcraft -- 1c --> artifacts[Artifact Snap]
-            artifacts -. 1d .-> buildj
-            testj[Test Job] -- 2b --> testa
-        end
-    end
+---
+title: Snap Testing Workflow
+---
+flowchart LR
+  subgraph build [Build Job]
+    builda[[Build Action]] --> Source
+    --> Build[Build Snap]
+    --> Snap[/Artifact<br>Snap/]
+  end
+  subgraph test [Test Job]
+    Snap -.-> testa[[Test Action]]
+    --> gotests[Go Test Suites]
+    --> Logs[/Artifact<br>Logs/]
+  end
 ```
+
+The Github Workflow configurations (triggers, jobs, etc) are maintained in respective upstream source codes.  
+The Github Actions and testing suites are maintained in this repository.
+
+For example, [this](https://github.com/edgexfoundry/edgex-go/blob/main/.github/workflows/snap.yaml) is the workflow of the tests that run on the edgex-go project. The Github Actions used in the workflow are versioned using a major semantic versioning tag. This tag is [automatically moved](https://github.com/canonical/edgex-snap-testing/blob/main/.github/workflows/versioning.yml) to the latest minor and patch releases of the tests (this repository).
+
+This project has additional [workflows](https://github.com/canonical/edgex-snap-testing/tree/main/.github/workflows) such as for running the tests weekly and on local PRs.
 
 ## Test locally
 Example command to run tests:
