@@ -28,38 +28,40 @@ graph LR
 ```
 
 ## Test locally
-Example command to run tests:
+This section includes example command to run tests.
+
+Useful `go test` flags are:
+- `-v` is to enable verbose output
+- `-failfast` makes the test stop after first failure
+- `-timeout 60m` extends the timeout to longer than the default 10m
+- `-count 1` is to avoid Go test caching for example when testing a rebuilt snap
+
 #### Run one testing suite
 ```bash
-go test -v ./test/suites/device-mqtt
+go test -v -failfast ./test/suites/device-mqtt
 ```
-
-Flag `-v` is for verbose output.
 
 #### Run all suites
 ```bash
-go test -v -p 1 ./test/suites/...
+go test -p 1 -timeout 60m -failfast -count 1 ./test/suites/...
 ```
-
-The `-p 1` is set to force sequential run and avoid snapd and logical errors when running multipe testing suites.
 
 #### Run one suite with env variables
 The environment variables are defined in [test/utils/env.go](./test/utils/env.go)
 
 Full config test:
 ```bash
-FULL_CONFIG_TEST=true go test -v ./test/suites/device-mqtt
+FULL_CONFIG_TEST=true go test -v -failfast ./test/suites/device-mqtt
 ```
 
 Testing with a local snap:
 ```bash
-LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -v --count=1 ./test/suites/device-mqtt
+LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -v -failfast -count 1 ./test/suites/device-mqtt
 ```
-The `--count=1` flag is to avoid Go test caching when testing the rebuilt snap.
 
 Test by revision:
 ```
-PLATFORM_CHANNEL=4259 go test -v ./test/suites/edgex-no-sec
+PLATFORM_CHANNEL=4259 go test -v -failfast ./test/suites/edgex-no-sec
 ```
 This requires developer access; see `snap install -h` for details.
 
