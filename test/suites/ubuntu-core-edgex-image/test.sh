@@ -1,7 +1,9 @@
 #!/bin/bash -e
 
-# check status of core and device services inside of the emulator
-ports=(59880 59881 59882 59900)
+ssh "$USER@localhost" -p 8022 "snap install curl"
+
+# check status of core services inside of the emulator
+ports=(59880 59881 59882)
 
 for port in "${ports[@]}"
 do

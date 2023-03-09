@@ -5,6 +5,7 @@ git clone https://github.com/snapcore/pc-gadget.git --branch=22
 
 # build gadget snap
 cd pc-gadget
+# extend the size of disk partitions to have sufficient capacity for EdgeX snaps
 yq e '(.volumes.pc.structure[] | select(.name=="ubuntu-seed") | .size)="1500M"' gadget.yaml -i
 snapcraft
 

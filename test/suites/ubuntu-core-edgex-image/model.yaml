@@ -15,7 +15,7 @@ snaps:
     # We're going to build it locally and pass it to the image builder. 
     name: pc
     type: gadget
-    # default-channel: 20/stable
+    # default-channel: 22/stable
     # id: UqFziVZDHLSyO3TqSWgNBoAdHbLI4dAH
   - name: pc-kernel
     type: kernel

@@ -1,6 +1,2 @@
 *.log
 tmp
-model.signed.yaml
-pc.img
-pc-gadget
-seed.manifest

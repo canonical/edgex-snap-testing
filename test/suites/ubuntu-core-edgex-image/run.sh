@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 # clean and build the image
-sudo rm -rf pc.img
+sudo rm -f pc.img
 ubuntu-image snap model.signed.yaml --validation=enforce --snap pc-gadget/pc_*_amd64.snap
 
 # check the image file
@@ -17,6 +17,6 @@ sudo qemu-system-x86_64 \
  -machine accel=kvm \
  -serial mon:stdio \
  -net nic,model=virtio \
- -net user,hostfwd=tcp::8022-:22,hostfwd=tcp::8443-:8443,hostfwd=tcp::59880-:59880,hostfwd=tcp::59881-:59881
+ -net user,hostfwd=tcp::8022-:22
 
 

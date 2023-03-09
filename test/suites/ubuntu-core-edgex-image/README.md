@@ -49,5 +49,4 @@ USER=<your-username> ./test.sh
 # {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:14 UTC 2023","serviceName":"core-data"}
 # {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:15 UTC 2023","serviceName":"core-metadata"}
 # {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:15 UTC 2023","serviceName":"core-command"}
-# {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:15 UTC 2023","serviceName":"device-virtual"}
 ```
