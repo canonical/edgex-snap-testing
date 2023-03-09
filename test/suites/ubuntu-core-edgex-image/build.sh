@@ -18,7 +18,7 @@ yq e -i ".brand-id = \"$DEVELOPER_ID\"" model.yaml
 yq e -i ".timestamp = \"$TIMESTAMP\"" model.yaml
 
 # sign the model assertion
-yq eval model.yaml -o=json | snap sign -k $SNAP_KEY > model.signed.yaml
+yq eval model.yaml -o=json | snap sign -k $KEY_NAME > model.signed.yaml
 
 # check the signed model
 cat model.signed.yaml

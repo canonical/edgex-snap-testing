@@ -28,24 +28,27 @@ Note: Follow the instructions [here](https://snapcraft.io/docs/creating-your-dev
 
 After logging in, create a key named `ubuntu-core-edgex-image-test` which will be used later by running:
 ```
-snap create-key ubuntu-core-edgex-image-test
+$ snap create-key ubuntu-core-edgex-image-test
 # set passphrase
-snapcraft register-key ubuntu-core-edgex-image-test
+$ snapcraft register-key ubuntu-core-edgex-image-test
 ```
 
 
 ### Build, Boot and Test the Image
 To build the Ubuntu Core image with EdgeX components, run the following command:
 ```
-SNAP_KEY=ubuntu-core-edgex-image-test ./build.sh
+KEY_NAME=ubuntu-core-edgex-image-test ./build.sh
 ```
 To boot the image in an emulator:
 ```
 ./run.sh
 ```
-Once the networking and user account setup is complete, open a new terminal to test the image by running:
+**After the complete installation, use the wizard to setup the networking and user account.**
+
+Once you see the SSH command and the IP address, open a new terminal to test the image by running:
+
 ```
-USER=<your-username> ./test.sh
+$ USER=<your-username> ./test.sh
 # {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:14 UTC 2023","serviceName":"core-data"}
 # {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:15 UTC 2023","serviceName":"core-metadata"}
 # {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:15 UTC 2023","serviceName":"core-command"}
