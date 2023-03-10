@@ -37,7 +37,7 @@ Useful `go test` flags are:
 
 #### Run one testing suite
 ```bash
-go test -v -failfast ./test/suites/device-mqtt
+go test -v -failfast -count 1 ./test/suites/device-mqtt
 ```
 
 #### Run all suites
@@ -50,7 +50,7 @@ The environment variables are defined in [test/utils/env.go](./test/utils/env.go
 
 Full config test:
 ```bash
-FULL_CONFIG_TEST=true go test -v -failfast ./test/suites/device-mqtt
+FULL_CONFIG_TEST=true go test -v -failfast -count 1 ./test/suites/device-mqtt
 ```
 
 Testing with a local snap:
@@ -58,9 +58,14 @@ Testing with a local snap:
 LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -v -failfast -count 1 ./test/suites/device-mqtt
 ```
 
+Test with skipping the removal of snaps during teardown:
+```bash
+SKIP_TEARDOWN_REMOVAL=true go test -v -failfast -count 1 ./test/suites/
+```
+
 Test by revision:
 ```
-PLATFORM_CHANNEL=4259 go test -v -failfast ./test/suites/edgex-no-sec
+PLATFORM_CHANNEL=4259 go test -v -failfast -count 1 ./test/suites/edgex-no-sec
 ```
 This requires developer access; see `snap install -h` for details.
 

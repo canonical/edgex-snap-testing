@@ -32,6 +32,11 @@ inputs:
     description: |
       Flags for running go test
     required: false
+  skip_teardown_removal:
+    description: |
+        Option for enabling removal of snaps during teardown.
+        This is particularly useful when running tests on ephemeral CI instances.
+    required: false
   
 runs:
   using: composite
@@ -58,6 +63,7 @@ runs:
         PLATFORM_CHANNEL: ${{inputs.platform_channel}}
         SERVICE_CHANNEL: ${{inputs.channel}}
         FULL_CONFIG_TEST: ${{inputs.full_config_test}}
+        SKIP_TEARDOWN_REMOVAL: ${{inputs.skip_teardown_removal}}
       run: |
         go test -failfast -p 1 -timeout 30m -v ./suites/${{inputs.name}} ${{inputs.go-args}}
 
