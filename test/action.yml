@@ -37,6 +37,7 @@ inputs:
         Option for enabling removal of snaps during teardown.
         This is particularly useful when running tests on ephemeral CI instances.
     required: false
+    default: 'true'
   
 runs:
   using: composite
