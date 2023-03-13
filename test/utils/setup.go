@@ -22,10 +22,13 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 		SnapDumpLogs(nil, start, snapName)
 		SnapDumpLogs(nil, start, "edgexfoundry")
 
-		SnapRemove(nil,
-			snapName,
-			"edgexfoundry",
-		)
+		log.Println("Removing installed snap:", !SkipTeardownRemoval)
+		if !SkipTeardownRemoval {
+			SnapRemove(nil,
+				snapName,
+				"edgexfoundry",
+			)
+		}
 	}
 
 	// install the device snap before edgexfoundry

@@ -47,7 +47,11 @@ func setup() (teardown func(), err error) {
 	teardown = func() {
 		log.Println("[TEARDOWN]")
 		utils.SnapDumpLogs(nil, start, uiSnap)
-		utils.SnapRemove(nil, uiSnap)
+
+		log.Println("Removing installed snap:", !utils.SkipTeardownRemoval)
+		if !utils.SkipTeardownRemoval {
+			utils.SnapRemove(nil, uiSnap)
+		}
 	}
 
 	if utils.LocalSnap() {
