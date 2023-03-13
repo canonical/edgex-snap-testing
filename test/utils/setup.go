@@ -22,9 +22,8 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 		SnapDumpLogs(nil, start, snapName)
 		SnapDumpLogs(nil, start, "edgexfoundry")
 
-		if SkipTeardownRemoval {
-			log.Println("[SKIP] Removal of snaps in teardown is skipped.")
-		} else {
+		log.Println("Removing installed snap:", !SkipTeardownRemoval)
+		if !SkipTeardownRemoval {
 			SnapRemove(nil,
 				snapName,
 				"edgexfoundry",
