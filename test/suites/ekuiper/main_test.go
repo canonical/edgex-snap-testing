@@ -74,9 +74,8 @@ func setup() (teardown func(), err error) {
 		utils.SnapDumpLogs(nil, start, "edgexfoundry")
 		utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
 
-		if utils.SkipTeardownRemoval {
-			log.Println("[SKIP] Removal of snaps in teardown is skipped.")
-		} else {
+		log.Println("Removing installed snap:", !utils.SkipTeardownRemoval)
+		if !utils.SkipTeardownRemoval {
 			utils.SnapRemove(nil,
 				ekuiperSnap,
 				"edgexfoundry",

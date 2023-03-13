@@ -48,9 +48,8 @@ func setup() (teardown func(), err error) {
 		log.Println("[TEARDOWN]")
 		utils.SnapDumpLogs(nil, start, uiSnap)
 
-		if utils.SkipTeardownRemoval {
-			log.Println("[SKIP] Removal of snaps in teardown is skipped.")
-		} else {
+		log.Println("Removing installed snap:", !utils.SkipTeardownRemoval)
+		if !utils.SkipTeardownRemoval {
 			utils.SnapRemove(nil, uiSnap)
 		}
 	}
