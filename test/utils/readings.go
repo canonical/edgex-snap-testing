@@ -2,49 +2,66 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/stretchr/testify/require"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
-type EventCount struct {
-	Count int `json:"Count"`
+func LoginTestUser(t *testing.T) (idToken string) {
+	// The script path relative to the testing suites
+	const loginScriptPath = "../../utils/login-test-user.sh"
+
+	idToken, _, _ = Exec(t, loginScriptPath)
+	t.Log("ID Token for 'example' user:", idToken)
+	return strings.TrimSpace(idToken)
 }
 
-// TestDeviceVirtualReading waits for device-virtual to produce readings by querying core-data
-// up to a maximun number
-func TestDeviceVirtualReading(t *testing.T) {
-	t.Run("query readings", func(t *testing.T) {
-		var eventCount EventCount
+// WaitForReadings waits for readings to appear in core-data
+// The readings are produced by device-virtual or another service
+func WaitForReadings(t *testing.T, secured bool) {
+	const coreDataReadingCountEndpoint = "http://localhost:59880/api/v2/reading/count"
 
-		// wait device-virtual to produce readings with maximum 60 seconds
+	t.Run("query readings count", func(t *testing.T) {
+		var eventCount struct {
+			Count int
+		}
+
+		var idToken string
+		if secured {
+			idToken = LoginTestUser(t)
+		}
+
 		for i := 1; ; i++ {
 			time.Sleep(1 * time.Second)
-			resp, err := http.Get("http://localhost:59880/api/v2/event/count")
-			if err != nil {
-				fmt.Print(err)
-				return
-			}
-			defer resp.Body.Close()
+			req, err := http.NewRequest(http.MethodGet, coreDataReadingCountEndpoint, nil)
+			require.NoError(t, err)
 
-			if err = json.NewDecoder(resp.Body).Decode(&eventCount); err != nil {
-				t.Fatal(err)
+			if secured {
+				req.Header.Set("Authorization", "Bearer "+idToken)
 			}
 
-			t.Logf("waiting for device-virtual to produce readings, current retry count: %d/60\n", i)
+			client := &http.Client{}
+			resp, err := client.Do(req)
+			require.NoError(t, err)
+			require.Equal(t, 200, resp.StatusCode, "Unexpected HTTP response")
+
+			require.NoError(t, json.NewDecoder(resp.Body).Decode(&eventCount))
+
+			t.Logf("Waiting for readings in Core Data, current retry: %d/60", i)
 
 			if i <= 60 && eventCount.Count > 0 {
-				t.Logf("device-virtual is producing readings now, readings queried from core-data")
+				t.Logf("Found readings in Core Data")
 				break
 			}
 
 			if i > 60 && eventCount.Count <= 0 {
-				t.Logf("waiting for device-virtual to produce readings, reached maximum retry count of 60")
+				t.Logf("Waiting for readings in Core Data: reached maximum 60 retries")
 				break
 			}
 		}
-		require.Greaterf(t, eventCount.Count, 0, "No device-virtual reading in core-data")
+		require.Greaterf(t, eventCount.Count, 0, "No readings in Core Data")
 	})
 }

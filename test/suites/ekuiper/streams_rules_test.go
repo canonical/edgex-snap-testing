@@ -68,7 +68,7 @@ func TestStreamsAndRules(t *testing.T) {
 	if err := utils.WaitServiceOnline(t, 60, deviceVirtualPort); err != nil {
 		t.Fatal(err)
 	}
-	utils.TestDeviceVirtualReading(t)
+	utils.WaitForReadings(t, true)
 
 	t.Run("check rule_log", func(t *testing.T) {
 		var ruleStatus RuleStatus
@@ -108,11 +108,17 @@ func TestStreamsAndRules(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		req, err := http.NewRequest(http.MethodGet, "http://localhost:59880/api/v2/reading/device/name/device-test", nil)
+		require.NoError(t, err)
+
+		idToken := utils.LoginTestUser(t)
+		req.Header.Set("Authorization", "Bearer "+idToken)
+
 		var reading Reading
-		resp, err := http.Get("http://localhost:59880/api/v2/reading/device/name/device-test")
-		if err != nil {
-			t.Fatal(err)
-		}
+		client := &http.Client{}
+		resp, err := client.Do(req)
+
+		require.NoError(t, err)
 		defer resp.Body.Close()
 
 		if err = json.NewDecoder(resp.Body).Decode(&reading); err != nil {
