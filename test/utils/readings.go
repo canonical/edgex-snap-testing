@@ -46,6 +46,7 @@ func WaitForReadings(t *testing.T, secured bool) {
 			client := &http.Client{}
 			resp, err := client.Do(req)
 			require.NoError(t, err)
+                        defer resp.Body.Close()
 			require.Equal(t, 200, resp.StatusCode, "Unexpected HTTP response")
 
 			require.NoError(t, json.NewDecoder(resp.Body).Decode(&eventCount))
