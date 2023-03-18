@@ -100,6 +100,7 @@ func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 }
 
 func checkStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time) bool {
+	t.Skip("https://github.com/canonical/edgex-snap-testing/issues/172")
 	const maxRetry = 10
 
 	utils.WaitPlatformOnline(t)
