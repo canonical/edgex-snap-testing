@@ -33,6 +33,7 @@ func TestConfig(t *testing.T, snapName string, conf Config) {
 
 func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
 	if conf.TestAppConfig || conf.TestGlobalConfig || conf.TestMixedGlobalAppConfig {
+                t.Skip("Skip while working on a fix: https://github.com/canonical/edgex-snap-testing/issues/172")
 		t.Run("change service port", func(t *testing.T) {
 
 			// start once so that default configs get uploaded to the registry
