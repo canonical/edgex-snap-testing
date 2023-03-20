@@ -48,7 +48,7 @@ func TestRulesEngine(t *testing.T) {
 
 		// wait device-virtual to come online and produce readings
 		utils.WaitServiceOnline(t, 60, deviceVirtualPort)
-		utils.TestDeviceVirtualReading(t)
+		utils.WaitForReadings(t, false)
 
 		var reading Reading
 		resp, err := http.Get("http://localhost:59880/api/v2/reading/device/name/device-test")

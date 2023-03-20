@@ -51,7 +51,7 @@ func TestCommon(t *testing.T) {
 		TestBindLoopback: platformPortsNoSec(),
 	})
 
-	utils.TestDeviceVirtualReading(t)
+	utils.WaitForReadings(t, false)
 }
 
 func setup() (teardown func(), err error) {
