@@ -23,6 +23,8 @@ func TestChangeStartupMsg_app(t *testing.T) {
 		utils.SnapRestart(t, supportSchedulerService)
 	})
 
+	utils.DisableConfigProvider(t, platformSnap, supportSchedulerApp)
+
 	t.Log("Set and verify new startup message:", newStartupMsg)
 	utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
 	ts := time.Now()
@@ -49,6 +51,8 @@ func TestChangeStartupMsg_global(t *testing.T) {
 		utils.SnapUnset(t, platformSnap, startupMsgKey)
 		utils.SnapRestart(t, supportSchedulerService)
 	})
+
+	utils.DisableConfigProvider(t, platformSnap, supportSchedulerApp)
 
 	t.Log("Set and verify new startup message:", newStartupMsg)
 	utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
@@ -80,6 +84,8 @@ func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 		utils.SnapRestart(t, supportSchedulerService)
 	})
 
+	utils.DisableConfigProvider(t, platformSnap, supportSchedulerApp)
+
 	t.Log("Set local and global startup messages and verify that local has taken precedence")
 	utils.SnapSet(t, platformSnap, appStartupMsgKey, appNewStartupMsg)
 	utils.SnapSet(t, platformSnap, globalStartupMsgKey, globalNewStartupMsg)
@@ -100,7 +106,6 @@ func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 }
 
 func checkStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time) bool {
-	t.Skip("Skip while working on a fix: https://github.com/canonical/edgex-snap-testing/issues/172")
 	const maxRetry = 10
 
 	utils.WaitPlatformOnline(t)
