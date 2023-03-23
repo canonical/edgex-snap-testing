@@ -221,7 +221,7 @@ func DisableConfigProviderServiceSnap(t *testing.T, snap, app string) {
 	t.Logf("Copying coommon config file from platform snap to service snap: %s", snap)
 
 	sourceFile := "/snap/edegxfoundry/current/config/core-common-config-bootstrapper/res/configuration.yaml"
-	destFile := "/var/snap/"+snap+"/current/config/core-common-config-bootstrapper/res/configuration.yaml"
+	destFile := "/var/snap/"+snap+"/current/config/common-config.yaml"
 	// read the source common config file
 	source, err := ioutil.ReadFile(sourceFile)
 	if err != nil {
