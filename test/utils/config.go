@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
@@ -71,7 +72,7 @@ func testChangePort_app(t *testing.T, snap, app, servicePort string) {
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
 
-		DisableConfigProvider(t, snap, app)
+		DisableConfigProviderServiceSnap(t, snap, app)
 
 		// set apps. and validate the new port comes online
 		SnapSet(t, snap, "apps."+app+".config.service-port", newPort)
@@ -104,7 +105,7 @@ func testChangePort_global(t *testing.T, snap, app, servicePort string) {
 		// make sure the port is available before using it
 		RequirePortAvailable(t, newPort)
 
-		DisableConfigProvider(t, snap, app)
+		DisableConfigProviderServiceSnap(t, snap, app)
 
 		// set config. and validate the new port comes online
 		SnapSet(t, snap, "config.service-port", newPort)
@@ -143,7 +144,7 @@ func testChangePort_mixedGlobalApp(t *testing.T, snap, app, servicePort string) 
 		RequirePortAvailable(t, newAppPort)
 		RequirePortAvailable(t, newConfigPort)
 
-		DisableConfigProvider(t, snap, app)
+		DisableConfigProviderServiceSnap(t, snap, app)
 
 		// set apps. and config. with different values,
 		// and validate that app-specific option has been picked up because it has higher precedence
@@ -204,9 +205,34 @@ func WaitStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time, ret
 	t.Fatalf(`Time out: reached max %d retries looking for "%s"`, retries, expectedMsg)
 }
 
-// DisableConfigProvider disables the config provider for the specified app
+// DisableConfigProviderPlatformSnap disables the config provider for the specified app
 // and sets the common configuration path
-func DisableConfigProvider(t *testing.T, snap, app string) {
+func DisableConfigProviderPlatformSnap(t *testing.T, snap, app string) {
 	SnapSet(t, snap, "apps."+app+".config.edgex-config-provider", "none")
 	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", "./config/core-common-config-bootstrapper/res/configuration.yaml")
+}
+
+// DisableConfigProviderServiceSnap disables the config provider for the specified app,
+// copies the common configuration file from the platform snap to the service snap,
+// and sets the common configuration path.
+func DisableConfigProviderServiceSnap(t *testing.T, snap, app string) {
+	SnapSet(t, snap, "apps."+app+".config.edgex-config-provider", "none")
+
+	t.Logf("Copying coommon config file from platform snap to service snap: %s", snap)
+
+	sourceFile := "/snap/edegxfoundry/current/config/core-common-config-bootstrapper/res/configuration.yaml"
+	destFile := "/var/snap/"+snap+"/current/config/core-common-config-bootstrapper/res/configuration.yaml"
+	// read the source common config file
+	source, err := ioutil.ReadFile(sourceFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// write the source file contents to the destination file
+	err = ioutil.WriteFile(destFile, source, 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", destFile)
 }
