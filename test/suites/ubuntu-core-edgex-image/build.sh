@@ -9,6 +9,8 @@ cd pc-gadget
 yq e '(.volumes.pc.structure[] | select(.name=="ubuntu-seed") | .size)="1500M"' gadget.yaml -i
 
 # setup default options for snaps
+# AZGf0KNnh8aqdkbGATNuRuxnt1GNRKkV (edgexfoundry snap)
+# AmKuVTOfsN0uEKsyJG34M8CaMfnIqxc0 (edgex-device-virtual snap) 
 yq e '.defaults += {
   "AZGf0KNnh8aqdkbGATNuRuxnt1GNRKkV": {
     "app-options": true,
@@ -20,7 +22,8 @@ yq e '.defaults += {
     "apps": {
       "device-virtual": {
         "config": {
-          "service-startupmsg": "Startup message from gadget!"
+          "service-startupmsg": "Startup message from gadget!",
+          "edgex-security-secret-store": false
         }
       }
     }

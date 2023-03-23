@@ -19,3 +19,5 @@ ssh "$USER@localhost" -p 8022 "snap services edgex-device-virtual; printf '\n'"
 # verify that device-virtual has the startup message set from the gadget within the emulator
 ssh "$USER@localhost" -p 8022 'snap logs -n=all edgex-device-virtual | grep "Startup message"; printf '\n''
 
+# access the service endpoints via API Gateway outside of the emulator
+curl --insecure --show-err https://localhost:8443/core-data/api/v2/ping
