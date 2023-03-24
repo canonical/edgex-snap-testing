@@ -49,7 +49,15 @@ Once you see the SSH command and the IP address, open a new terminal to test the
 
 ```
 $ USER=<your-username> ./test.sh
-# {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:14 UTC 2023","serviceName":"core-data"}
-# {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:15 UTC 2023","serviceName":"core-metadata"}
-# {"apiVersion":"v2","timestamp":"Tue Mar  7 18:18:15 UTC 2023","serviceName":"core-command"}
+# {"apiVersion":"v2","timestamp":"Wed Mar 22 18:05:07 UTC 2023","serviceName":"core-data"}
+# {"apiVersion":"v2","timestamp":"Wed Mar 22 18:05:07 UTC 2023","serviceName":"core-metadata"}
+# {"apiVersion":"v2","timestamp":"Wed Mar 22 18:05:07 UTC 2023","serviceName":"core-command"}
+# {
+#         "security": false
+# }
+
+# Service                              Startup  Current  Notes
+# edgex-device-virtual.device-virtual  enabled  active   -
+
+# 2023-03-22T17:51:27Z edgex-device-virtual.device-virtual[3874]: level=INFO ts=2023-03-22T17:51:27.022824501Z app=device-virtual source=variables.go:377 msg="Variables override of 'Service.StartupMsg' by environment variable: SERVICE_STARTUPMSG=Startup message from gadget!"
 ```
