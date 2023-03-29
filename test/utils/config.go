@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
@@ -220,19 +219,9 @@ func DisableConfigProviderServiceSnap(t *testing.T, snap, app string) {
 
 	t.Logf("Copying coommon config file from platform snap to service snap: %s", snap)
 
-	sourceFile := "/snap/edegxfoundry/current/config/core-common-config-bootstrapper/res/configuration.yaml"
-	destFile := "/var/snap/"+snap+"/current/config/common-config.yaml"
-	// read the source common config file
-	source, err := ioutil.ReadFile(sourceFile)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// write the source file contents to the destination file
-	err = ioutil.WriteFile(destFile, source, 0644)
-	if err != nil {
-		t.Fatal(err)
-	}
+	sourceFile := "/snap/edgexfoundry/current/config/core-common-config-bootstrapper/res/configuration.yaml"
+	destFile := "/var/snap/" + snap + "/current/config/core-common-config-bootstrapper/res/configuration.yaml"
+	utils.Exec(t, "sudo cp "+sourceFile+" "+destFile)
 
 	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", destFile)
 }
