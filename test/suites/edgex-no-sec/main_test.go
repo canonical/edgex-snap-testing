@@ -72,7 +72,6 @@ func setup() (teardown func(), err error) {
 	// turn security off
 	utils.SnapSet(nil, platformSnap, "security", "false")
 
-
 	// make sure all services are online before starting the tests
 	if err = utils.WaitServiceOnline(nil, 180, platformPortsNoSec()...); err != nil {
 		teardown()

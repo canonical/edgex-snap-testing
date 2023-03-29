@@ -3,7 +3,6 @@ package test
 import (
 	"edgex-snap-testing/test/utils"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"testing"
@@ -36,6 +35,7 @@ func TestRulesEngine(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Failed to setup tests: %s", err)
 	}
+	defer teardown()
 
 	t.Run("create stream and rule", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
@@ -65,7 +65,6 @@ func TestRulesEngine(t *testing.T) {
 		var reading Reading
 		client := &http.Client{}
 		resp, err := client.Do(req)
-
 		require.NoError(t, err)
 		defer resp.Body.Close()
 
@@ -76,16 +75,9 @@ func TestRulesEngine(t *testing.T) {
 		require.Greaterf(t, reading.TotalCount, 0, "No readings have been re-published to EdgeX message bus by ekuiper")
 	})
 
-	teardown()
 }
 
 func subtestSetup(t *testing.T) (teardown func(), err error) {
-	log.Println("[SUBTEST CLEAN]")
-	utils.SnapRemove(t, deviceVirtualSnap)
-	utils.SnapRemove(t, ekuiperSnap)
-	utils.SnapRemove(t, ascSnap)
-
-	log.Println("[SUBTEST SETUP]")
 	start := time.Now()
 
 	teardown = func() {
@@ -101,6 +93,14 @@ func subtestSetup(t *testing.T) (teardown func(), err error) {
 			utils.SnapRemove(t, ascSnap)
 		}
 	}
+	defer teardown()
+
+	log.Println("[SUBTEST CLEAN]")
+	utils.SnapRemove(t, deviceVirtualSnap)
+	utils.SnapRemove(t, ekuiperSnap)
+	utils.SnapRemove(t, ascSnap)
+
+	log.Println("[SUBTEST SETUP]")
 
 	if err = utils.SnapInstallFromStore(t, deviceVirtualSnap, utils.ServiceChannel); err != nil {
 		teardown()
@@ -127,7 +127,7 @@ func subtestSetup(t *testing.T) (teardown func(), err error) {
 	utils.SnapSet(t, ekuiperSnap, "config.edgex.default.messagetype", "event")
 	utils.SnapSet(t, ascSnap, "profile", "rules-engine")
 
-	// set tests to run without a config provider when testing config options as a temporary solution. 
+	// set tests to run without a config provider when testing config options as a temporary solution.
 	// update this once the following PR has been merged: https://github.com/canonical/edgex-snap-testing/pull/175
 	disableConfigProviderServiceSnap(t, deviceVirtualSnap, deviceVirtualApp)
 	disableConfigProviderServiceSnap(t, ascSnap, ascApp)
@@ -164,17 +164,8 @@ func disableConfigProviderServiceSnap(t *testing.T, snap, app string) {
 
 	sourceFile := "/snap/edgexfoundry/current/config/core-common-config-bootstrapper/res/configuration.yaml"
 	destFile := "/var/snap/" + snap + "/current/config/common-config.yaml"
-	// read the source common config file
-	source, err := ioutil.ReadFile(sourceFile)
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	// write the source file contents to the destination file
-	err = ioutil.WriteFile(destFile, source, 0644)
-	if err != nil {
-		t.Fatal(err)
-	}
+	utils.Exec(t, "sudo cp "+sourceFile+" "+destFile)
 
 	utils.SnapSet(t, snap, "apps."+app+".config.edgex-common-config", destFile)
 }
