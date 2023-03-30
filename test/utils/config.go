@@ -220,7 +220,7 @@ func DisableConfigProviderServiceSnap(t *testing.T, snap, app string) {
 	t.Logf("Copying common config file from platform snap to service snap: %s", snap)
 
 	sourceFile := "/snap/edgexfoundry/current/config/core-common-config-bootstrapper/res/configuration.yaml"
-	destFile := "/var/snap/"+snap+"/current/config/common-config.yaml"
+	destFile := "/var/snap/" + snap + "/current/config/common-config.yaml"
 	Exec(t, "sudo cp "+sourceFile+" "+destFile)
 
 	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", destFile)
