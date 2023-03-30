@@ -17,6 +17,6 @@ sudo qemu-system-x86_64 \
  -machine accel=kvm \
  -serial mon:stdio \
  -net nic,model=virtio \
- -net user,hostfwd=tcp::8022-:22,hostfwd=tcp::59880-:59880,hostfwd=tcp::8443-:8443
+ -net user,hostfwd=tcp::8022-:22,hostfwd=tcp::8443-:8443
 
 
