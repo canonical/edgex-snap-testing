@@ -41,3 +41,7 @@ snaps:
     type: app
     default-channel: latest/stable
     id: AmKuVTOfsN0uEKsyJG34M8CaMfnIqxc0
+  - name: edgex-config-provider-example
+    type: app
+    default-channel: latest/edge
+    id: WWPGZGi1bImphPwrRfw46aP7YMyZYl6w

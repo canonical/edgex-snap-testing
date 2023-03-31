@@ -16,7 +16,7 @@ yq e -i '(.volumes.pc.structure[] | select(.name=="ubuntu-seed") | .size)="1500M
 yq e -i '.defaults += {
   "AZGf0KNnh8aqdkbGATNuRuxnt1GNRKkV": {
     "app-options": true,
-    "security": false
+    "security-secret-store": "off"
   },
   "AmKuVTOfsN0uEKsyJG34M8CaMfnIqxc0": {
     "autostart": true,
@@ -50,18 +50,6 @@ TIMESTAMP=$(date -Iseconds --utc)
 yq e -i ".authority-id = \"$DEVELOPER_ID\"" model.yaml
 yq e -i ".brand-id = \"$DEVELOPER_ID\"" model.yaml
 yq e -i ".timestamp = \"$TIMESTAMP\"" model.yaml
-
-# Add the config provider snap, which contains configuration files, to the model assertion
-yq e -i '
-  .snaps += [
-    {
-      "name": "edgex-config-provider-example",
-      "type": "app",
-      "default-channel": "latest/edge",
-      "id": "WWPGZGi1bImphPwrRfw46aP7YMyZYl6w"
-    }
-  ]
-' model.yaml
 
 # Sign the model assertion
 yq eval model.yaml -o=json | snap sign -k $KEY_NAME > model.signed.yaml
