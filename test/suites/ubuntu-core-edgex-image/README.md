@@ -49,8 +49,6 @@ Once you see the SSH command and the IP address, open a new terminal to test the
 
 ```
 $ USER=<your-username> ./test.sh
-# Install curl on host:
-curl 8.0.1 from Wouter van Bommel (woutervb) installed
 
 # Check status of core services inside of the emulator:
 {"apiVersion":"v2","timestamp":"Thu Mar 30 13:36:10 UTC 2023","serviceName":"core-data"}
@@ -65,9 +63,6 @@ curl 8.0.1 from Wouter van Bommel (woutervb) installed
 # Check the status of the device-virtual service within the emulator:
 Service                              Startup  Current  Notes
 edgex-device-virtual.device-virtual  enabled  active   -
-
-# Access the service endpoints via API Gateway outside of the emulator:
-{"message":"Unauthorized"}
 
 # List snaps and check edgex-config-provider-example is in the list:
 Name                           Version         Rev    Tracking       Publisher    Notes
@@ -87,6 +82,4 @@ snapd                          2.58.3          18596  latest/stable  canonical**
 # Verify that Device Virtual has the startup message set from the provider:
 2023-03-30T12:47:58Z edgex-device-virtual.device-virtual[3965]: level=INFO ts=2023-03-30T12:47:58.514769034Z app=device-virtual source=message.go:55 msg="CONFIG BY EXAMPLE PROVIDER"
 
-# Query the metadata of Device Virtual from your host machine:
-{"message":"Unauthorized"}
 ```
