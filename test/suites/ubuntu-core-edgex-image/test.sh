@@ -2,10 +2,13 @@
 
 SSH_USER="$USER"
 SSH_PORT="8022"
-alias remote_call="ssh \"$SSH_USER@localhost\" -p $SSH_PORT"
+remote_call() {
+  ssh "$SSH_USER@localhost" -p $SSH_PORT "$@"
+}
 
-# Install curl on host
-snap install curl
+
+# Install curl on emulator
+remote_call "snap install curl"
 
 # Check status of core services inside of the emulator
 ports=(59880 59881 59882)
@@ -16,7 +19,7 @@ do
 done
 
 # Verify that the security is avaliable as a snap option of edgexfoundry within the emulator
-remote_call "snap get edgexfoundry security -d"
+remote_call "snap get edgexfoundry security-secret-store -d"
 
 # Check the status of the device-virtual service within the emulator
 remote_call "snap services edgex-device-virtual"
