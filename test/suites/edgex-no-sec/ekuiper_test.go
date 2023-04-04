@@ -83,6 +83,12 @@ func TestRulesEngine(t *testing.T) {
 		ascServiceRulesPort,
 	)
 
+	// TODO: temporary fix
+	err := utils.InjectDevicesAndProfilesDirConfig("device-virtual")
+	if err != nil {
+		log.Fatalf("Failed to inject devices/profiles dir into config: %s", err)
+	}
+
 	// wait device-virtual to produce readings
 	utils.WaitForReadings(t, false)
 
@@ -107,9 +113,6 @@ func TestRulesEngine(t *testing.T) {
 
 		req, err := http.NewRequest(http.MethodGet, "http://localhost:59880/api/v2/reading/device/name/device-test", nil)
 		require.NoError(t, err)
-
-		idToken := utils.LoginTestUser(t)
-		req.Header.Set("Authorization", "Bearer "+idToken)
 
 		var reading Reading
 		client := &http.Client{}
