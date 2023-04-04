@@ -1,23 +1,35 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
-ssh "$USER@localhost" -p 8022 "snap install curl"
+SSH_USER="$USER"
+SSH_PORT="8022"
+remote_call() {
+  ssh "$SSH_USER@localhost" -p $SSH_PORT "$@"
+}
 
-# check status of core services inside of the emulator
+
+# Install curl on emulator
+remote_call "snap install curl"
+
+# Check status of core services inside of the emulator
 ports=(59880 59881 59882)
 
 for port in "${ports[@]}"
 do
-  ssh "$USER@localhost" -p 8022 "curl -s http://localhost:$port/api/v2/ping; printf '\n'"
+  remote_call "curl -s http://localhost:$port/api/v2/ping"
 done
 
-# verify that the security is avaliable as a snap option of edgexfoundry within the emulator
-ssh "$USER@localhost" -p 8022 "snap get edgexfoundry security -d; printf '\n'"
+# Verify that the security is avaliable as a snap option of edgexfoundry within the emulator
+remote_call "snap get edgexfoundry security-secret-store -d"
 
-# check the status of the device-virtual service within the emulator
-ssh "$USER@localhost" -p 8022 "snap services edgex-device-virtual; printf '\n'"
+# Check the status of the device-virtual service within the emulator
+remote_call "snap services edgex-device-virtual"
 
-# verify that device-virtual has the startup message set from the gadget within the emulator
-ssh "$USER@localhost" -p 8022 'snap logs -n=all edgex-device-virtual | grep "Startup message"; printf '\n''
+# List snaps and check edgex-config-provider-example is in the list
+remote_call 'snap list'
 
-# access the service endpoints via API Gateway outside of the emulator
-curl --insecure --show-err https://localhost:8443/core-data/api/v2/ping
+# Verify that Device Virtual only has one profile, as configured in the config provider
+remote_call 'curl --silent http://localhost:59881/api/v2/deviceprofile/all' | jq '.totalCount'
+
+# Verify that Device Virtual has the startup message set from the provider
+remote_call 'snap logs -n=all edgex-device-virtual | grep "CONFIG BY EXAMPLE PROVIDER"'
+
