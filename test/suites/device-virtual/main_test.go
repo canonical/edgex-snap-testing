@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	deviceVirtualSnap        = "edgex-device-virtual"
-	deviceVirtualApp         = "device-virtual"
-	deviceVirtualServicePort = "59900"
+	deviceVirtualSnap = "edgex-device-virtual"
+	deviceVirtualApp  = "device-virtual"
+	
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +35,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceVirtualSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceVirtualApp,
-			DefaultPort:              deviceVirtualServicePort,
+			DefaultPort:              utils.ServicePorts[deviceVirtualApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +45,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceVirtualSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceVirtualServicePort},
-		TestBindLoopback: []string{deviceVirtualServicePort},
+		TestOpenPorts:    []string{utils.ServicePorts[deviceVirtualApp]},
+		TestBindLoopback: []string{utils.ServicePorts[deviceVirtualApp]},
 	})
 
 	utils.TestPackaging(t, deviceVirtualSnap, utils.Packaging{
