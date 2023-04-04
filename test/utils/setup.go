@@ -66,7 +66,7 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 
 	// TODO: remove this patch which is for device services
 	if strings.Contains(snapName, "device-") {
-		err = injectDevicesAndProfilesDirConfig(strings.TrimPrefix(snapName, "edgex-"))
+		err = InjectDevicesAndProfilesDirConfig(strings.TrimPrefix(snapName, "edgex-"))
 		if err != nil {
 			log.Fatalf("Failed to inject devices/profiles dir into config: %s", err)
 		}

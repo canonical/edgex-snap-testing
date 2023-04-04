@@ -121,5 +121,11 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
+	// TODO: temporary fix
+	err = utils.InjectDevicesAndProfilesDirConfig("device-virtual")
+	if err != nil {
+		log.Fatalf("Failed to inject devices/profiles dir into config: %s", err)
+	}
+
 	return
 }

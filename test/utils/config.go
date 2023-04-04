@@ -229,7 +229,7 @@ func DisableConfigProviderServiceSnap(t *testing.T, snap, app string) {
 }
 
 // TODO: remove once issue (TBA) is resolved
-func injectDevicesAndProfilesDirConfig(app string) error {
+func InjectDevicesAndProfilesDirConfig(app string) error {
 	const confPathTempl = "/var/snap/edgex-{{.}}/current/config/{{.}}/res/configuration.yaml"
 	const confTempl = `
 # Local config to override the common setting
