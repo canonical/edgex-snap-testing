@@ -228,7 +228,7 @@ func DisableConfigProviderServiceSnap(t *testing.T, snap, app string) {
 	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", destFile)
 }
 
-// TODO: remove once issue (TBA) is resolved
+// TODO: remove once the following issue is resolved: https://github.com/edgexfoundry/device-sdk-go/issues/1414
 func InjectDevicesAndProfilesDirConfig(app string) error {
 	const confPathTempl = "/var/snap/edgex-{{.}}/current/config/{{.}}/res/configuration.yaml"
 	const confTempl = `
