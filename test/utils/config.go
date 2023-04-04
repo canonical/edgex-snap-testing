@@ -245,7 +245,7 @@ Device:
 	template.Must(template.New("temp").Parse(confPathTempl)).Execute(&tpl, app)
 	confPath := tpl.String()
 
-	stdout, stderr, err := exec(nil, "echo '"+conf+"' | sudo tee -a "+confPath, true)
+	stdout, stderr, err := Exec(nil, "echo '"+conf+"' | sudo tee -a "+confPath)
 	if err != nil {
 		return fmt.Errorf("%s %s %s", stdout, stderr, err)
 	}
