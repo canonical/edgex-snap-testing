@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"testing"
+	"text/template"
 	"time"
 
 	"github.com/stretchr/testify/require"
@@ -224,4 +226,28 @@ func DisableConfigProviderServiceSnap(t *testing.T, snap, app string) {
 	Exec(t, "sudo cp "+sourceFile+" "+destFile)
 
 	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", destFile)
+}
+
+// TODO: remove once issue (TBA) is resolved
+func injectDevicesAndProfilesDirConfig(app string) error {
+	const confPathTempl = "/var/snap/edgex-{{.}}/current/config/{{.}}/res/configuration.yaml"
+	const confTempl = `
+# Local config to override the common setting
+Device:
+  ProfilesDir: /var/snap/edgex-{{.}}/current/config/{{.}}/res/profiles
+  DevicesDir: /var/snap/edgex-{{.}}/current/config/{{.}}/res/devices
+`
+	var tpl bytes.Buffer
+	template.Must(template.New("temp").Parse(confTempl)).Execute(&tpl, app)
+	conf := tpl.String()
+
+	tpl.Reset()
+	template.Must(template.New("temp").Parse(confPathTempl)).Execute(&tpl, app)
+	confPath := tpl.String()
+
+	stdout, stderr, err := exec(nil, "echo '"+conf+"' | sudo tee -a "+confPath, true)
+	if err != nil {
+		return fmt.Errorf("%s %s %s", stdout, stderr, err)
+	}
+	return nil
 }
