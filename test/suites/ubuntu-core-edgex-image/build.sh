@@ -28,7 +28,8 @@ yq e -i '.defaults += {
       }
     }
   }
-}' gadget.yaml
+} | .defaults.AZGf0KNnh8aqdkbGATNuRuxnt1GNRKkV.security-secret-store style="double"' gadget.yaml
+
 
 # Connect edgex-device-virtual's plug (consumer) to 
 # edgex-config-provider-example's slot (provider) 
@@ -40,7 +41,18 @@ yq e -i '.connections += [
           }
         ]
       ' gadget.yaml
+# Add kernel options for extended logging and a debugging shell
+cp -r ../kernel-options/ .
+yq e -i '.parts += { 
+    "kernel-options": 
+      { 
+        "source": "kernel-options/",
+        "plugin": "dump" 
+      }
+    }' snapcraft.yaml
 
+
+# Build gadget snap
 snapcraft
 
 # Configure model assertion

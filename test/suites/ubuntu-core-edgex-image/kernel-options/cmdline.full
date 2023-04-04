@@ -1,0 +1,29 @@
+# this is the first serial console, pick a suitable one for your device
+console=ttyS0 
+
+# set to get more output from snapd
+#snapd.debug=1
+
+# these will output more device status/logging to our console,
+# which is kinda annoying in that it goes to the same place we 
+# have our shell, but I think it's more useful to be able to see 
+# than have a perfectly pristine console, if you have multiple
+# consoles you could of course use a different console for
+# systemd output and your debug shell
+rd.systemd.journald.forward_to_console=1
+systemd.journald.forward_to_console=1
+
+# to disable console-conf from running on ttyS0 so we can setup
+# our debug shell there, this is the most key part here, without
+# this console-conf will kill/prevent from starting our debug shell
+systemd.mask=serial-getty@ttyS0.service
+
+# create our debug shell on ttyS0
+systemd.debug-shell=ttyS0
+
+# needed in order to allow the debug-shell to run on UC20
+dangerous
+
+# standard Ubuntu Core kernel command line parameters
+panic=-1
+
