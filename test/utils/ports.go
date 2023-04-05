@@ -2,12 +2,6 @@ package utils
 
 var ServicePorts = map[string]string{
 	// platform services
-	"core-data":         "59880",
-	"core-metadata":     "59881",
-	"core-command":      "59882",
-	"vault":             "8200",
-	"consul":            "8500",
-	"redis":             "6379",
 	"support-scheduler": "59861",
 	// app services
 	"app-rfid-llrp-inventory":  "59711",

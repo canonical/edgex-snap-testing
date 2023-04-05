@@ -33,7 +33,7 @@ func TestCommon(t *testing.T) {
 
 	utils.TestConfig(t, appRfidLlrpSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
-			App:                      utils.ServicePorts[appRfidLlrpApp],
+			App:                      appRfidLlrpApp,
 			DefaultPort:              utils.ServicePorts[appRfidLlrpApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
