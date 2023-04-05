@@ -64,8 +64,8 @@ func TestRulesEngine(t *testing.T) {
 	utils.SnapSet(t, ascSnap, "profile", "rules-engine")
 
 	// set tests to run without a config provider when testing config options as a temporary solution.
-	utils.DisableConfigProviderServiceSnap(t, deviceVirtualSnap, deviceVirtualApp)
-	utils.DisableConfigProviderServiceSnap(t, ascSnap, ascApp)
+	utils.DoNotUseConfigProviderServiceSnap(t, deviceVirtualSnap, deviceVirtualApp)
+	utils.DoNotUseConfigProviderServiceSnap(t, ascSnap, ascApp)
 
 	// make sure all services are online before starting the tests
 	utils.SnapStart(t,
