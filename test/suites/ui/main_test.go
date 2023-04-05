@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	uiSnap        = "edgex-ui"
-	uiServicePort = "4000"
+	uiSnap = "edgex-ui"
+	uiApp  = "ui"
 )
 
 func TestMain(m *testing.M) {
@@ -28,8 +28,8 @@ func TestMain(m *testing.M) {
 func TestCommon(t *testing.T) {
 	utils.TestNet(t, uiSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{uiServicePort},
-		TestBindLoopback: []string{},
+		TestOpenPorts:    []string{utils.ServicePort(uiApp)},
+		TestBindLoopback: []string{utils.ServicePort(uiApp)},
 	})
 
 	utils.TestPackaging(t, uiSnap, utils.Packaging{

@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	deviceRestSnap        = "edgex-device-rest"
-	deviceRestApp         = "device-rest"
-	deviceRestServicePort = "59986"
+	deviceRestSnap = "edgex-device-rest"
+	deviceRestApp  = "device-rest"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceRestSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceRestApp,
-			DefaultPort:              deviceRestServicePort,
+			DefaultPort:              utils.ServicePort(deviceRestApp),
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceRestSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceRestServicePort},
-		TestBindLoopback: []string{deviceRestServicePort},
+		TestOpenPorts:    []string{utils.ServicePort(deviceRestApp)},
+		TestBindLoopback: []string{utils.ServicePort(deviceRestApp)},
 	})
 
 	utils.TestPackaging(t, deviceRestSnap, utils.Packaging{

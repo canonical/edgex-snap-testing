@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	deviceOnvifCameraSnap        = "edgex-device-onvif-camera"
-	deviceOnvifCameraApp         = "device-onvif-camera"
-	deviceOnvifCameraServicePort = "59984"
+	deviceOnvifCameraSnap = "edgex-device-onvif-camera"
+	deviceOnvifCameraApp  = "device-onvif-camera"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceOnvifCameraSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceOnvifCameraApp,
-			DefaultPort:              deviceOnvifCameraServicePort,
+			DefaultPort:              utils.ServicePort(deviceOnvifCameraApp),
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceOnvifCameraSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceOnvifCameraServicePort},
-		TestBindLoopback: []string{deviceOnvifCameraServicePort},
+		TestOpenPorts:    []string{utils.ServicePort(deviceOnvifCameraApp)},
+		TestBindLoopback: []string{utils.ServicePort(deviceOnvifCameraApp)},
 	})
 
 	utils.TestPackaging(t, deviceOnvifCameraSnap, utils.Packaging{

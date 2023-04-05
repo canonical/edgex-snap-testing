@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	deviceGpioSnap        = "edgex-device-gpio"
-	deviceGpioApp         = "device-gpio"
-	deviceGpioServicePort = "59910"
+	deviceGpioSnap = "edgex-device-gpio"
+	deviceGpioApp  = "device-gpio"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceGpioSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceGpioApp,
-			DefaultPort:              deviceGpioServicePort,
+			DefaultPort:              utils.ServicePort(deviceGpioApp),
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceGpioSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceGpioServicePort},
-		TestBindLoopback: []string{deviceGpioServicePort},
+		TestOpenPorts:    []string{utils.ServicePort(deviceGpioApp)},
+		TestBindLoopback: []string{utils.ServicePort(deviceGpioApp)},
 	})
 
 	utils.TestPackaging(t, deviceGpioSnap, utils.Packaging{

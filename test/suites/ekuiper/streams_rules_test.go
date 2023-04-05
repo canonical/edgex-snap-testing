@@ -65,7 +65,7 @@ func TestStreamsAndRules(t *testing.T) {
 	})
 
 	// wait device-virtual to come online and produce readings
-	if err := utils.WaitServiceOnline(t, 60, deviceVirtualPort); err != nil {
+	if err := utils.WaitServiceOnline(t, 60, utils.ServicePort(deviceVirtualApp)); err != nil {
 		t.Fatal(err)
 	}
 	utils.WaitForReadings(t, true)
@@ -104,7 +104,7 @@ func TestStreamsAndRules(t *testing.T) {
 
 	t.Run("check rule_edgex_message_bus", func(t *testing.T) {
 		// wait device-virtual to come online and produce readings
-		if err := utils.WaitServiceOnline(t, 60, deviceVirtualPort); err != nil {
+		if err := utils.WaitServiceOnline(t, 60, utils.ServicePort(deviceVirtualApp)); err != nil {
 			t.Fatal(err)
 		}
 
