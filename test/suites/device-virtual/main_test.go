@@ -10,7 +10,6 @@ import (
 const (
 	deviceVirtualSnap = "edgex-device-virtual"
 	deviceVirtualApp  = "device-virtual"
-	
 )
 
 func TestMain(m *testing.M) {

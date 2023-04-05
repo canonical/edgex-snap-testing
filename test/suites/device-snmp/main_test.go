@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	deviceSnmpSnap        = "edgex-device-snmp"
-	deviceSnmpApp         = "device-snmp"
-	deviceSnmpServicePort = "59993"
+	deviceSnmpSnap = "edgex-device-snmp"
+	deviceSnmpApp  = "device-snmp"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceSnmpSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceSnmpApp,
-			DefaultPort:              deviceSnmpServicePort,
+			DefaultPort:              utils.ServicePorts[deviceSnmpApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceSnmpSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceSnmpServicePort},
-		TestBindLoopback: []string{deviceSnmpServicePort},
+		TestOpenPorts:    []string{utils.ServicePorts[deviceSnmpApp]},
+		TestBindLoopback: []string{utils.ServicePorts[deviceSnmpApp]},
 	})
 
 	utils.TestPackaging(t, deviceSnmpSnap, utils.Packaging{

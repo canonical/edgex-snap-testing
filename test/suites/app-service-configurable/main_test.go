@@ -8,11 +8,10 @@ import (
 )
 
 const (
-	ascSnap                       = "edgex-app-service-configurable"
-	ascApp                        = "app-service-configurable"
-	ascService                    = ascSnap + "." + ascApp
-	defaultTestProfile            = "rules-engine"
-	defaultTestProfileServicePort = "59701"
+	ascSnap            = "edgex-app-service-configurable"
+	ascApp             = "app-service-configurable"
+	ascService         = ascSnap + "." + ascApp
+	defaultTestProfile = "rules-engine"
 )
 
 func TestMain(m *testing.M) {
@@ -40,7 +39,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, ascSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      ascApp,
-			DefaultPort:              defaultTestProfileServicePort,
+			DefaultPort:              utils.ServicePorts[ascApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -50,8 +49,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, ascSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{defaultTestProfileServicePort},
-		TestBindLoopback: []string{defaultTestProfileServicePort},
+		TestOpenPorts:    []string{utils.ServicePorts[ascApp]},
+		TestBindLoopback: []string{utils.ServicePorts[ascApp]},
 	})
 
 	utils.TestPackaging(t, ascSnap, utils.Packaging{

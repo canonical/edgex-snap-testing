@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	deviceMqttSnap        = "edgex-device-mqtt"
-	deviceMqttApp         = "device-mqtt"
-	deviceMqttServicePort = "59982"
+	deviceMqttSnap = "edgex-device-mqtt"
+	deviceMqttApp  = "device-mqtt"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceMqttSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceMqttApp,
-			DefaultPort:              deviceMqttServicePort,
+			DefaultPort:              utils.ServicePorts[deviceMqttApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceMqttSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceMqttServicePort},
-		TestBindLoopback: []string{deviceMqttServicePort},
+		TestOpenPorts:    []string{utils.ServicePorts[deviceMqttApp]},
+		TestBindLoopback: []string{utils.ServicePorts[deviceMqttApp]},
 	})
 
 	utils.TestPackaging(t, deviceMqttSnap, utils.Packaging{

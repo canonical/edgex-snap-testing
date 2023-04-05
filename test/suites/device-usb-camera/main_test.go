@@ -8,10 +8,9 @@ import (
 )
 
 const (
-	deviceUSBCamSnap        = "edgex-device-usb-camera"
-	deviceUSBCamApp         = "device-usb-camera"
-	deviceUSBCamServicePort = "59983"
-	rtspServerPort          = "8554"
+	deviceUSBCamSnap    = "edgex-device-usb-camera"
+	deviceUSBCamApp     = "device-usb-camera"
+	deviceUSBCamRtspApp = "device-usb-camera/rtsp"
 )
 
 func TestMain(m *testing.M) {
@@ -36,7 +35,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceUSBCamSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceUSBCamApp,
-			DefaultPort:              deviceUSBCamServicePort,
+			DefaultPort:              utils.ServicePorts[deviceUSBCamApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -46,8 +45,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceUSBCamSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceUSBCamServicePort, rtspServerPort},
-		TestBindLoopback: []string{deviceUSBCamServicePort, rtspServerPort},
+		TestOpenPorts:    []string{utils.ServicePorts[deviceUSBCamApp], utils.ServicePorts[deviceUSBCamRtspApp]},
+		TestBindLoopback: []string{utils.ServicePorts[deviceUSBCamApp], utils.ServicePorts[deviceUSBCamRtspApp]},
 	})
 
 	utils.TestPackaging(t, deviceUSBCamSnap, utils.Packaging{

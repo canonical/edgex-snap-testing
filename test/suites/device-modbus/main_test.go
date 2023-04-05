@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	deviceModbusSnap        = "edgex-device-modbus"
-	deviceModbusApp         = "device-modbus"
-	deviceModbusServicePort = "59901"
+	deviceModbusSnap = "edgex-device-modbus"
+	deviceModbusApp  = "device-modbus"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceModbusSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceModbusApp,
-			DefaultPort:              deviceModbusServicePort,
+			DefaultPort:              utils.ServicePorts[deviceModbusApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceModbusSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceModbusServicePort},
-		TestBindLoopback: []string{deviceModbusServicePort},
+		TestOpenPorts:    []string{utils.ServicePorts[deviceModbusApp]},
+		TestBindLoopback: []string{utils.ServicePorts[deviceModbusApp]},
 	})
 
 	utils.TestPackaging(t, deviceModbusSnap, utils.Packaging{

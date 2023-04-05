@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	ekuiperSnap           = "edgex-ekuiper"
-	ekuiperServerPort     = "20498"
-	ekuiperRestfulApiPort = "59720"
+	ekuiperSnap       = "edgex-ekuiper"
+	ekuiperApp        = "ekuiper"
+	ekuiperRestfulApi = "ekuiper/rest-api"
 
 	deviceVirtualSnap = "edgex-device-virtual"
-	deviceVirtualPort = "59900"
+	deviceVirtualApp  = "device-virtual"
 )
 
 var testSecretsInterface bool
@@ -47,8 +47,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, ekuiperSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{ekuiperServerPort, ekuiperRestfulApiPort},
-		TestBindLoopback: []string{ekuiperServerPort, ekuiperRestfulApiPort},
+		TestOpenPorts:    []string{utils.ServicePorts[ekuiperApp], utils.ServicePorts[ekuiperRestfulApi]},
+		TestBindLoopback: []string{utils.ServicePorts[ekuiperApp], utils.ServicePorts[ekuiperRestfulApi]},
 	})
 
 	utils.TestPackaging(t, ekuiperSnap, utils.Packaging{

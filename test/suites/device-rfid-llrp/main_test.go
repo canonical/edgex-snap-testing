@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	deviceRfidLlrpSnap        = "edgex-device-rfid-llrp"
-	deviceRfidLlrpApp         = "device-rfid-llrp"
-	deviceRfidLlrpServicePort = "59989"
+	deviceRfidLlrpSnap = "edgex-device-rfid-llrp"
+	deviceRfidLlrpApp  = "device-rfid-llrp"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceRfidLlrpSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceRfidLlrpApp,
-			DefaultPort:              deviceRfidLlrpServicePort,
+			DefaultPort:              utils.ServicePorts[deviceRfidLlrpApp],
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceRfidLlrpSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceRfidLlrpServicePort},
-		TestBindLoopback: []string{deviceRfidLlrpServicePort},
+		TestOpenPorts:    []string{utils.ServicePorts[deviceRfidLlrpApp]},
+		TestBindLoopback: []string{utils.ServicePorts[deviceRfidLlrpApp]},
 	})
 
 	utils.TestPackaging(t, deviceRfidLlrpSnap, utils.Packaging{
