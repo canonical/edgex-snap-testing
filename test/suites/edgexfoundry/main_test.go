@@ -31,7 +31,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, platformSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      supportSchedulerApp,
-			DefaultPort:              utils.ServicePorts[supportSchedulerApp],
+			DefaultPort:              utils.ServicePorts(supportSchedulerApp),
 			TestAppConfig:            false, // covered in local startup message testing
 			TestGlobalConfig:         false, // multiple servers, test setting startup message instead
 			TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
@@ -86,7 +86,7 @@ func setup() (teardown func(), err error) {
 	// Start it to have the default configurations registered in the EdgeX Registry
 	//	in preparation for the local config tests.
 	utils.SnapStart(nil, supportSchedulerService)
-	if err = utils.WaitServiceOnline(nil, 60, utils.ServicePorts[supportSchedulerApp]); err != nil {
+	if err = utils.WaitServiceOnline(nil, 60, utils.ServicePorts(supportSchedulerApp)); err != nil {
 		teardown()
 		return
 	}

@@ -111,8 +111,9 @@ func TestRulesEngine(t *testing.T) {
 			   ]
 			}'`)
 
-		req, err := http.NewRequest(http.MethodGet, "http://localhost:59880/api/v2/reading/device/name/device-test", nil)
-		require.NoError(t, err)
+		// wait device-virtual to come online and produce readings
+		utils.WaitServiceOnline(t, 60, utils.ServicePort(deviceVirtualApp))
+		utils.WaitForReadings(t, false)
 
 		var reading Reading
 		client := &http.Client{}

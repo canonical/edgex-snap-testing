@@ -34,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceGpioSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceGpioApp,
-			DefaultPort:              utils.ServicePorts[deviceGpioApp],
+			DefaultPort:              utils.ServicePort(deviceGpioApp),
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -44,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceGpioSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{utils.ServicePorts[deviceGpioApp]},
-		TestBindLoopback: []string{utils.ServicePorts[deviceGpioApp]},
+		TestOpenPorts:    []string{utils.ServicePort(deviceGpioApp)},
+		TestBindLoopback: []string{utils.ServicePort(deviceGpioApp)},
 	})
 
 	utils.TestPackaging(t, deviceGpioSnap, utils.Packaging{

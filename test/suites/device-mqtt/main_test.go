@@ -34,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceMqttSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceMqttApp,
-			DefaultPort:              utils.ServicePorts[deviceMqttApp],
+			DefaultPort:              utils.ServicePort(deviceMqttApp),
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -44,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceMqttSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{utils.ServicePorts[deviceMqttApp]},
-		TestBindLoopback: []string{utils.ServicePorts[deviceMqttApp]},
+		TestOpenPorts:    []string{utils.ServicePort(deviceMqttApp)},
+		TestBindLoopback: []string{utils.ServicePort(deviceMqttApp)},
 	})
 
 	utils.TestPackaging(t, deviceMqttSnap, utils.Packaging{

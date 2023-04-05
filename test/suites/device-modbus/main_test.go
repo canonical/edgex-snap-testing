@@ -34,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceModbusSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceModbusApp,
-			DefaultPort:              utils.ServicePorts[deviceModbusApp],
+			DefaultPort:              utils.ServicePort(deviceModbusApp),
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -44,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceModbusSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{utils.ServicePorts[deviceModbusApp]},
-		TestBindLoopback: []string{utils.ServicePorts[deviceModbusApp]},
+		TestOpenPorts:    []string{utils.ServicePort(deviceModbusApp)},
+		TestBindLoopback: []string{utils.ServicePort(deviceModbusApp)},
 	})
 
 	utils.TestPackaging(t, deviceModbusSnap, utils.Packaging{

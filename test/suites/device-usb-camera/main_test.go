@@ -13,6 +13,11 @@ const (
 	deviceUSBCamRtspApp = "device-usb-camera/rtsp"
 )
 
+var (
+	deviceUSBCamPort     = utils.ServicePort(deviceUSBCamApp)
+	deviceUSBCamRtspPort = utils.ServicePort(deviceUSBCamRtspApp)
+)
+
 func TestMain(m *testing.M) {
 	teardown, err := utils.SetupServiceTests(deviceUSBCamSnap)
 	if err != nil {
@@ -35,7 +40,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceUSBCamSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceUSBCamApp,
-			DefaultPort:              utils.ServicePorts[deviceUSBCamApp],
+			DefaultPort:              deviceUSBCamPort,
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -45,8 +50,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceUSBCamSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{utils.ServicePorts[deviceUSBCamApp], utils.ServicePorts[deviceUSBCamRtspApp]},
-		TestBindLoopback: []string{utils.ServicePorts[deviceUSBCamApp], utils.ServicePorts[deviceUSBCamRtspApp]},
+		TestOpenPorts:    []string{deviceUSBCamPort, deviceUSBCamRtspPort},
+		TestBindLoopback: []string{deviceUSBCamPort, deviceUSBCamRtspPort},
 	})
 
 	utils.TestPackaging(t, deviceUSBCamSnap, utils.Packaging{

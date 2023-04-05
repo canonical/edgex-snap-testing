@@ -17,6 +17,11 @@ const (
 	deviceVirtualApp  = "device-virtual"
 )
 
+var (
+	ekuiperPort        = utils.ServicePort(ekuiperApp)
+	ekuiperRestfulPort = utils.ServicePort(ekuiperRestfulApi)
+)
+
 var testSecretsInterface bool
 
 func TestMain(m *testing.M) {
@@ -47,8 +52,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, ekuiperSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{utils.ServicePorts[ekuiperApp], utils.ServicePorts[ekuiperRestfulApi]},
-		TestBindLoopback: []string{utils.ServicePorts[ekuiperApp], utils.ServicePorts[ekuiperRestfulApi]},
+		TestOpenPorts:    []string{ekuiperPort, ekuiperRestfulPort},
+		TestBindLoopback: []string{ekuiperPort, ekuiperRestfulPort},
 	})
 
 	utils.TestPackaging(t, ekuiperSnap, utils.Packaging{

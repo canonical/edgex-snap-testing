@@ -34,7 +34,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceOnvifCameraSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceOnvifCameraApp,
-			DefaultPort:              utils.ServicePorts[deviceOnvifCameraApp],
+			DefaultPort:              utils.ServicePort(deviceOnvifCameraApp),
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,
@@ -44,8 +44,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceOnvifCameraSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{utils.ServicePorts[deviceOnvifCameraApp]},
-		TestBindLoopback: []string{utils.ServicePorts[deviceOnvifCameraApp]},
+		TestOpenPorts:    []string{utils.ServicePort(deviceOnvifCameraApp)},
+		TestBindLoopback: []string{utils.ServicePort(deviceOnvifCameraApp)},
 	})
 
 	utils.TestPackaging(t, deviceOnvifCameraSnap, utils.Packaging{
