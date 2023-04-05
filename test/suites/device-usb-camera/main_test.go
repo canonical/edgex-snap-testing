@@ -14,8 +14,8 @@ const (
 )
 
 var (
-	deviceUSBCamPort     = utils.ServicePort(deviceUSBCamApp)
-	deviceUSBCamRtspPort = utils.ServicePort(deviceUSBCamRtspApp)
+	deviceUSBCamServicePort     = utils.ServicePort(deviceUSBCamApp)
+	deviceUSBCamRtspServicePort = utils.ServicePort(deviceUSBCamRtspApp)
 )
 
 func TestMain(m *testing.M) {
@@ -50,8 +50,8 @@ func TestCommon(t *testing.T) {
 
 	utils.TestNet(t, deviceUSBCamSnap, utils.Net{
 		StartSnap:        true,
-		TestOpenPorts:    []string{deviceUSBCamPort, deviceUSBCamRtspPort},
-		TestBindLoopback: []string{deviceUSBCamPort, deviceUSBCamRtspPort},
+		TestOpenPorts:    []string{deviceUSBCamServicePort, deviceUSBCamRtspServicePort},
+		TestBindLoopback: []string{deviceUSBCamServicePort, deviceUSBCamRtspServicePort},
 	})
 
 	utils.TestPackaging(t, deviceUSBCamSnap, utils.Packaging{

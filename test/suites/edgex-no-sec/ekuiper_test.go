@@ -19,11 +19,12 @@ const (
 	deviceVirtualSnap = "edgex-device-virtual"
 	deviceVirtualApp  = "device-virtual"
 
-	ekuiperSnap           = "edgex-ekuiper"
-	ekuiperApp            = "ekuiper"
+	ekuiperSnap       = "edgex-ekuiper"
+	ekuiperApp        = "ekuiper"
+	ekuiperRestfulApi = "ekuiper/rest-api"
 
-	ascSnap             = "edgex-app-service-configurable"
-	ascApp              = "app-service-configurable"
+	ascSnap = "edgex-app-service-configurable"
+	ascApp  = "app-service-configurable"
 )
 
 func TestRulesEngine(t *testing.T) {
