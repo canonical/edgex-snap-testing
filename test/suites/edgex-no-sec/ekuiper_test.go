@@ -18,16 +18,12 @@ type Reading struct {
 const (
 	deviceVirtualSnap = "edgex-device-virtual"
 	deviceVirtualApp  = "device-virtual"
-	deviceVirtualPort = "59900"
 
 	ekuiperSnap           = "edgex-ekuiper"
 	ekuiperApp            = "ekuiper"
-	ekuiperServerPort     = "20498"
-	ekuiperRestfulApiPort = "59720"
 
 	ascSnap             = "edgex-app-service-configurable"
 	ascApp              = "app-service-configurable"
-	ascServiceRulesPort = "59701"
 )
 
 func TestRulesEngine(t *testing.T) {
@@ -77,10 +73,10 @@ func TestRulesEngine(t *testing.T) {
 		ascSnap)
 
 	utils.WaitServiceOnline(t, 60,
-		deviceVirtualPort,
-		ekuiperServerPort,
-		ekuiperRestfulApiPort,
-		ascServiceRulesPort,
+		utils.ServicePort(deviceVirtualApp),
+		utils.ServicePort(ekuiperApp),
+		utils.ServicePort(ekuiperRestfulApi),
+		utils.ServicePort(ascApp),
 	)
 
 	// TODO: temporary fix
@@ -111,16 +107,15 @@ func TestRulesEngine(t *testing.T) {
 			   ]
 			}'`)
 
-		// wait device-virtual to come online and produce readings
-		utils.WaitServiceOnline(t, 60, utils.ServicePort(deviceVirtualApp))
-		utils.WaitForReadings(t, false)
+		req, err := http.NewRequest(http.MethodGet, "http://localhost:59880/api/v2/reading/device/name/device-test", nil)
+		require.NoError(t, err)
 
-		var reading Reading
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		require.NoError(t, err)
 		defer resp.Body.Close()
 
+		var reading Reading
 		if err = json.NewDecoder(resp.Body).Decode(&reading); err != nil {
 			t.Fatal(err)
 		}
