@@ -9,7 +9,15 @@ import (
 
 func TestServiceStatus(t *testing.T) {
 	t.Run("security services", func(t *testing.T) {
-		var securityServices = []string{"kong-daemon", "postgres", "vault"}
+		var securityServices = []string{
+			"nginx", "vault",
+			"secrets-config-processor",
+			"security-bootstrapper-nginx",
+			"security-bootstrapper-redis",
+			"security-consul-bootstrapper",
+			"security-proxy-auth",
+			"security-secretstore-setup",
+		}
 
 		for _, service := range securityServices {
 			require.False(t, utils.SnapServicesEnabled(t, "edgexfoundry."+service))

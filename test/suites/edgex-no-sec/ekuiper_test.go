@@ -22,9 +22,6 @@ const (
 	ekuiperSnap       = "edgex-ekuiper"
 	ekuiperApp        = "ekuiper"
 	ekuiperRestfulApi = "ekuiper/rest-api"
-
-	ascSnap = "edgex-app-service-configurable"
-	ascApp  = "app-service-configurable"
 )
 
 func TestRulesEngine(t *testing.T) {
@@ -34,51 +31,20 @@ func TestRulesEngine(t *testing.T) {
 		log.Println("[TEARDOWN SUBTEST]")
 		utils.SnapDumpLogs(t, start, deviceVirtualSnap)
 		utils.SnapDumpLogs(t, start, ekuiperSnap)
-		utils.SnapDumpLogs(t, start, ascSnap)
 
 		log.Println("Removing installed snap:", !utils.SkipTeardownRemoval)
 		if !utils.SkipTeardownRemoval {
 			utils.SnapRemove(t, deviceVirtualSnap)
 			utils.SnapRemove(t, ekuiperSnap)
-			utils.SnapRemove(t, ascSnap)
 		}
 	})
 
 	log.Println("[CLEAN SUBTEST]")
 	utils.SnapRemove(t, deviceVirtualSnap)
 	utils.SnapRemove(t, ekuiperSnap)
-	utils.SnapRemove(t, ascSnap)
 
 	utils.SnapInstallFromStore(t, deviceVirtualSnap, utils.ServiceChannel)
 	utils.SnapInstallFromStore(t, ekuiperSnap, utils.ServiceChannel)
-	utils.SnapInstallFromStore(t, ascSnap, utils.ServiceChannel)
-
-	// turn security off
-	utils.SnapSet(t, deviceVirtualSnap, "config.edgex-security-secret-store", "false")
-	utils.SnapSet(t, ascSnap, "config.edgex-security-secret-store", "false")
-	utils.SnapSet(t, ekuiperSnap, "config.edgex-security-secret-store", "false")
-
-	// use ASC for event filtering
-	utils.SnapSet(t, ekuiperSnap, "config.edgex.default.topic", "rules-events")
-	utils.SnapSet(t, ekuiperSnap, "config.edgex.default.messagetype", "event")
-	utils.SnapSet(t, ascSnap, "profile", "rules-engine")
-
-	// set tests to run without a config provider when testing config options as a temporary solution.
-	utils.DoNotUseConfigProviderServiceSnap(t, deviceVirtualSnap, deviceVirtualApp)
-	utils.DoNotUseConfigProviderServiceSnap(t, ascSnap, ascApp)
-
-	// make sure all services are online before starting the tests
-	utils.SnapStart(t,
-		ekuiperSnap,
-		deviceVirtualSnap,
-		ascSnap)
-
-	utils.WaitServiceOnline(t, 60,
-		utils.ServicePort(deviceVirtualApp),
-		utils.ServicePort(ekuiperApp),
-		utils.ServicePort(ekuiperRestfulApi),
-		utils.ServicePort(ascApp),
-	)
 
 	// TODO: temporary fix
 	err := utils.InjectDevicesAndProfilesDirConfig("device-virtual")
@@ -86,8 +52,29 @@ func TestRulesEngine(t *testing.T) {
 		log.Fatalf("Failed to inject devices/profiles dir into config: %s", err)
 	}
 
+	// turn security off
+	utils.SnapSet(t, deviceVirtualSnap, "config.edgex-security-secret-store", "false")
+	utils.SnapSet(t, ekuiperSnap, "config.edgex-security-secret-store", "false")
+
+	utils.SnapSet(t, ekuiperSnap, "config.kuiper.basic.debug", "true")
+
+
+	// set tests to run without a config provider when testing config options as a temporary solution.
+	utils.DoNotUseConfigProviderServiceSnap(t, deviceVirtualSnap, deviceVirtualApp)
+
+	// make sure all services are online before starting the tests
+	utils.SnapStart(t,
+		ekuiperSnap,
+		deviceVirtualSnap)
+
+	utils.WaitServiceOnline(t, 60,
+		utils.ServicePort(deviceVirtualApp),
+		utils.ServicePort(ekuiperApp),
+		utils.ServicePort(ekuiperRestfulApi),
+	)
+
 	// wait device-virtual to produce readings
-	utils.WaitForReadings(t, false)
+	utils.WaitForReadings(t, "Random-Integer-Device", false)
 
 	t.Run("create stream and rule", func(t *testing.T) {
 		utils.Exec(t, `edgex-ekuiper.kuiper create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
@@ -95,7 +82,7 @@ func TestRulesEngine(t *testing.T) {
 		utils.Exec(t,
 			`edgex-ekuiper.kuiper create rule rule_edgex_message_bus '
 			{
-			   "sql":"SELECT * from stream1",
+			   "sql":"SELECT * FROM stream1 WHERE meta(deviceName) != \"device-test\"",
 			   "actions": [
 				  {
 					 "edgex": {
@@ -107,6 +94,9 @@ func TestRulesEngine(t *testing.T) {
 				  }
 			   ]
 			}'`)
+
+		// wait readings come from ekuiper to edgex message bus
+		utils.WaitForReadings(t, "device-test", false)
 
 		req, err := http.NewRequest(http.MethodGet, "http://localhost:59880/api/v2/reading/device/name/device-test", nil)
 		require.NoError(t, err)
