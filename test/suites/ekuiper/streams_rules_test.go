@@ -68,7 +68,7 @@ func TestStreamsAndRules(t *testing.T) {
 	if err := utils.WaitServiceOnline(t, 60, utils.ServicePort(deviceVirtualApp)); err != nil {
 		t.Fatal(err)
 	}
-	utils.WaitForReadings(t, true)
+	utils.WaitForReadings(t, "Random-Integer-Device", true)
 
 	t.Run("check rule_log", func(t *testing.T) {
 		var ruleStatus RuleStatus
