@@ -23,6 +23,8 @@ var portService = map[string]string{
 	"59881": "core-metadata",
 	"59882": "core-command",
 	"8200":  "vault",
+	"8000":  "nginx(http)",
+	"8443":  "nginx(https)",
 	"8500":  "consul",
 	"6379":  "redis",
 	"59861": "support-scheduler",
@@ -64,7 +66,13 @@ func PlatformPorts(includePublicPorts bool) (ports []string) {
 		ServicePort("vault"),
 		ServicePort("consul"),
 		ServicePort("redis"),
+		ServicePort("nginx(http)"),
 	)
+	if includePublicPorts {
+		ports = append(ports,
+			ServicePort("nginx(https)"),
+		)
+	}
 	return
 }
 
