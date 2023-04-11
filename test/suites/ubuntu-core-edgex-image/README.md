@@ -39,16 +39,20 @@ To build the gadget snap, run the following command:
 ```
 ./build-gadget.sh
 ```
-To build and boot the Ubuntu Core image with EdgeX components in an emulator:
+To build the Ubuntu Core image:
 ```
 KEY_NAME=ubuntu-core-edgex-image-test ./build-image.sh
+```
+To boot the Ubuntu Core image with EdgeX components in an emulator:
+```
+./run.sh
 ```
 **After the complete installation, use the wizard to setup the networking and user account.**
 
 Once you see the SSH command and the IP address, open a new terminal to test the image by running:
 
 ```
-$ USER=<your-username> ./run.sh
+$ USER=<your-username> ./test.sh
 + SSH_USER=<your-username>
 + SSH_PORT=8022
 + remote_call 'snap install curl'
