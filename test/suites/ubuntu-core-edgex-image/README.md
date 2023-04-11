@@ -35,20 +35,20 @@ $ snapcraft register-key ubuntu-core-edgex-image-test
 
 
 ### Build, Boot and Test the Image
-To build the Ubuntu Core image with EdgeX components, run the following command:
+To build the gadget snap, run the following command:
 ```
-KEY_NAME=ubuntu-core-edgex-image-test ./build.sh
+./build-gadget.sh
 ```
-To boot the image in an emulator:
+To build and boot the Ubuntu Core image with EdgeX components in an emulator:
 ```
-./run.sh
+KEY_NAME=ubuntu-core-edgex-image-test ./build-image.sh
 ```
 **After the complete installation, use the wizard to setup the networking and user account.**
 
 Once you see the SSH command and the IP address, open a new terminal to test the image by running:
 
 ```
-$ USER=<your-username> ./test.sh
+$ USER=<your-username> ./run.sh
 + SSH_USER=<your-username>
 + SSH_PORT=8022
 + remote_call 'snap install curl'
