@@ -8,13 +8,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	supportSchedulerStartupMsg      = "This is the Support Scheduler Microservice"
+	supportSchedulerStartupMsgInLog = `msg="This is the Support Scheduler Microservice"`
+)
+
 func TestChangeStartupMsg_app(t *testing.T) {
 	const (
 		newStartupMsg      = "snap-testing (app)"
 		newStartupMsgInLog = `msg="snap-testing (app)"`
-
-		supportSchedulerStartupMsg      = "This is the Support Scheduler Microservice"
-		supportSchedulerStartupMsgInLog = `msg="This is the Support Scheduler Microservice"`
 
 		startupMsgKey = "apps.support-scheduler.config.service-startupmsg"
 	)
