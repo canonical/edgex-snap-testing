@@ -56,7 +56,10 @@ func TestConfigOption(t *testing.T) {
 func waitForRedisPortInLogs(t *testing.T, snap, expectedPort string, since time.Time) bool {
 	const maxRetry = 60
 
-	utils.WaitPlatformOnline(t)
+	utils.WaitServiceOnline(t, 60,
+		utils.ServicePort(ekuiperApp),
+		utils.ServicePort(ekuiperRestfulApi),
+	)
 
 	for i := 1; i <= maxRetry; i++ {
 		time.Sleep(1 * time.Second)
@@ -69,7 +72,7 @@ func waitForRedisPortInLogs(t *testing.T, snap, expectedPort string, since time.
 			return true
 		}
 	}
-	
+
 	t.Logf("Time out: reached max %d retries.", maxRetry)
 	return false
 }
