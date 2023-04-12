@@ -68,7 +68,9 @@ func PlatformPorts(includePublicPorts bool) (ports []string) {
 		ServicePort("vault"),
 		ServicePort("consul"),
 		ServicePort("redis"),
+                ServicePort("nginx(http)"),
 		ServicePort("security-proxy-auth"),
+		
 	)
 	if includePublicPorts {
 		ports = append(ports,
