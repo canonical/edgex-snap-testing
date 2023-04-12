@@ -251,3 +251,23 @@ Device:
 	}
 	return nil
 }
+
+func CheckChangesInLogs(t *testing.T, snap, expectedChange, expectedLog string, since time.Time) bool {
+	const maxRetry = 10
+
+	WaitPlatformOnline(t)
+
+	for i := 1; i <= maxRetry; i++ {
+		time.Sleep(1 * time.Second)
+		t.Logf("Retry %d/%d: Waiting for expected change in logs: %s", i, maxRetry, expectedChange)
+
+		logs := SnapLogs(t, since, snap)
+		if strings.Contains(logs, expectedLog) ||
+			strings.Contains(logs, expectedLog) {
+			t.Logf("Found expected change in logs: %s", expectedChange)
+			return true
+		}
+	}
+	t.Logf("Time out: reached max %d retries.", maxRetry)
+	return false
+}
