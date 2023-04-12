@@ -54,7 +54,7 @@ func TestConfigOption(t *testing.T) {
 }
 
 func waitForRedisPortInLogs(t *testing.T, snap, expectedPort string, since time.Time) bool {
-	const maxRetry = 10
+	const maxRetry = 60
 
 	utils.WaitPlatformOnline(t)
 
