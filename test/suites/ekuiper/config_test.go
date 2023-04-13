@@ -19,7 +19,6 @@ func TestConfigOption(t *testing.T) {
 
 	t.Cleanup(func() {
 		utils.SnapUnset(t, ekuiperSnap, portKey)
-		utils.SnapRestart(t, ekuiperSnap)
 		utils.SnapStop(t, ekuiperSnap)
 	})
 
