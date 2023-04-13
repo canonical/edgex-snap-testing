@@ -58,7 +58,6 @@ func TestRulesEngine(t *testing.T) {
 
 	utils.SnapSet(t, ekuiperSnap, "config.kuiper.basic.debug", "true")
 
-
 	// set tests to run without a config provider when testing config options as a temporary solution.
 	utils.DoNotUseConfigProviderServiceSnap(t, deviceVirtualSnap, deviceVirtualApp)
 

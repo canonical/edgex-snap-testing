@@ -2,7 +2,6 @@ package test
 
 import (
 	"edgex-snap-testing/test/utils"
-	"fmt"
 	"testing"
 	"time"
 
@@ -11,15 +10,12 @@ import (
 
 func TestConfigOption(t *testing.T) {
 	const (
-		newPort = "1111"
+		// eKuiper will be configured to use this port to connect to Redis
+		newPort = "11111"
 		portKey = "config.edgex.default.port"
 	)
 
-	var (
-		defaultPort      = utils.ServicePort("redis")
-		newPortInLog     = fmt.Sprintf("port:%s", newPort)
-		defaultPortInLog = fmt.Sprintf("port:%s", defaultPort)
-	)
+	var defaultRedisPort = utils.ServicePort("redis")
 
 	t.Cleanup(func() {
 		utils.SnapUnset(t, ekuiperSnap, portKey)
@@ -51,14 +47,14 @@ func TestConfigOption(t *testing.T) {
 					]
 				}'`)
 
-		require.True(t, utils.CheckChangesInLogs(t, ekuiperSnap, newPort, newPortInLog, startTime),
+		require.True(t, utils.WaitForLogMessage(t, ekuiperSnap, "port:"+newPort, startTime),
 			"new port: %s", newPort)
 
 		t.Log("Unset and check default port")
 		utils.SnapUnset(t, ekuiperSnap, portKey)
 		startTime = time.Now()
 		utils.SnapRestart(t, ekuiperSnap)
-		require.True(t, utils.CheckChangesInLogs(t, ekuiperSnap, defaultPort, defaultPortInLog, startTime),
+		require.True(t, utils.WaitForLogMessage(t, ekuiperSnap, "port:"+defaultRedisPort, startTime),
 			"default port: %s", utils.ServicePort("redis"))
 	})
 }

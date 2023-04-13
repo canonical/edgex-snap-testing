@@ -149,7 +149,7 @@ func TestConfigProvider(t *testing.T) {
 
 			utils.SnapStart(t, snapName)
 
-			utils.WaitStartupMsg(t, snapName, startupMsg, start, 10)
+			utils.WaitForLogMessage(t, snapName, `msg="`+startupMsg+`"`, start)
 		})
 	}
 }

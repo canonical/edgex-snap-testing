@@ -40,7 +40,7 @@ func TestChangePort(t *testing.T, snapName string, conf ConfigChangePort) {
 			// start once so that default configs get uploaded to the registry
 			service := snapName + "." + conf.App
 			SnapStart(t, service)
-			WaitServiceOnline(t, 60, conf.DefaultPort)
+			WaitServiceOnline(t, serviceWaitTimeout, conf.DefaultPort)
 			SnapStop(t, service)
 
 			if conf.TestAppConfig {
@@ -191,21 +191,6 @@ func TestAutostartGlobal(t *testing.T, snapName string) {
 	})
 }
 
-func WaitStartupMsg(t *testing.T, snap, expectedMsg string, since time.Time, retries int) {
-	for i := 1; i <= retries; i++ {
-		time.Sleep(1 * time.Second)
-		t.Logf("Retry %d/%d: Waiting for startup message: %s", i, retries, expectedMsg)
-
-		logs := SnapLogs(t, since, snap)
-		if strings.Contains(logs, fmt.Sprintf("msg=%s", expectedMsg)) ||
-			strings.Contains(logs, fmt.Sprintf(`msg="%s"`, expectedMsg)) {
-			t.Logf(`Found startup message: "%s"`, expectedMsg)
-			return
-		}
-	}
-	t.Fatalf(`Time out: reached max %d retries looking for "%s"`, retries, expectedMsg)
-}
-
 // DoNotUseConfigProviderPlatformSnap disables the config provider for the specified app
 // and sets the common configuration path
 func DoNotUseConfigProviderPlatformSnap(t *testing.T, snap, app string) {
@@ -252,19 +237,19 @@ Device:
 	return nil
 }
 
-func CheckChangesInLogs(t *testing.T, snap, expectedChange, expectedLog string, since time.Time) bool {
+func WaitForLogMessage(t *testing.T, snap, expectedLog string, since time.Time) bool {
 	const maxRetry = 10
 
 	WaitPlatformOnline(t)
 
 	for i := 1; i <= maxRetry; i++ {
 		time.Sleep(1 * time.Second)
-		t.Logf("Retry %d/%d: Waiting for expected change in logs: %s", i, maxRetry, expectedChange)
+		t.Logf("Retry %d/%d: Waiting for expected content in logs: %s", i, maxRetry, expectedLog)
 
 		logs := SnapLogs(t, since, snap)
 		if strings.Contains(logs, expectedLog) ||
 			strings.Contains(logs, expectedLog) {
-			t.Logf("Found expected change in logs: %s", expectedChange)
+			t.Logf("Found expected content in logs: %s", expectedLog)
 			return true
 		}
 	}

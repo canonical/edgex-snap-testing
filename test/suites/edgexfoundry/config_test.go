@@ -8,16 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	supportSchedulerStartupMsg      = "This is the Support Scheduler Microservice"
-	supportSchedulerStartupMsgInLog = `msg="This is the Support Scheduler Microservice"`
-)
+const supportSchedulerStartupMsg = "This is the Support Scheduler Microservice"
 
 func TestChangeStartupMsg_app(t *testing.T) {
 	const (
-		newStartupMsg      = "snap-testing (app)"
-		newStartupMsgInLog = `msg="snap-testing (app)"`
-
+		newStartupMsg = "snap-testing (app)"
 		startupMsgKey = "apps.support-scheduler.config.service-startupmsg"
 	)
 
@@ -33,22 +28,21 @@ func TestChangeStartupMsg_app(t *testing.T) {
 	ts := time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
 
-	require.True(t, utils.CheckChangesInLogs(t, supportSchedulerService, newStartupMsg, newStartupMsgInLog, ts),
+	require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+newStartupMsg+`"`, ts),
 		"new startup message = %s", newStartupMsg)
 
 	t.Log("Unset and check default message")
 	utils.SnapUnset(t, platformSnap, startupMsgKey)
 	ts = time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
-	require.True(t, utils.CheckChangesInLogs(t, supportSchedulerService, supportSchedulerStartupMsg, supportSchedulerStartupMsgInLog, ts),
+	require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+supportSchedulerStartupMsg+`"`, ts),
 		"default startup message = %s", supportSchedulerStartupMsg)
 }
 
 func TestChangeStartupMsg_global(t *testing.T) {
 	const (
-		newStartupMsg      = "snap-testing (global)"
-		startupMsgKey      = "config.service-startupmsg"
-		newStartupMsgInLog = `msg="snap-testing (global)"`
+		newStartupMsg = "snap-testing (global)"
+		startupMsgKey = "config.service-startupmsg"
 	)
 
 	t.Cleanup(func() {
@@ -63,22 +57,21 @@ func TestChangeStartupMsg_global(t *testing.T) {
 	ts := time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
 
-	require.True(t, utils.CheckChangesInLogs(t, supportSchedulerService, newStartupMsg, newStartupMsgInLog, ts),
+	require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+newStartupMsg+`"`, ts),
 		"new startup message = %s", newStartupMsg)
 
 	t.Log("Unset and check default message")
 	utils.SnapUnset(t, platformSnap, startupMsgKey)
 	ts = time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
-	require.True(t, utils.CheckChangesInLogs(t, supportSchedulerService, supportSchedulerStartupMsg, supportSchedulerStartupMsgInLog, ts),
+	require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+supportSchedulerStartupMsg+`"`, ts),
 		"default startup message = %s", supportSchedulerStartupMsg)
 }
 
 func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 	const (
-		appNewStartupMsg      = "snap-testing (app specific)"
-		appStartupMsgKey      = "apps." + supportSchedulerApp + ".config.service-startupmsg"
-		appNewStartupMsgInLog = `msg="snap-testing (app specific)"`
+		appNewStartupMsg = "snap-testing (app specific)"
+		appStartupMsgKey = "apps." + supportSchedulerApp + ".config.service-startupmsg"
 
 		globalNewStartupMsg = "snap-testing (global override)"
 		globalStartupMsgKey = "config.service-startupmsg"
@@ -97,7 +90,7 @@ func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 	ts := time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
 	require.True(t,
-		utils.CheckChangesInLogs(t, supportSchedulerService, appNewStartupMsg, appNewStartupMsgInLog, ts),
+		utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+appNewStartupMsg+`"`, ts),
 		"new startup message = %s", appNewStartupMsg)
 
 	t.Log("Unset and check default message")
@@ -106,7 +99,6 @@ func TestChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 	ts = time.Now()
 	utils.SnapRestart(t, supportSchedulerService)
 	require.True(t,
-		utils.CheckChangesInLogs(t, supportSchedulerService, supportSchedulerStartupMsg, supportSchedulerStartupMsgInLog, ts),
+		utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+supportSchedulerStartupMsg+`"`, ts),
 		"default startup message = %s", supportSchedulerStartupMsg)
 }
-
