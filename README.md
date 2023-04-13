@@ -71,7 +71,7 @@ This requires developer access; see `snap install -h` for details.
 
 #### Run only one test from a suite
 ```
-go test -v ./test/suites/edgexfoundry --run=TestAddProxyUser
+go test -v ./test/suites/edgexfoundry --run=TestCommon
 ```
 ```
 go test -v ./test/suites/edgex-config-provider -run=TestConfigProvider/device-virtual
