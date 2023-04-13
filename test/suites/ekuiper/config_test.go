@@ -33,6 +33,11 @@ func TestConfigOption(t *testing.T) {
 		startTime := time.Now()
 		utils.SnapStart(t, ekuiperSnap)
 
+		utils.WaitServiceOnline(t, 60,
+			utils.ServicePort(ekuiperApp),
+			utils.ServicePort(ekuiperRestfulApi),
+		)
+
 		t.Log("Creating stream and rule to trigger the process of applying config option in edgex-ekuiper")
 		utils.Exec(t, `edgex-ekuiper.kuiper create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")'`)
 		utils.Exec(t,
