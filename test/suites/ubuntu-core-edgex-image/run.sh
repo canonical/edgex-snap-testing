@@ -1,12 +1,5 @@
 #!/bin/bash -ex
 
-# clean and build the image
-sudo rm -f pc.img
-ubuntu-image snap model.signed.yaml --validation=enforce --snap pc-gadget/pc_*_amd64.snap
-
-# check the image file
-file pc.img
-
 # test ubuntu core with QEMU
 sudo qemu-system-x86_64 \
  -smp 4 \
@@ -18,5 +11,4 @@ sudo qemu-system-x86_64 \
  -serial mon:stdio \
  -net nic,model=virtio \
  -net user,hostfwd=tcp::8022-:22
-
 

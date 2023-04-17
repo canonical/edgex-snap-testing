@@ -1,11 +1,15 @@
 #!/bin/bash -ex
 
+if [[ -z "$USER" ]]; then
+  echo "Required input 'USER' is unset. Exiting..."
+  exit 1
+fi
+
 SSH_USER="$USER"
 SSH_PORT="8022"
 remote_call() {
   ssh "$SSH_USER@localhost" -p $SSH_PORT "$@"
 }
-
 
 # Install curl on emulator
 remote_call "snap install curl"

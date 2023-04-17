@@ -2,7 +2,7 @@
 
 # Remove the pc-gadget directory if it already exists
 rm -rf pc-gadget
-git clone https://github.com/snapcore/pc-gadget.git --branch=22
+git clone https://github.com/snapcore/pc-gadget.git --branch=22 --depth 1 
 
 # Build gadget snap
 cd pc-gadget
@@ -55,16 +55,3 @@ yq e -i '.parts += {
 # Build gadget snap
 snapcraft
 
-# Configure model assertion
-cd ../
-DEVELOPER_ID=$(snapcraft whoami | grep 'id:' | awk '{print $2}')
-TIMESTAMP=$(date -Iseconds --utc)
-yq e -i ".authority-id = \"$DEVELOPER_ID\"" model.yaml
-yq e -i ".brand-id = \"$DEVELOPER_ID\"" model.yaml
-yq e -i ".timestamp = \"$TIMESTAMP\"" model.yaml
-
-# Sign the model assertion
-yq eval model.yaml -o=json | snap sign -k $KEY_NAME > model.signed.yaml
-
-# Check the signed model
-cat model.signed.yaml
