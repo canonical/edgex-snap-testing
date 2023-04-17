@@ -82,6 +82,9 @@ go test -v ./test/suites/edgex-config-provider -run=TestConfigProvider/device-vi
 go test ./test/utils -count=10
 ```
 
+#### Run EdgeX Ubuntu Core tests
+Refer to [./test/suites/ubuntu-core-edgex-image](test/suites/ubuntu-core-edgex-image)
+
 ## Test using Github Actions
 This project includes two Github Actions that can be used in workflows to test snaps:
 * [build](./build): Checkout code, build the snap, and upload snap as build artifact
