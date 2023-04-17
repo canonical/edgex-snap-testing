@@ -2,7 +2,7 @@
 
 rm -fr \
     pc-gadget \
-    model.signed.yaml \
+    model-test.* \
     pc.img \
     seed.manifest
 

@@ -1,8 +1,8 @@
 type: model
 series: '16'
 # authority-id and brand-id must be set to your developer-id
-authority-id: 3ehWphH4KXEI2BY8mla8ydYPJm8BCfkd
-brand-id: 3ehWphH4KXEI2BY8mla8ydYPJm8BCfkd
+authority-id: <developer-id>
+brand-id: <developer-id>
 model: ubuntu-core-22-amd64
 architecture: amd64
 # timestamp should be within your signature's validity period

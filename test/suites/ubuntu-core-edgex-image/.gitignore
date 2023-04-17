@@ -1,5 +1,4 @@
-model.yaml
-model.signed.yaml
+model-test.*
 pc.img
 pc-gadget
 seed.manifest
