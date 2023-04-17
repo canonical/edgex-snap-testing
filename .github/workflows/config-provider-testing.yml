@@ -3,6 +3,9 @@ name: Config Provider Testing
 on:
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - './test/suites/ubuntu-core-edgex-image/**'
   schedule:
     - cron: "0 3 * * SUN"
   # allow manual trigger
