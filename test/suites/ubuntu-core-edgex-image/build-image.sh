@@ -19,7 +19,6 @@ yq eval model.yaml -o=json | snap sign -k $KEY_NAME > model.signed.yaml
 cat model.signed.yaml
 
 # clean and build the image
-sudo rm -f pc.img
 ubuntu-image snap model.signed.yaml --validation=enforce --snap pc-gadget/pc_*_amd64.snap
 
 # check the image file
