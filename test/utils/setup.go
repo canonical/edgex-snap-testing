@@ -2,7 +2,6 @@ package utils
 
 import (
 	"log"
-	"strings"
 	"time"
 )
 
@@ -62,14 +61,6 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 	if err = WaitPlatformOnline(nil); err != nil {
 		teardown()
 		return
-	}
-
-	// TODO: remove this patch which is for device services
-	if strings.Contains(snapName, "device-") {
-		err = InjectDevicesAndProfilesDirConfig(strings.TrimPrefix(snapName, "edgex-"))
-		if err != nil {
-			log.Fatalf("Failed to inject devices/profiles dir into config: %s", err)
-		}
 	}
 
 	return
