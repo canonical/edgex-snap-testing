@@ -40,7 +40,7 @@ func TestCommon(t *testing.T) {
 	utils.TestConfig(t, deviceUSBCamSnap, utils.Config{
 		TestChangePort: utils.ConfigChangePort{
 			App:                      deviceUSBCamApp,
-			DefaultPort:              deviceUSBCamPort,
+			DefaultPort:              deviceUSBCamServicePort,
 			TestAppConfig:            true,
 			TestGlobalConfig:         true,
 			TestMixedGlobalAppConfig: utils.FullConfigTest,

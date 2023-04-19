@@ -46,12 +46,6 @@ func TestRulesEngine(t *testing.T) {
 	utils.SnapInstallFromStore(t, deviceVirtualSnap, utils.ServiceChannel)
 	utils.SnapInstallFromStore(t, ekuiperSnap, utils.ServiceChannel)
 
-	// TODO: temporary fix
-	err := utils.InjectDevicesAndProfilesDirConfig("device-virtual")
-	if err != nil {
-		log.Fatalf("Failed to inject devices/profiles dir into config: %s", err)
-	}
-
 	// turn security off
 	utils.SnapSet(t, deviceVirtualSnap, "config.edgex-security-secret-store", "false")
 	utils.SnapSet(t, ekuiperSnap, "config.edgex-security-secret-store", "false")
