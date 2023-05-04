@@ -156,11 +156,11 @@ func testChangePort_mixedGlobalApp(t *testing.T, snap, app, servicePort string) 
 }
 
 func TestAutoStart(t *testing.T, snapName string, testAutoStart bool) {
-	t.Run("autostart", func(t *testing.T) {
-		if testAutoStart {
+	if testAutoStart {
+		t.Run("autostart", func(t *testing.T) {
 			TestAutostartGlobal(t, snapName)
-		}
-	})
+		})
+	}
 }
 
 func TestAutostartGlobal(t *testing.T, snapName string) {

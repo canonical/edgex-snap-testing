@@ -28,15 +28,13 @@ func TestMain(m *testing.M) {
 
 func TestCommon(t *testing.T) {
 
-	utils.TestConfig(t, platformSnap, utils.Config{
-		TestChangePort: utils.ConfigChangePort{
-			App:                      supportSchedulerApp,
-			DefaultPort:              utils.ServicePort(supportSchedulerApp),
-			TestAppConfig:            false, // covered in local startup message testing
-			TestGlobalConfig:         false, // multiple servers, test setting startup message instead
-			TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
-		},
-	})
+	// utils.TestConfig(t, platformSnap, utils.Config{
+	// 	TestChangePort: utils.ConfigChangePort{
+	// 		TestAppConfig:            false, // covered in local startup message testing
+	// 		TestGlobalConfig:         false, // multiple servers, test setting startup message instead
+	// 		TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
+	// 	},
+	// })
 
 	utils.TestNet(t, platformSnap, utils.Net{
 		StartSnap:        false, // the service are started by default
