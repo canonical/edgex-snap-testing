@@ -9,6 +9,8 @@ import (
 )
 
 const (
+	platformSnap = "edgexfoundry"
+
 	ekuiperSnap       = "edgex-ekuiper"
 	ekuiperApp        = "ekuiper"
 	ekuiperRestfulApi = "ekuiper/rest-api"
@@ -65,7 +67,7 @@ func setup() (teardown func(), err error) {
 	log.Println("[CLEAN]")
 	utils.SnapRemove(nil,
 		ekuiperSnap,
-		"edgexfoundry",
+		platformSnap,
 		deviceVirtualSnap,
 	)
 
@@ -76,14 +78,14 @@ func setup() (teardown func(), err error) {
 		log.Println("[TEARDOWN]")
 
 		utils.SnapDumpLogs(nil, start, ekuiperSnap)
-		utils.SnapDumpLogs(nil, start, "edgexfoundry")
+		utils.SnapDumpLogs(nil, start, platformSnap)
 		utils.SnapDumpLogs(nil, start, deviceVirtualSnap)
 
 		log.Println("Removing installed snap:", !utils.SkipTeardownRemoval)
 		if !utils.SkipTeardownRemoval {
 			utils.SnapRemove(nil,
 				ekuiperSnap,
-				"edgexfoundry",
+				platformSnap,
 				deviceVirtualSnap,
 			)
 		}
@@ -101,7 +103,7 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	if err = utils.SnapInstallFromStore(nil, "edgexfoundry", utils.PlatformChannel); err != nil {
+	if err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel); err != nil {
 		teardown()
 		return
 	}
@@ -119,6 +121,8 @@ func setup() (teardown func(), err error) {
 			return
 		}
 	}
+
+	utils.SnapStart(nil, platformSnap)
 
 	// make sure all services are online before starting the tests
 	if err = utils.WaitPlatformOnline(nil); err != nil {

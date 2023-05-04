@@ -5,9 +5,7 @@ import (
 	"testing"
 )
 
-const (
-	platformSnap = "edgexfoundry"
-)
+const platformSnap = "edgexfoundry"
 
 func TestCommon(t *testing.T) {
 	utils.TestRefresh(t, platformSnap)

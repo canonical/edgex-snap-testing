@@ -8,9 +8,7 @@ import (
 	"time"
 )
 
-const (
-	platformSnap = "edgexfoundry"
-)
+const platformSnap = "edgexfoundry"
 
 func platformPortsNoSec() []string {
 	return []string{
@@ -71,6 +69,8 @@ func setup() (teardown func(), err error) {
 
 	// turn security off
 	utils.SnapSet(nil, platformSnap, "security", "false")
+
+	utils.SnapStart(nil, platformSnap)
 
 	// make sure all services are online before starting the tests
 	if err = utils.WaitServiceOnline(nil, 180, platformPortsNoSec()...); err != nil {
