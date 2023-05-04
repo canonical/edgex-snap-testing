@@ -5,13 +5,15 @@ import (
 	"time"
 )
 
+const platformSnap = "edgexfoundry"
+
 // SetupServiceTests setup up the environment for testing
 // It returns a teardown function to be called at the end of the tests
 func SetupServiceTests(snapName string) (teardown func(), err error) {
 	log.Println("[CLEAN]")
 	SnapRemove(nil,
 		snapName,
-		"edgexfoundry",
+		platformSnap,
 	)
 
 	log.Println("[SETUP]")
@@ -20,13 +22,13 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 	teardown = func() {
 		log.Println("[TEARDOWN]")
 		SnapDumpLogs(nil, start, snapName)
-		SnapDumpLogs(nil, start, "edgexfoundry")
+		SnapDumpLogs(nil, start, platformSnap)
 
 		log.Println("Removing installed snap:", !SkipTeardownRemoval)
 		if !SkipTeardownRemoval {
 			SnapRemove(nil,
 				snapName,
-				"edgexfoundry",
+				platformSnap,
 			)
 		}
 	}
@@ -43,7 +45,7 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 		return
 	}
 
-	if err = SnapInstallFromStore(nil, "edgexfoundry", PlatformChannel); err != nil {
+	if err = SnapInstallFromStore(nil, platformSnap, PlatformChannel); err != nil {
 		teardown()
 		return
 	}
@@ -56,6 +58,8 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 			return
 		}
 	}
+
+	SnapStart(nil, platformSnap)
 
 	// make sure all services are online before starting the tests
 	if err = WaitPlatformOnline(nil); err != nil {

@@ -76,6 +76,8 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
+	utils.SnapStart(nil, platformSnap)
+
 	// make sure all services are online before starting the tests
 	if err = utils.WaitPlatformOnline(nil); err != nil {
 		teardown()
