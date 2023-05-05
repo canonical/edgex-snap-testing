@@ -28,12 +28,13 @@ func TestMain(m *testing.M) {
 
 func TestCommon(t *testing.T) {
 
+	// The common config tests aren't used
+	// - TestAppConfig is covered in local startup message testing
+	// - TestGlobalConfig and TestMixedGlobalAppConfig can't be used because this
+	// snap multiple servers, test setting startup message instead
+	// - TestAutostart testing fails (unknown reason)
 	// utils.TestConfig(t, platformSnap, utils.Config{
-	// 	TestChangePort: utils.ConfigChangePort{
-	// 		TestAppConfig:            false, // covered in local startup message testing
-	// 		TestGlobalConfig:         false, // multiple servers, test setting startup message instead
-	// 		TestMixedGlobalAppConfig: false, // multiple servers, test setting startup message instead
-	// 	},
+	// 	TestAutoStart: true,
 	// })
 
 	utils.TestNet(t, platformSnap, utils.Net{
