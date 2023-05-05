@@ -181,12 +181,9 @@ func SnapRestart(t *testing.T, names ...string) {
 			name,
 		), true)
 	}
-}
-
-func SnapStopWaitStart(t *testing.T, names ...string) {
-	SnapStop(t, names...)
-	time.Sleep(time.Second)
-	SnapStart(t, names...)
+	// Add delay after restart to avoid reaching systemd's restart limits
+	// See https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html#DefaultStartLimitIntervalSec=
+	time.Sleep(1 * time.Second)
 }
 
 func SnapRefresh(t *testing.T, name, channel string) {
