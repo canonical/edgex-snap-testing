@@ -30,8 +30,6 @@ func testChangeStartupMsg_app(t *testing.T) {
 			startupMsgKey = "apps.support-scheduler.config.service-startupmsg"
 		)
 
-		utils.DoNotUseConfigProviderPlatformSnap(t, platformSnap, supportSchedulerApp)
-
 		t.Log("Set and verify new startup message:", newStartupMsg)
 		utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
 		ts := time.Now()
@@ -55,8 +53,6 @@ func testChangeStartupMsg_global(t *testing.T) {
 			newStartupMsg = "snap-testing (global)"
 			startupMsgKey = "config.service-startupmsg"
 		)
-
-		utils.DoNotUseConfigProviderPlatformSnap(t, platformSnap, supportSchedulerApp)
 
 		t.Log("Set and verify new startup message:", newStartupMsg)
 		utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
@@ -84,8 +80,6 @@ func testChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 			globalNewStartupMsg = "snap-testing (global override)"
 			globalStartupMsgKey = "config.service-startupmsg"
 		)
-
-		utils.DoNotUseConfigProviderPlatformSnap(t, platformSnap, supportSchedulerApp)
 
 		t.Log("Set local and global startup messages and verify that local has taken precedence")
 		utils.SnapSet(t, platformSnap, appStartupMsgKey, appNewStartupMsg)
