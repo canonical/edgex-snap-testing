@@ -148,11 +148,11 @@ func SnapSet(t *testing.T, name, key, value string) {
 	), true)
 }
 
-func SnapUnset(t *testing.T, name, key string) {
+func SnapUnset(t *testing.T, name string, keys ...string) {
 	exec(t, fmt.Sprintf(
 		"sudo snap unset %s %s",
 		name,
-		key,
+		strings.Join(keys, " "),
 	), true)
 }
 
@@ -181,6 +181,9 @@ func SnapRestart(t *testing.T, names ...string) {
 			name,
 		), true)
 	}
+	// Add delay after restart to avoid reaching systemd's restart limits
+	// See https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html#DefaultStartLimitIntervalSec=
+	time.Sleep(1 * time.Second)
 }
 
 func SnapRefresh(t *testing.T, name, channel string) {
