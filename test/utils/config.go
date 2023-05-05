@@ -197,6 +197,7 @@ func DoNotUseConfigProviderPlatformSnap(t *testing.T, snap, app string) (revert 
 	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", "./config/core-common-config-bootstrapper/res/configuration.yaml")
 
 	return func() {
+		t.Log("Revert to use Config Provider as usual")
 		SnapUnset(t, snap, "apps."+app+".config.edgex-config-provider")
 		SnapUnset(t, snap, "apps."+app+".config.edgex-common-config")
 	}

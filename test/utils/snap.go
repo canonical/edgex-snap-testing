@@ -148,11 +148,11 @@ func SnapSet(t *testing.T, name, key, value string) {
 	), true)
 }
 
-func SnapUnset(t *testing.T, name, key string) {
+func SnapUnset(t *testing.T, name string, keys ...string) {
 	exec(t, fmt.Sprintf(
 		"sudo snap unset %s %s",
 		name,
-		key,
+		strings.Join(keys, " "),
 	), true)
 }
 
@@ -181,6 +181,12 @@ func SnapRestart(t *testing.T, names ...string) {
 			name,
 		), true)
 	}
+}
+
+func SnapStopWaitStart(t *testing.T, names ...string) {
+	SnapStop(t, names...)
+	time.Sleep(time.Second)
+	SnapStart(t, names...)
 }
 
 func SnapRefresh(t *testing.T, name, channel string) {

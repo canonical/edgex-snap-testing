@@ -35,7 +35,7 @@ func testChangeStartupMsg_app(t *testing.T) {
 		t.Log("Set and verify new startup message:", newStartupMsg)
 		utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
 		ts := time.Now()
-		utils.SnapRestart(t, supportSchedulerService)
+		utils.SnapStopWaitStart(t, supportSchedulerService)
 
 		require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+newStartupMsg+`"`, ts),
 			"new startup message = %s", newStartupMsg)
@@ -43,7 +43,7 @@ func testChangeStartupMsg_app(t *testing.T) {
 		t.Log("Unset and check default message")
 		utils.SnapUnset(t, platformSnap, startupMsgKey)
 		ts = time.Now()
-		utils.SnapRestart(t, supportSchedulerService)
+		utils.SnapStopWaitStart(t, supportSchedulerService)
 		require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+supportSchedulerStartupMsg+`"`, ts),
 			"default startup message = %s", supportSchedulerStartupMsg)
 	})
@@ -61,7 +61,7 @@ func testChangeStartupMsg_global(t *testing.T) {
 		t.Log("Set and verify new startup message:", newStartupMsg)
 		utils.SnapSet(t, platformSnap, startupMsgKey, newStartupMsg)
 		ts := time.Now()
-		utils.SnapRestart(t, supportSchedulerService)
+		utils.SnapStopWaitStart(t, supportSchedulerService)
 
 		require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+newStartupMsg+`"`, ts),
 			"new startup message = %s", newStartupMsg)
@@ -69,7 +69,7 @@ func testChangeStartupMsg_global(t *testing.T) {
 		t.Log("Unset and check default message")
 		utils.SnapUnset(t, platformSnap, startupMsgKey)
 		ts = time.Now()
-		utils.SnapRestart(t, supportSchedulerService)
+		utils.SnapStopWaitStart(t, supportSchedulerService)
 		require.True(t, utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+supportSchedulerStartupMsg+`"`, ts),
 			"default startup message = %s", supportSchedulerStartupMsg)
 	})
@@ -91,7 +91,7 @@ func testChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 		utils.SnapSet(t, platformSnap, appStartupMsgKey, appNewStartupMsg)
 		utils.SnapSet(t, platformSnap, globalStartupMsgKey, globalNewStartupMsg)
 		ts := time.Now()
-		utils.SnapRestart(t, supportSchedulerService)
+		utils.SnapStopWaitStart(t, supportSchedulerService)
 		require.True(t,
 			utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+appNewStartupMsg+`"`, ts),
 			"new startup message = %s", appNewStartupMsg)
@@ -100,7 +100,7 @@ func testChangeStartupMsg_mixedGlobalApp(t *testing.T) {
 		utils.SnapUnset(t, platformSnap, appStartupMsgKey)
 		utils.SnapUnset(t, platformSnap, globalStartupMsgKey)
 		ts = time.Now()
-		utils.SnapRestart(t, supportSchedulerService)
+		utils.SnapStopWaitStart(t, supportSchedulerService)
 		require.True(t,
 			utils.WaitForLogMessage(t, supportSchedulerService, `msg="`+supportSchedulerStartupMsg+`"`, ts),
 			"default startup message = %s", supportSchedulerStartupMsg)
