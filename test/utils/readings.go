@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
@@ -50,9 +49,7 @@ func WaitForReadings(t *testing.T, deviceName string, secured bool) {
 			defer resp.Body.Close()
 			require.Equal(t, 200, resp.StatusCode, "Unexpected HTTP response")
 
-			body, err := ioutil.ReadAll(resp.Body)
-			require.NoError(t, err)
-			require.NoError(t, json.Unmarshal(body, &eventCount))
+			require.NoError(t, json.NewDecoder(resp.Body).Decode(&eventCount))
 
 			t.Logf("Waiting for readings in Core Data, current retry: %d/60", i)
 
