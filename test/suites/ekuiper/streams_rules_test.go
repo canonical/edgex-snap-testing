@@ -108,7 +108,7 @@ func TestStreamsAndRules(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		req, err := http.NewRequest(http.MethodGet, "http://localhost:59880/api/v2/reading/device/name/device-test", nil)
+		req, err := http.NewRequest(http.MethodGet, "http://localhost:59880/api/v3/reading/device/name/device-test", nil)
 		require.NoError(t, err)
 
 		idToken := utils.LoginTestUser(t)

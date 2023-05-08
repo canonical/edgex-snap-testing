@@ -22,7 +22,7 @@ func LoginTestUser(t *testing.T) (idToken string) {
 // WaitForReadings waits for readings to appear in core-data
 // The readings are produced by device-virtual or another service
 func WaitForReadings(t *testing.T, deviceName string, secured bool) {
-	var coreDataReadingCountEndpoint = "http://localhost:59880/api/v2/reading/count/device/name/" + deviceName
+	var coreDataReadingCountEndpoint = "http://localhost:59880/api/v3/reading/count/device/name/" + deviceName
 
 	t.Run("query readings count", func(t *testing.T) {
 		var eventCount struct {
