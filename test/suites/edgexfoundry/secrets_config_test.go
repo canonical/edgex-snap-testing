@@ -6,19 +6,19 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"edgex-snap-testing/test/utils"
+	"github.com/stretchr/testify/require"
 )
+
 // TestAddAPIGatewayUser creates an example user, generates a JWT token for this user,
 // and then accesses the core-data service via the API gateway using the JWT token.
 // https://docs.edgexfoundry.org/3.0/getting-started/Ch-GettingStartedSnapUsers/#adding-api-gateway-users
 func TestAddAPIGatewayUser(t *testing.T) {
 	t.Log("Create an example user and generate a JWT token")
-	var idToken string
-	idToken = utils.LoginTestUser(t)
+	idToken := utils.LoginTestUser(t)
 
-	t.Log("Call an API on behalf of example user")
-	coreDataEndpoint := "https://localhost:8443/core-data/api/v3/ping"
+	const coreDataEndpoint = "https://localhost:8443/core-data/api/v3/ping"
+	t.Log("Calling on behalf of example user:", coreDataEndpoint)
 
 	req, err := http.NewRequest("GET", coreDataEndpoint, nil)
 	require.NoError(t, err)
@@ -31,7 +31,7 @@ func TestAddAPIGatewayUser(t *testing.T) {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
-	
+
 	resp, err := client.Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
