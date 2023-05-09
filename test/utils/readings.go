@@ -3,21 +3,11 @@ package utils
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/require"
 )
-
-func LoginTestUser(t *testing.T) (idToken string) {
-	// The script path relative to the testing suites
-	const loginScriptPath = "../../utils/login-test-user.sh"
-
-	idToken, _, _ = Exec(t, loginScriptPath)
-	t.Log("ID Token for 'example' user:", idToken)
-	return strings.TrimSpace(idToken)
-}
 
 // WaitForReadings waits for readings to appear in core-data
 // The readings are produced by device-virtual or another service
