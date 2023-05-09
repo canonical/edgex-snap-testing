@@ -67,10 +67,10 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	// turn security off
+	// disable security - this sets autostart of security services to false
 	utils.SnapSet(nil, platformSnap, "security", "false")
-
-	utils.SnapStart(nil, platformSnap)
+	// enable autostart globally to start all services apart from security services that are explicitly disabled
+	utils.SnapSet(nil, platformSnap, "autostart", "true")
 
 	// make sure all services are online before starting the tests
 	if err = utils.WaitServiceOnline(nil, 180, platformPortsNoSec()...); err != nil {
