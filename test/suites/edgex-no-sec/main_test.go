@@ -69,8 +69,22 @@ func setup() (teardown func(), err error) {
 
 	// disable security - this sets autostart of security services to false
 	utils.SnapSet(nil, platformSnap, "security", "false")
-	// enable autostart globally to start all services apart from security services that are explicitly disabled
+
+	// enable autostart globally to start all services apart from security services that are explicitly disabled:
 	utils.SnapSet(nil, platformSnap, "autostart", "true")
+	// The above is equivalent to starting non-security services manually:
+	// utils.SnapStart(nil, func() (names []string) {
+	// 	nonSecServices := []string{
+	// 		"consul", "redis",
+	// 		"core-common-config-bootstrapper",
+	// 		"core-data", "core-metadata", "core-command",
+	// 		"support-scheduler", "support-notifications",
+	// 	}
+	// 	for _, s := range nonSecServices {
+	// 		names = append(names, "edgexfoundry."+s)
+	// 	}
+	// 	return
+	// }()...)
 
 	// make sure all services are online before starting the tests
 	if err = utils.WaitServiceOnline(nil, 180, platformPortsNoSec()...); err != nil {
