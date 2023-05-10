@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"edgex-snap-testing/test/utils"
 	"github.com/stretchr/testify/require"
