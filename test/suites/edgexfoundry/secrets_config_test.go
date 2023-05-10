@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"edgex-snap-testing/test/utils"
 	"github.com/stretchr/testify/require"
@@ -48,17 +50,22 @@ func TestAddAPIGatewayUser(t *testing.T) {
 // TestChangeTLSCert creats new TLS certificate and calls API gateway to verify the use of new certificate
 // https://docs.edgexfoundry.org/3.0/getting-started/Ch-GettingStartedSnapUsers/#changing-tls-certificates
 func TestChangeTLSCert(t *testing.T) {
+	const tmpDir = "./tmp"
+	t.Cleanup(func() {
+		require.NoError(t, os.RemoveAll(tmpDir))
+	})
+
 	t.Log("Create TLS certificate")
 	createTLSCert(t)
 
 	t.Log("Calling API gateway using new TLS certificates:", coreDataPingEndpoint)
-	utils.WaitServiceOnline(t, 60, utils.ServicePort("nginx(https)"))
+	time.Sleep(5 * time.Second)
 
-	const caCertFile = "./ca.cert"
+	const caCertFile = tmpDir + "/ca.cert"
 	// Note: %%	is a literal percent sign
-	// Note: The path to the ca.cert file is created by create-tls-certificates.sh
+	// Note: The ca.cert file is created by create-tls-certificates.sh
 	code, _, _ := utils.Exec(t, fmt.Sprintf(
-		"curl --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --caCert %s '%s'",
+		"curl --verbose --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --cacert %s '%s'",
 		caCertFile,
 		coreDataPingEndpoint))
 
