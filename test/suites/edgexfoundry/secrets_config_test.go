@@ -2,8 +2,10 @@ package test
 
 import (
 	"crypto/tls"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"testing"
 
 	"edgex-snap-testing/test/utils"
@@ -40,4 +42,27 @@ func TestAddAPIGatewayUser(t *testing.T) {
 	body, err := ioutil.ReadAll(resp.Body)
 	require.NoError(t, err)
 	t.Logf("Output: %s", body)
+}
+
+// TestChangeTlsCert creats new TLS certificate and calls API gateway to verify the use of new certificate
+// https://docs.edgexfoundry.org/3.0/getting-started/Ch-GettingStartedSnapUsers/#changing-tls-certificates
+func TestChangeTlsCert(t *testing.T) {
+	t.Log("Create TLS certificate")
+	createTlsCert(t)
+
+	const coreDataEndpoint = "https://localhost:8443/core-data/api/v2/ping"
+	t.Log("Calling API gateway using new TLS certificates:", coreDataEndpoint)
+	// Note: %%	is a literal percent sign
+	code, _, _ := utils.Exec(t, fmt.Sprintf("curl --show-error --silent --include"+
+		"--output /dev/null --write-out '%%{http_code}' --caCert ca.cert '%s'",
+		coreDataEndpoint))
+
+	// A success response should return status 401 because the endpoint is protected.
+	require.Equal(t, "401", strings.TrimSpace(code))
+}
+
+func createTlsCert(t *testing.T) {
+	// The script path relative to the testing suites
+	const createLtsCert = "../../utils/create-tls-certificates.sh"
+	utils.Exec(t, createLtsCert)
 }
