@@ -12,6 +12,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const coreDataPingEndpoint = "https://localhost:8443/core-data/api/v3/ping"
+
 // TestAddAPIGatewayUser creates an example user, generates a JWT token for this user,
 // and then accesses the core-data service via the API gateway using the JWT token.
 // https://docs.edgexfoundry.org/3.0/getting-started/Ch-GettingStartedSnapUsers/#adding-api-gateway-users
@@ -19,10 +21,9 @@ func TestAddAPIGatewayUser(t *testing.T) {
 	t.Log("Create an example user and generate a JWT token")
 	idToken := utils.LoginTestUser(t)
 
-	const coreDataEndpoint = "https://localhost:8443/core-data/api/v3/ping"
-	t.Log("Calling on behalf of example user:", coreDataEndpoint)
+	t.Log("Calling on behalf of example user:", coreDataPingEndpoint)
 
-	req, err := http.NewRequest("GET", coreDataEndpoint, nil)
+	req, err := http.NewRequest("GET", coreDataPingEndpoint, nil)
 	require.NoError(t, err)
 
 	req.Header.Set("Authorization", "Bearer "+idToken)
@@ -44,24 +45,26 @@ func TestAddAPIGatewayUser(t *testing.T) {
 	t.Logf("Output: %s", body)
 }
 
-// TestChangeTlsCert creats new TLS certificate and calls API gateway to verify the use of new certificate
+// TestChangeTLSCert creats new TLS certificate and calls API gateway to verify the use of new certificate
 // https://docs.edgexfoundry.org/3.0/getting-started/Ch-GettingStartedSnapUsers/#changing-tls-certificates
-func TestChangeTlsCert(t *testing.T) {
+func TestChangeTLSCert(t *testing.T) {
 	t.Log("Create TLS certificate")
-	createTlsCert(t)
+	createTLSCert(t)
 
-	const coreDataEndpoint = "https://localhost:8443/core-data/api/v2/ping"
-	t.Log("Calling API gateway using new TLS certificates:", coreDataEndpoint)
+	t.Log("Calling API gateway using new TLS certificates:", coreDataPingEndpoint)
+	const caCertFile = "./ca.cert"
 	// Note: %%	is a literal percent sign
-	code, _, _ := utils.Exec(t, fmt.Sprintf("curl --show-error --silent --include"+
-		"--output /dev/null --write-out '%%{http_code}' --caCert ca.cert '%s'",
-		coreDataEndpoint))
+	// Note: The path to the ca.cert file is created by create-tls-certificates.sh
+	code, _, _ := utils.Exec(t, fmt.Sprintf(
+		"curl --show-error --silent --include --output /dev/null --write-out '%%{http_code}' --caCert %s '%s'",
+		caCertFile,
+		coreDataPingEndpoint))
 
 	// A success response should return status 401 because the endpoint is protected.
 	require.Equal(t, "401", strings.TrimSpace(code))
 }
 
-func createTlsCert(t *testing.T) {
+func createTLSCert(t *testing.T) {
 	// The script path relative to the testing suites
 	const createLtsCert = "../../utils/create-tls-certificates.sh"
 	utils.Exec(t, createLtsCert)
