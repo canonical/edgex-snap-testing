@@ -58,8 +58,9 @@ func TestChangeTLSCert(t *testing.T) {
 	createTLSCert(t)
 
 	t.Log("Calling API gateway using new TLS certificates:", coreDataPingEndpoint)
-	const caCertFile = tmpDir + "/ca.cert"
+	time.Sleep(5 * time.Second)
 
+	const caCertFile = tmpDir + "/ca.cert"
 	// Note: %%	is a literal percent sign
 	// Note: The ca.cert file is created by create-tls-certificates.sh
 	code, _, _ := utils.Exec(t, fmt.Sprintf(
