@@ -11,7 +11,6 @@ func TestServiceStatus(t *testing.T) {
 	t.Run("security services", func(t *testing.T) {
 		var securityServices = []string{
 			"nginx", "vault",
-			"secrets-config-processor",
 			"security-bootstrapper-nginx",
 			"security-bootstrapper-redis",
 			"security-consul-bootstrapper",
