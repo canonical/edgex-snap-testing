@@ -60,18 +60,20 @@ $ USER=<your-username> ./test.sh
 curl 8.0.1 from Wouter van Bommel (woutervb) installed
 + ports=(59880 59881 59882)
 + for port in "${ports[@]}"
-+ remote_call 'curl -s http://localhost:59880/api/v2/ping'
-+ ssh <your-username>@localhost -p 8022 'curl -s http://localhost:59880/api/v2/ping'
-{"apiVersion":"v2","timestamp":"Tue Apr  4 07:33:14 UTC 2023","serviceName":"core-data"}+ for port in "${ports[@]}"
-+ remote_call 'curl -s http://localhost:59881/api/v2/ping'
-+ ssh <your-username>@localhost -p 8022 'curl -s http://localhost:59881/api/v2/ping'
-{"apiVersion":"v2","timestamp":"Tue Apr  4 07:33:14 UTC 2023","serviceName":"core-metadata"}+ for port in "${ports[@]}"
-+ remote_call 'curl -s http://localhost:59882/api/v2/ping'
-+ ssh <your-username>@localhost -p 8022 'curl -s http://localhost:59882/api/v2/ping'
-{"apiVersion":"v2","timestamp":"Tue Apr  4 07:33:14 UTC 2023","serviceName":"core-command"}+ remote_call 'snap get edgexfoundry security-secret-store -d'
++ remote_call 'curl -s http://localhost:59880/api/v3/ping'
++ ssh <your-username>@localhost -p 8022 'curl -s http://localhost:59880/api/v3/ping'
+{"apiVersion":"v3","timestamp":"Tue Apr  4 07:33:14 UTC 2023","serviceName":"core-data"}+ for port in "${ports[@]}"
++ remote_call 'curl -s http://localhost:59881/api/v3/ping'
++ ssh <your-username>@localhost -p 8022 'curl -s http://localhost:59881/api/v3/ping'
+{"apiVersion":"v3","timestamp":"Tue Apr  4 07:33:14 UTC 2023","serviceName":"core-metadata"}+ for port in "${ports[@]}"
++ remote_call 'curl -s http://localhost:59882/api/v3/ping'
++ ssh <your-username>@localhost -p 8022 'curl -s http://localhost:59882/api/v3/ping'
+{"apiVersion":"v3","timestamp":"Tue Apr  4 07:33:14 UTC 2023","serviceName":"core-command"}+ remote_call 'snap get edgexfoundry security-secret-store -d'
 + ssh <your-username>@localhost -p 8022 'snap get edgexfoundry security-secret-store -d'
++ remote_call 'snap get edgexfoundry security -d'
++ ssh <your-username>@localhost -p 8022 'snap get edgexfoundry security -d'
 {
-        "security-secret-store": "off"
+        "security": false
 }
 + remote_call 'snap services edgex-device-virtual'
 + ssh <your-username>@localhost -p 8022 'snap services edgex-device-virtual'
@@ -80,17 +82,17 @@ edgex-device-virtual.device-virtual  enabled  active   -
 + remote_call 'snap list'
 + ssh <your-username>@localhost -p 8022 'snap list'
 Name                           Version         Rev    Tracking       Publisher    Notes
-core20                         20230308        1852   latest/stable  canonical**  base
-core22                         20230316        583    latest/stable  canonical**  base
-curl                           8.0.1           1579   latest/stable  woutervb     -
+core20                         20230404        1879   latest/stable  canonical**  base
+core22                         20230404        617    latest/stable  canonical**  base
+curl                           8.0.1           1679   latest/stable  woutervb     -
 edgex-config-provider-example  2.3             6      latest/stable  farshidtz    -
-edgex-device-virtual           2.3.0           335    latest/stable  canonical**  -
-edgexfoundry                   2.3.0+1         4108   latest/stable  canonical**  -
+edgex-device-virtual           3.0.0-dev.45    645    latest/edge    canonical**  -
+edgexfoundry                   3.0.0-dev.155   4428   latest/edge    canonical**  -
 pc                             22-0.3          x1     -              -            gadget
-pc-kernel                      5.15.0-69.76.1  1258   22/stable      canonical**  kernel
-snapd                          2.58.3          18596  latest/stable  canonical**  snapd
-+ remote_call 'curl --silent http://localhost:59881/api/v2/deviceprofile/all'
-+ ssh <your-username>@localhost -p 8022 'curl --silent http://localhost:59881/api/v2/deviceprofile/all'
+pc-kernel                      5.15.0-71.78.1  1281   22/stable      canonical**  kernel
+snapd                          2.59.2          19122  latest/stable  canonical**  snapd
++ remote_call 'curl --silent http://localhost:59881/api/v3/deviceprofile/all'
++ ssh <your-username>@localhost -p 8022 'curl --silent http://localhost:59881/api/v3/deviceprofile/all'
 + jq .totalCount
 0
 + remote_call 'snap logs -n=all edgex-device-virtual | grep "CONFIG BY EXAMPLE PROVIDER"'

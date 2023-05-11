@@ -19,11 +19,11 @@ ports=(59880 59881 59882)
 
 for port in "${ports[@]}"
 do
-  remote_call "curl -s http://localhost:$port/api/v2/ping"
+  remote_call "curl -s http://localhost:$port/api/v3/ping"
 done
 
 # Verify that the security is avaliable as a snap option of edgexfoundry within the emulator
-remote_call "snap get edgexfoundry security-secret-store -d"
+remote_call "snap get edgexfoundry security -d"
 
 # Check the status of the device-virtual service within the emulator
 remote_call "snap services edgex-device-virtual"
@@ -32,7 +32,7 @@ remote_call "snap services edgex-device-virtual"
 remote_call 'snap list'
 
 # Verify that Device Virtual only has one profile, as configured in the config provider
-remote_call 'curl --silent http://localhost:59881/api/v2/deviceprofile/all' | jq '.totalCount'
+remote_call 'curl --silent http://localhost:59881/api/v3/deviceprofile/all' | jq '.totalCount'
 
 # Verify that Device Virtual has the startup message set from the provider
 remote_call 'snap logs -n=all edgex-device-virtual | grep "CONFIG BY EXAMPLE PROVIDER"'
