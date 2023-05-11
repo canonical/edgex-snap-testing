@@ -29,7 +29,7 @@ yq e -i '.defaults += {
       }
     }
   }
-} | .defaults.AZGf0KNnh8aqdkbGATNuRuxnt1GNRKkV.security style="double"' gadget.yaml
+} ' gadget.yaml
 
 
 # Connect edgex-device-virtual's plug (consumer) to 
