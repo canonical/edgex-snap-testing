@@ -69,7 +69,6 @@ curl 8.0.1 from Wouter van Bommel (woutervb) installed
 + remote_call 'curl -s http://localhost:59882/api/v3/ping'
 + ssh <your-username>@localhost -p 8022 'curl -s http://localhost:59882/api/v3/ping'
 {"apiVersion":"v3","timestamp":"Tue Apr  4 07:33:14 UTC 2023","serviceName":"core-command"}+ remote_call 'snap get edgexfoundry security-secret-store -d'
-+ ssh <your-username>@localhost -p 8022 'snap get edgexfoundry security-secret-store -d'
 + remote_call 'snap get edgexfoundry security -d'
 + ssh <your-username>@localhost -p 8022 'snap get edgexfoundry security -d'
 {
