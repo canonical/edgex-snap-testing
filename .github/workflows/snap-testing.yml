@@ -9,7 +9,9 @@ on:
       - 'test/suites/ubuntu-core-edgex-image/**'
   schedule:
     # weekly tests run 6AM every Sunday
-    - cron: "0 3 * * SUN"
+    #- cron: "0 3 * * SUN"
+    # Make it nighly for the beta testing phase
+    - cron: "0 3 * * *"
   # allow manual trigger
   workflow_dispatch:
     inputs:
