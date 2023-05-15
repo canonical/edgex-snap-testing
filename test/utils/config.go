@@ -218,8 +218,10 @@ func DoNotUseConfigProviderServiceSnap(t *testing.T, snap, app string) {
 	SnapSet(t, snap, "apps."+app+".config.edgex-common-config", destFile)
 }
 
-func WaitForLogMessage(t *testing.T, snap, expectedLog string, since time.Time) bool {
+func WaitForLogMessage(t *testing.T, snap, expectedLog string, since time.Time) {
 	const maxRetry = 10
+
+	var found = false
 
 	WaitPlatformOnline(t)
 
@@ -228,12 +230,12 @@ func WaitForLogMessage(t *testing.T, snap, expectedLog string, since time.Time) 
 		t.Logf("Retry %d/%d: Waiting for expected content in logs: %s", i, maxRetry, expectedLog)
 
 		logs := SnapLogs(t, since, snap)
-		if strings.Contains(logs, expectedLog) ||
-			strings.Contains(logs, expectedLog) {
+		if strings.Contains(logs, expectedLog) {
 			t.Logf("Found expected content in logs: %s", expectedLog)
-			return true
+			found = true
+			break
 		}
 	}
-	t.Logf("Time out: reached max %d retries.", maxRetry)
-	return false
+
+	require.True(t, found, "Time out: reached max %d retries.", maxRetry)
 }

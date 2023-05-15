@@ -4,8 +4,6 @@ import (
 	"edgex-snap-testing/test/utils"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestConfigOption(t *testing.T) {
@@ -46,14 +44,12 @@ func TestConfigOption(t *testing.T) {
 					]
 				}'`)
 
-		require.True(t, utils.WaitForLogMessage(t, ekuiperSnap, "port:"+newPort, startTime),
-			"new port: %s", newPort)
+		utils.WaitForLogMessage(t, ekuiperSnap, "port:"+newPort, startTime)
 
 		t.Log("Unset and check default port")
 		utils.SnapUnset(t, ekuiperSnap, portKey)
 		startTime = time.Now()
 		utils.SnapRestart(t, ekuiperSnap)
-		require.True(t, utils.WaitForLogMessage(t, ekuiperSnap, "port:"+defaultRedisPort, startTime),
-			"default port: %s", utils.ServicePort("redis"))
+		utils.WaitForLogMessage(t, ekuiperSnap, "port:"+defaultRedisPort, startTime)
 	})
 }
