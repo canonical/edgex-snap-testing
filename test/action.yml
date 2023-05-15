@@ -45,7 +45,7 @@ runs:
   steps:
     # Download the snap from build artifacts
     - if: ${{inputs.snap != ''}}
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: ${{inputs.snap}}
 
