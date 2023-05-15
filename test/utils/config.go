@@ -221,8 +221,6 @@ func DoNotUseConfigProviderServiceSnap(t *testing.T, snap, app string) {
 func WaitForLogMessage(t *testing.T, snap, expectedLog string, since time.Time) {
 	const maxRetry = 10
 
-	var found = false
-
 	WaitPlatformOnline(t)
 
 	for i := 1; i <= maxRetry; i++ {
@@ -232,10 +230,9 @@ func WaitForLogMessage(t *testing.T, snap, expectedLog string, since time.Time) 
 		logs := SnapLogs(t, since, snap)
 		if strings.Contains(logs, expectedLog) {
 			t.Logf("Found expected content in logs: %s", expectedLog)
-			found = true
-			break
+			return
 		}
 	}
 
-	require.True(t, found, "Time out: reached max %d retries.", maxRetry)
+	t.Fatalf("Time out: reached max %d retries.", maxRetry)
 }
