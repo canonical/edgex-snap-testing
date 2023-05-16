@@ -75,6 +75,6 @@ func TestChangeTLSCert(t *testing.T) {
 
 func createTLSCert(t *testing.T) {
 	// The script path relative to the testing suites
-	const createLtsCert = "../../utils/create-tls-certificates.sh"
+	const createLtsCert = "../../scripts/create-tls-certificates.sh"
 	utils.Exec(t, createLtsCert)
 }

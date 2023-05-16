@@ -122,3 +122,20 @@ jobs:
           name: device-mqtt
           snap: ${{needs.build.outputs.snap}}
 ```
+
+## Add API Gateway users and change TLS certificates
+
+To manually add API Gateway users, please follow the steps outlined in the example script [here](./test/scripts/login-test-user.sh). Once you obtain the token from the script mentioned above, you can access the services via the API Gateway:
+
+```bash
+curl --insecure https://localhost:8443/core-data/api/v3/ping -H "Authorization: Bearer $(cat id-token.txt)"
+```
+
+By default, the API Gateway setup generates a self-signed certificate with a short expiration period. If you wish to change the default TLS certificates, you can follow the steps described in the script [here](./test/scripts/create-tls-certificates.sh). After completing the steps, you can test the new TLS certificates using the following command:
+
+```bash
+curl --cacert ca.crt https://localhost:8443/core-data/api/v3/ping
+```
+
+For more detailed information, please refer to the documentation [here](https://docs.edgexfoundry.org/3.0/getting-started/Ch-GettingStartedSnapUsers/#adding-api-gateway-users).
+
