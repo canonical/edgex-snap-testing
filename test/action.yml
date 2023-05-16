@@ -54,7 +54,7 @@ runs:
       shell: bash
       id: path
       run: |
-        echo "::set-output name=local_snap::${{github.workspace}}/${{inputs.snap}}"
+        echo "local_snap=${{github.workspace}}/${{inputs.snap}}" >> $GITHUB_OUTPUT
 
     # Run smoke tests
     - shell: bash
