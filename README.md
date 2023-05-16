@@ -122,3 +122,20 @@ jobs:
           name: device-mqtt
           snap: ${{needs.build.outputs.snap}}
 ```
+
+## Testing Scripts
+
+The testing scripts can be located in the [./test/scripts](./test/scripts/) directory.
+
+To create a token for example user:
+
+```bash
+./test/scripts/login-test-user.sh
+```
+
+To create a self-signed TLS certificate and replace the defaults:
+
+```bash
+./test/scripts/create-tls-certificates.sh
+```
+
