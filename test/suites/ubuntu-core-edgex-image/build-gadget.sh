@@ -16,7 +16,8 @@ yq e -i '(.volumes.pc.structure[] | select(.name=="ubuntu-seed") | .size)="1500M
 yq e -i '.defaults += {
   "AZGf0KNnh8aqdkbGATNuRuxnt1GNRKkV": {
     "app-options": true,
-    "security-secret-store": "off"
+    "security": false,
+    "autostart": true
   },
   "AmKuVTOfsN0uEKsyJG34M8CaMfnIqxc0": {
     "autostart": true,
@@ -28,7 +29,7 @@ yq e -i '.defaults += {
       }
     }
   }
-} | .defaults.AZGf0KNnh8aqdkbGATNuRuxnt1GNRKkV.security-secret-store style="double"' gadget.yaml
+} ' gadget.yaml
 
 
 # Connect edgex-device-virtual's plug (consumer) to 
