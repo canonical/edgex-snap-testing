@@ -83,7 +83,7 @@ go test ./test/utils -count=10
 ```
 
 #### Run EdgeX Ubuntu Core tests
-Refer to [./test/suites/ubuntu-core-edgex-image](test/suites/ubuntu-core-edgex-image)
+Refer to [edgex-ubuntu-core-testing](https://github.com/canonical/edgex-ubuntu-core-testing)
 
 ## Test using Github Actions
 This project includes two Github Actions that can be used in workflows to test snaps:
