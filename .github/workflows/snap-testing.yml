@@ -51,9 +51,6 @@ jobs:
           
           - name: edgexfoundry
             repo: edgexfoundry/edgex-go
-          
-          - name: cli
-            repo: edgexfoundry/edgex-cli
 
           - name: ui
             repo: edgexfoundry/edgex-ui-go
