@@ -8,9 +8,7 @@ on:
       - '**.md'
   schedule:
     # weekly tests run 6AM every Sunday
-    #- cron: "0 3 * * SUN"
-    # Make it nighly for the beta testing phase
-    - cron: "0 3 * * *"
+    - cron: "0 3 * * SUN"
   # allow manual trigger
   workflow_dispatch:
     inputs:
