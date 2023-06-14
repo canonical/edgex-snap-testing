@@ -35,8 +35,8 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 
 	// install the device/app service snap before edgexfoundry
 	// to catch build error sooner and stop
-	if LocalSnap() {
-		err = SnapInstallFromFile(nil, LocalSnapPath)
+	if LocalServiceSnap() {
+		err = SnapInstallFromFile(nil, LocalServiceSnapPath)
 	} else {
 		err = SnapInstallFromStore(nil, snapName, ServiceChannel)
 	}
@@ -50,9 +50,20 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 		return
 	}
 
+	// install the edgexfoundry platform snap
+	if LocalPlatformSnap() {
+		err = SnapInstallFromFile(nil, LocalPlatformSnapPath)
+	} else {
+		err = SnapInstallFromStore(nil, snapName, PlatformChannel)
+	}
+	if err != nil {
+		teardown()
+		return
+	}
+
 	// for local build, the interface isn't auto-connected.
 	// connect manually
-	if LocalSnap() {
+	if LocalServiceSnap() || LocalPlatformSnap {
 		if err = SnapConnectSecretstoreToken(nil, snapName); err != nil {
 			teardown()
 			return

@@ -93,8 +93,8 @@ func setup() (teardown func(), err error) {
 
 	// install the ekuiper snap before edgexfoundry
 	// to catch build error sooner and stop
-	if utils.LocalSnap() {
-		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
+	if utils.LocalServiceSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalServiceSnapPath)
 	} else {
 		err = utils.SnapInstallFromStore(nil, ekuiperSnap, utils.ServiceChannel)
 	}
@@ -103,7 +103,12 @@ func setup() (teardown func(), err error) {
 		return
 	}
 
-	if err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel); err != nil {
+	if utils.LocalPlatformSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalPlatformSnapPath)
+	} else {
+		err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel)
+	}
+	if err != nil {
 		teardown()
 		return
 	}
@@ -115,7 +120,7 @@ func setup() (teardown func(), err error) {
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually
-	if utils.LocalSnap() {
+	if utils.LocalServiceSnap() {
 		if err = utils.SnapConnectSecretstoreToken(nil, ekuiperSnap); err != nil {
 			teardown()
 			return

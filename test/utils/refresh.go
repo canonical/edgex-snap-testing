@@ -10,7 +10,7 @@ import (
 // TestRefresh tests an EdgeX upgrade using snap refresh
 func TestRefresh(t *testing.T, snapName string) {
 	t.Run("refresh", func(t *testing.T) {
-		if LocalSnap() {
+		if LocalPlatformSnap() {
 			t.Skip("Skip refresh for local snap build")
 		}
 

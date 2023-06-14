@@ -65,8 +65,8 @@ func setup() (teardown func(), err error) {
 		}
 	}
 
-	if utils.LocalSnap() {
-		err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath)
+	if utils.LocalPlatformSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalPlatformSnapPath)
 	} else {
 		err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel)
 	}

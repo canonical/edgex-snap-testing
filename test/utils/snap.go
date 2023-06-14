@@ -210,6 +210,10 @@ func SnapServicesActive(t *testing.T, name string) bool {
 	return strings.TrimSpace(out) == "active"
 }
 
-func LocalSnap() bool {
-	return LocalSnapPath != ""
+func LocalPlatformSnap() bool {
+	return LocalPlatformSnapPath != ""
+}
+
+func LocalServiceSnap() bool {
+	return LocalServiceSnapPath != ""
 }

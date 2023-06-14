@@ -59,8 +59,8 @@ func setup() (teardown func(), err error) {
 	}
 
 	// install the provider
-	if utils.LocalSnap() {
-		if err = utils.SnapInstallFromFile(nil, utils.LocalSnapPath); err != nil {
+	if utils.LocalServiceSnap() {
+		if err = utils.SnapInstallFromFile(nil, utils.LocalServiceSnapPath); err != nil {
 			teardown()
 			return
 		}
@@ -85,7 +85,12 @@ func setup() (teardown func(), err error) {
 		}
 	}
 
-	if err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel); err != nil {
+	if utils.LocalPlatformSnap() {
+		err = utils.SnapInstallFromFile(nil, utils.LocalPlatformSnapPath)
+	} else {
+		err = utils.SnapInstallFromStore(nil, platformSnap, utils.PlatformChannel)
+	}
+	if err != nil {
 		teardown()
 		return
 	}
