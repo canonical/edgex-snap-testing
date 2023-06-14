@@ -63,7 +63,7 @@ func SetupServiceTests(snapName string) (teardown func(), err error) {
 
 	// for local build, the interface isn't auto-connected.
 	// connect manually
-	if LocalServiceSnap() || LocalPlatformSnap {
+	if LocalServiceSnap() || LocalPlatformSnap() {
 		if err = SnapConnectSecretstoreToken(nil, snapName); err != nil {
 			teardown()
 			return
