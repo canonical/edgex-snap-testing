@@ -53,9 +53,21 @@ Full config test:
 FULL_CONFIG_TEST=true go test -v -failfast -count 1 ./test/suites/device-mqtt
 ```
 
-Testing with a local snap:
+Testing with a local platform snap:
 ```bash
-LOCAL_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" go test -v -failfast -count 1 ./test/suites/device-mqtt
+LOCAL_PLATFORM_SNAP="edgexfoundry_3.1.0-dev.3_amd64.snap" \
+go test -v -failfast -count 1 ./test/suites/edgexfoundry
+```
+Testing with a local service snap:
+```bash
+LOCAL_SERVICE_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" \
+go test -v -failfast -count 1 ./test/suites/device-mqtt
+```
+Testing with local platform and service snaps:
+```bash
+LOCAL_PLATFORM_SNAP="edgexfoundry_3.1.0-dev.3_amd64.snap" \
+LOCAL_SERVICE_SNAP="edgex-device-mqtt_2.0.1-dev.15_amd64.snap" \
+go test -v -failfast -count 1 ./test/suites/device-mqtt
 ```
 
 Test with skipping the removal of snaps during teardown:
