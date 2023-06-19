@@ -17,6 +17,26 @@ on:
         required: false
         default: false
         type: boolean
+      channel:
+        description: Channel (optional)
+        required: false
+        default: "latest/edge"
+        type: choice
+        options: 
+          - 'latest/edge'
+          - 'latest/beta'
+          - 'latest/candidate'
+          - 'latest/stable'
+      platform_channel:
+        description: Platform channel (optional)
+        required: false
+        default: "latest/edge"
+        type: choice
+        options: 
+          - 'latest/edge'
+          - 'latest/beta'
+          - 'latest/candidate'
+          - 'latest/stable'
 
 jobs:
   build_and_test:
