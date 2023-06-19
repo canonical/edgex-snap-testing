@@ -111,7 +111,7 @@ jobs:
         with:
           name: ${{matrix.name}}
           snap: ${{ inputs.localBuild == true && steps.build.outputs.snap || '' }}
-          channel: ${{matrix.channel}}
-          platform_channel: ${{matrix.platform_channel}}
+          channel: ${{ github.event.inputs.channel }}
+          platform_channel: ${{ github.event.inputs.platform_channel }}
           full_config_test: true
 
