@@ -13,12 +13,12 @@ on:
   workflow_dispatch:
     inputs:
       localBuild:
-        description: Build snaps locally
+        description: Build snaps from source (ignore channels)
         required: false
         default: false
         type: boolean
       channel:
-        description: Channel (optional)
+        description: Channel
         required: false
         default: "latest/edge"
         type: choice
@@ -28,7 +28,7 @@ on:
           - 'latest/candidate'
           - 'latest/stable'
       platform_channel:
-        description: Platform channel (optional)
+        description: Platform channel
         required: false
         default: "latest/edge"
         type: choice
