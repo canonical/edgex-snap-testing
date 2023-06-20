@@ -17,6 +17,26 @@ on:
         required: false
         default: false
         type: boolean
+      channel:
+        description: Channel (optional)
+        required: false
+        default: "latest/edge"
+        type: choice
+        options: 
+          - 'latest/edge'
+          - 'latest/beta'
+          - 'latest/candidate'
+          - 'latest/stable'
+      platform_channel:
+        description: Platform channel (optional)
+        required: false
+        default: "latest/edge"
+        type: choice
+        options: 
+          - 'latest/edge'
+          - 'latest/beta'
+          - 'latest/candidate'
+          - 'latest/stable'
 
 jobs:
   build_and_test:
@@ -91,7 +111,7 @@ jobs:
         with:
           name: ${{matrix.name}}
           snap: ${{ inputs.localBuild == true && steps.build.outputs.snap || '' }}
-          channel: ${{matrix.channel}}
-          platform_channel: ${{matrix.platform_channel}}
+          channel: ${{ github.event.inputs.channel }}
+          platform_channel: ${{ github.event.inputs.platform_channel }}
           full_config_test: true
 
